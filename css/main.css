@@ -16,12 +16,14 @@ h1{margin:6px 0 8px;font-size:34px;line-height:1.1}
 .list{padding-bottom:20px}
 .itemShell{position:relative;margin:8px 0;border-radius:15px;overflow:hidden;background:#8b1616}
 .deleteHint{position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-start;padding-left:20px;color:#fff;font-size:16px;font-weight:700;direction:ltr}
-.item{position:relative;background:#1b1b1b;border:1px solid #333;border-radius:15px;padding:28px 14px 14px 14px;font-size:20px;font-weight:700;cursor:pointer;min-height:78px;transition:transform .18s ease;touch-action:pan-y}
+.item{position:relative;background:#1b1b1b;border:1px solid #333;border-radius:15px;padding:28px 28px 16px 14px;font-size:20px;font-weight:700;cursor:pointer;min-height:86px;transition:transform .18s ease;touch-action:pan-y}
 .item:active{background:#242424}
-.itemName{line-height:1.25}
-.openCount{font-size:14px;color:#8e8e8e;margin-top:4px;font-weight:400}
-.item .num{direction:ltr;text-align:left;font-size:14px;color:#aaa;margin-top:5px;font-weight:400;word-break:break-all}
+.itemName{line-height:1.2;margin-top:16px}
+.openCount{font-size:14px;color:#8e8e8e;margin-top:3px;font-weight:400;text-align:right}
+.item .num{direction:ltr;text-align:right;font-size:18px;color:#ddd;margin-top:14px;padding-top:10px;border-top:1px solid #333;font-weight:400;word-break:break-all}
 .itemDate{position:absolute;left:13px;top:9px;direction:ltr;color:#8e8e8e;font-size:12px;font-weight:400}
+.itemMenu{position:absolute;left:7px;top:24px;width:34px;height:28px;padding:0;border:0;border-radius:10px;background:transparent;color:#bbb;font-size:20px;line-height:24px;font-weight:700;transform:rotate(90deg);z-index:4}
+.itemMenu:active{background:#2a2a2a;transform:rotate(90deg) scale(.96)}
 .star{position:absolute;right:9px;top:6px;width:30px;height:30px;padding:0;border-radius:50%;background:transparent;color:#777;font-size:22px;line-height:30px}
 .star.on{color:#ffd54a}
 .bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(12px + var(--safe-bottom));background:#000;z-index:20;border-top:1px solid #222}
