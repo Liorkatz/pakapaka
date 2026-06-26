@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.06">
+<link rel="stylesheet" href="css/main.css?v=1.07">
 <title>פקעות</title>
 </head>
 <body>
@@ -27,7 +27,7 @@
   <div class="saveChoiceTitle">איפה לשמור?</div>
   <div class="saveTabs"><button id="saveLocalBtn" class="saveTab" onclick="setSaveTarget('local')">מקומי</button><button id="saveSharedBtn" class="saveTab" onclick="setSaveTarget('shared')">משותף</button></div>
   <label>שם הפקעה</label><input id="name" autocomplete="off" maxlength="60" placeholder="לדוגמה: תקלה">
-  <div class="codeGrid"><div><label>בסיס - 8 ספרות</label><input id="codeBase" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="15" placeholder="60026342" oninput="cleanCodeFields('base')"></div><div><label>סיומת</label><input id="codeSuffix" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="3" placeholder="004" oninput="cleanCodeFields('suffix')"></div></div>
+  <div class="codeGrid"><div><label>בסיס - 8 ספרות</label><input id="codeBase" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="15" placeholder="60026342" oninput="cleanCodeFields('base')"><div id="baseCounter" class="fieldCounter">נותרו 8 ספרות</div></div><div><label>סיומת</label><input id="codeSuffix" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="3" placeholder="004" oninput="cleanCodeFields('suffix')"></div></div>
   <label>הערות</label><textarea id="notes" maxlength="250" placeholder="לא חובה"></textarea>
   <button class="save" onclick="saveItem()">שמור</button>
   <div class="smallHelp">הברקוד נשמר כ־8 ספרות + 0000 + סיומת בת 3 ספרות.</div>
@@ -38,16 +38,16 @@
   <div class="barcodeWrap"><div class="barcodeName" id="barcodeName"></div><div class="barcodeNumber" id="barcodeNumber"></div><div id="barcodeSvg"></div></div>
 </section>
 
-<script src="js/config.js?v=1.06"></script>
-<script src="js/utils.js?v=1.06"></script>
-<script src="js/storage.js?v=1.06"></script>
-<script src="js/barcode.js?v=1.06"></script>
-<script src="js/shared.js?v=1.06"></script>
-<script src="js/app.js?v=1.06"></script>
-<script src="js/pwa-enhance.js?v=1.06"></script>
+<script src="js/config.js?v=1.07"></script>
+<script src="js/utils.js?v=1.07"></script>
+<script src="js/storage.js?v=1.07"></script>
+<script src="js/barcode.js?v=1.07"></script>
+<script src="js/shared.js?v=1.07"></script>
+<script src="js/app.js?v=1.07"></script>
+<script src="js/pwa-enhance.js?v=1.07"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=1.06').catch(() => {}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=1.07').catch(() => {}));
 }
 </script>
 </body>
