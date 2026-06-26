@@ -9,13 +9,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.04">
+<link rel="stylesheet" href="css/main.css?v=1.05">
 <title>פקעות</title>
 </head>
 <body>
 <section id="home" class="page active">
   <div class="topBar"><h1>פקעות</h1><button class="refreshBtn" onclick="refreshList()">↻</button></div>
-  <p class="subtitle">מועדפים למעלה. מחיקה: החלקה ימינה.</p>
+  <p id="homeHelp" class="subtitle">מועדפים למעלה. מחיקה: החלקה ימינה.</p>
   <div class="tabs"><button id="tabLocal" class="tab active" onclick="setTab('local')">מקומי</button><button id="tabShared" class="tab" onclick="setTab('shared')">משותף</button></div>
   <div id="list" class="list"></div>
   <div class="bottom"><button onclick="showPage('newPage')">הכנס פקעה חדשה</button></div>
@@ -38,16 +38,16 @@
   <div class="barcodeWrap"><div class="barcodeName" id="barcodeName"></div><div class="barcodeNumber" id="barcodeNumber"></div><div id="barcodeSvg"></div></div>
 </section>
 
-<script src="js/config.js?v=1.04"></script>
-<script src="js/utils.js?v=1.04"></script>
-<script src="js/storage.js?v=1.04"></script>
-<script src="js/barcode.js?v=1.04"></script>
-<script src="js/shared.js?v=1.04"></script>
-<script src="js/app.js?v=1.04"></script>
-<script src="js/pwa-enhance.js?v=1.04"></script>
+<script src="js/config.js?v=1.05"></script>
+<script src="js/utils.js?v=1.05"></script>
+<script src="js/storage.js?v=1.05"></script>
+<script src="js/barcode.js?v=1.05"></script>
+<script src="js/shared.js?v=1.05"></script>
+<script src="js/app.js?v=1.05"></script>
+<script src="js/pwa-enhance.js?v=1.05"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=1.04').catch(() => {}));
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=1.05').catch(() => {}));
 }
 </script>
 </body>
