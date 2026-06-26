@@ -1,4 +1,4 @@
-const VERSION = '1.13';
+const VERSION = '1.14';
 const STORAGE_KEY = 'pekaot_barcode_v3';
 const SHARED_FAV_KEY = 'pakapaka_shared_favorites_v1';
 const SUPABASE_URL = 'https://inotumlxglxsilatijat.supabase.co';
