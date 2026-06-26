@@ -9,7 +9,10 @@ function addVersionBadge() {
   d.id = 'versionBadge';
   d.className = 'versionBadge';
   d.textContent = 'v ' + VERSION;
-  document.body.appendChild(d);
+  const home = document.getElementById('home');
+  const topBar = home ? home.querySelector('.topBar') : null;
+  if (home && topBar) home.insertBefore(d, topBar);
+  else document.body.insertBefore(d, document.body.firstChild);
 }
 
 function toast(msg) {
