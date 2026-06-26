@@ -19,8 +19,9 @@ h1{margin:6px 0 8px;font-size:34px;line-height:1.1}
 .item{position:relative;background:#1b1b1b;border:1px solid #333;border-radius:15px;padding:28px 28px 16px 14px;font-size:20px;font-weight:700;cursor:pointer;min-height:86px;transition:transform .18s ease;touch-action:pan-y}
 .item:active{background:#242424}
 .itemName{line-height:1.2;margin-top:16px}
-.openCount{font-size:14px;color:#8e8e8e;margin-top:3px;font-weight:400;text-align:right}
-.item .num{direction:ltr;text-align:right;font-size:18px;color:#ddd;margin-top:14px;padding-top:10px;border-top:1px solid #333;font-weight:400;word-break:break-all}
+.itemMeta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding-top:8px;border-top:1px solid #333}
+.openCount{font-size:14px;color:#8e8e8e;font-weight:400;text-align:right;white-space:nowrap;order:2}
+.item .num{direction:ltr;text-align:left;font-size:18px;color:#ddd;font-weight:400;word-break:break-all;order:1}
 .itemDate{position:absolute;left:13px;top:9px;direction:ltr;color:#8e8e8e;font-size:12px;font-weight:400}
 .itemMenu{position:absolute;left:7px;top:24px;width:34px;height:28px;padding:0;border:0;border-radius:10px;background:transparent;color:#bbb;font-size:20px;line-height:24px;font-weight:700;transform:rotate(90deg);z-index:4}
 .itemMenu:active{background:#2a2a2a;transform:rotate(90deg) scale(.96)}
