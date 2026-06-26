@@ -93,13 +93,15 @@ function renderSection(title, items) {
 
 function renderItem(x) {
   const countLine = activeTab === 'local' ? `<div class="openCount">נפתחה ${Number(x.openCount || 0)} פעמים</div>` : '';
-  return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}"><button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemDate">${formatDate(x.createdAt)}</div><div class="itemName">${escapeHtml(x.name)}</div>${countLine}<div class="num">${escapeHtml(x.code)}</div></div></div>`;
+  const menu = activeTab === 'local' ? `<button class="itemMenu" data-action="rename" data-id="${escapeAttr(x.id)}">⋯</button>` : '';
+  return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}">${menu}<button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemDate">${formatDate(x.createdAt)}</div><div class="itemName">${escapeHtml(x.name)}</div>${countLine}<div class="num">${escapeHtml(x.code)}</div></div></div>`;
 }
 
 function bindActions() {
   document.querySelectorAll('.item').forEach(el => {
     el.addEventListener('click', e => {
       if (e.target.dataset.action === 'star') return;
+      if (e.target.dataset.action === 'rename') return;
       handleItemClick(el.dataset.id);
     });
     el.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -107,11 +109,27 @@ function bindActions() {
     el.addEventListener('touchend', onTouchEnd, { passive: true });
   });
   document.querySelectorAll('[data-action="star"]').forEach(el => el.addEventListener('click', e => toggleFavorite(e, el.dataset.id)));
+  document.querySelectorAll('[data-action="rename"]').forEach(el => el.addEventListener('click', e => renameLocalItem(e, el.dataset.id)));
 }
 
 function handleItemClick(id) {
   if (activeTab === 'shared') return promptCopySharedToLocal(id);
   openBarcode(id);
+}
+
+function renameLocalItem(event, id) {
+  event.stopPropagation();
+  if (activeTab !== 'local') return;
+  const items = getLocalItems();
+  const item = items.find(x => String(x.id) === String(id));
+  if (!item) return;
+  const name = prompt('שם חדש לפקעה:', item.name || '');
+  if (name === null) return;
+  const finalName = name.trim();
+  if (!finalName) return alert('שם לא יכול להיות ריק');
+  item.name = finalName;
+  setLocalItems(items);
+  renderList();
 }
 
 function promptCopySharedToLocal(id) {
