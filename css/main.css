@@ -37,6 +37,7 @@ button:active{transform:scale(.99)}
 .saveTab{border:0;border-radius:14px;padding:12px;font-size:18px;background:transparent;color:#999}
 .saveTab.active{background:#fff;color:#000}
 label{display:block;font-size:18px;margin:18px 0 8px;color:#ddd}
+.labelHint{display:inline-block;margin-right:8px;color:#888;font-size:13px;font-weight:400;vertical-align:baseline}
 input,textarea{width:100%;border-radius:16px;border:1px solid #444;background:#111;color:#fff;padding:16px;font-size:22px;outline:none}
 input:focus,textarea:focus{border-color:#fff}
 textarea{min-height:74px;resize:vertical}
