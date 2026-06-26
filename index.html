@@ -11,58 +11,71 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <title>פקעות</title>
   <style>
-    body { margin:0; font-family:Arial,sans-serif; background:#000; color:#fff; }
-    .page { min-height:100dvh; display:none; padding:18px; box-sizing:border-box; }
+    :root { --safe-bottom: env(safe-area-inset-bottom, 0px); --safe-top: env(safe-area-inset-top, 0px); }
+    * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    html, body { margin:0; min-height:100%; font-family:Arial,sans-serif; background:#000; color:#fff; }
+    body { overscroll-behavior:none; }
+    .page { min-height:100dvh; display:none; padding:calc(18px + var(--safe-top)) 18px 120px; }
     .page.active { display:block; }
-    h1 { margin:10px 0 22px; font-size:32px; }
-    .list { padding-bottom:135px; }
-    .item { background:#1b1b1b; border:1px solid #333; border-radius:16px; padding:18px; margin:12px 0; font-size:24px; font-weight:700; }
-    .item .num { direction:ltr; text-align:left; font-size:16px; color:#aaa; margin-top:8px; font-weight:400; }
-    .bottom { position:fixed; left:0; right:0; bottom:0; padding:14px 18px calc(34px + env(safe-area-inset-bottom)); background:#000; box-sizing:border-box; z-index:20; border-top:1px solid #222; }
-    button { width:100%; border:0; border-radius:18px; padding:18px; font-size:22px; font-weight:700; background:#fff; color:#000; }
-    .back { background:#222; color:#fff; margin-bottom:16px; border:1px solid #444; }
+    h1 { margin:6px 0 8px; font-size:34px; line-height:1.1; }
+    .subtitle { margin:0 0 22px; color:#aaa; font-size:16px; }
+    .list { padding-bottom:20px; }
+    .item { background:#1b1b1b; border:1px solid #333; border-radius:18px; padding:18px; margin:12px 0; font-size:24px; font-weight:700; cursor:pointer; }
+    .item:active { transform:scale(.99); background:#242424; }
+    .item .num { direction:ltr; text-align:left; font-size:16px; color:#aaa; margin-top:8px; font-weight:400; word-break:break-all; }
+    .bottom { position:fixed; left:0; right:0; bottom:0; padding:12px 18px calc(12px + var(--safe-bottom)); background:#000; z-index:20; border-top:1px solid #222; }
+    button { width:100%; border:0; border-radius:18px; padding:17px; font-size:21px; font-weight:700; background:#fff; color:#000; cursor:pointer; }
+    button:active { transform:scale(.99); }
+    .back { background:#222; color:#fff; margin-bottom:18px; border:1px solid #444; }
     label { display:block; font-size:18px; margin:18px 0 8px; color:#ddd; }
-    input, textarea { width:100%; box-sizing:border-box; border-radius:16px; border:1px solid #444; background:#111; color:#fff; padding:16px; font-size:22px; }
-    textarea { min-height:80px; }
-    .save { margin-top:24px; margin-bottom:40px; }
-    .whitePage { background:#fff; color:#000; text-align:center; display:none; min-height:100dvh; padding:18px; box-sizing:border-box; }
+    input, textarea { width:100%; border-radius:16px; border:1px solid #444; background:#111; color:#fff; padding:16px; font-size:22px; outline:none; }
+    input:focus, textarea:focus { border-color:#fff; }
+    textarea { min-height:80px; resize:vertical; }
+    .save { margin-top:24px; margin-bottom:20px; }
+    .whitePage { background:#fff; color:#000; text-align:center; display:none; min-height:100dvh; padding:calc(20px + var(--safe-top)) 16px calc(20px + var(--safe-bottom)); }
     .whitePage.active { display:flex; flex-direction:column; justify-content:center; align-items:center; }
-    .barcodeName { font-size:34px; font-weight:700; margin-bottom:28px; }
-    .barcodeNumber { direction:ltr; font-size:28px; letter-spacing:2px; margin-bottom:12px; }
-    #barcodeSvg { width:100%; }
-    #barcodeSvg svg { width:100%; max-width:680px; height:auto; }
-    .whiteBack { position:fixed; top:calc(14px + env(safe-area-inset-top)); right:14px; width:auto; padding:12px 18px; border-radius:14px; background:#111; color:#fff; font-size:18px; }
+    .barcodeWrap { width:100%; max-width:760px; }
+    .barcodeName { font-size:34px; font-weight:700; margin-bottom:22px; line-height:1.15; }
+    .barcodeNumber { direction:ltr; font-size:24px; letter-spacing:1px; margin-bottom:14px; word-break:break-all; }
+    #barcodeSvg { width:100%; overflow:hidden; }
+    #barcodeSvg svg { width:100%; max-width:760px; height:auto; display:block; margin:0 auto; }
+    .whiteBack { position:fixed; top:calc(12px + var(--safe-top)); right:12px; width:auto; padding:11px 17px; border-radius:14px; background:#111; color:#fff; font-size:18px; z-index:10; }
     .empty { color:#999; font-size:18px; margin-top:30px; }
+    .smallHelp { color:#888; font-size:15px; margin-top:10px; line-height:1.35; }
   </style>
 </head>
 <body>
 <section id="home" class="page active">
   <h1>פקעות</h1>
+  <p class="subtitle">הנתונים נשמרים מקומית על המכשיר הזה</p>
   <div id="list" class="list"></div>
   <div class="bottom"><button onclick="showPage('newPage')">הכנס פקעה חדשה</button></div>
 </section>
 <section id="newPage" class="page">
   <button class="back" onclick="showPage('home')">חזור</button>
   <h1>פקעה חדשה</h1>
-  <label>שם הפקעה</label><input id="name" placeholder="לדוגמה: תקלה">
-  <label>מספר ברקוד</label><input id="code" inputmode="numeric" placeholder="לדוגמה: 6002634200000004">
+  <label>שם הפקעה</label><input id="name" autocomplete="off" placeholder="לדוגמה: תקלה">
+  <label>מספר ברקוד</label><input id="code" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="לדוגמה: 6002634200000004">
   <label>הערות</label><textarea id="notes" placeholder="לא חובה"></textarea>
   <button class="save" onclick="saveItem()">שמור</button>
+  <div class="smallHelp">הברקוד נוצר בפורמט Code 128C, לכן מספר הברקוד חייב להיות עם כמות זוגית של ספרות.</div>
 </section>
 <section id="barcodePage" class="whitePage">
   <button class="whiteBack" onclick="showPage('home')">חזור</button>
-  <div class="barcodeName" id="barcodeName"></div>
-  <div class="barcodeNumber" id="barcodeNumber"></div>
-  <div id="barcodeSvg"></div>
+  <div class="barcodeWrap">
+    <div class="barcodeName" id="barcodeName"></div>
+    <div class="barcodeNumber" id="barcodeNumber"></div>
+    <div id="barcodeSvg"></div>
+  </div>
 </section>
 <script>
 const STORAGE_KEY = "pekaot_barcode_v3";
 const C128 = ["212222","222122","222221","121223","121322","131222","122213","122312","132212","221213","221312","231212","112232","122132","122231","113222","123122","123221","223211","221132","221231","213212","223112","312131","311222","321122","321221","312212","322112","322211","212123","212321","232121","111323","131123","131321","112313","132113","132311","211313","231113","231311","112133","112331","132131","113123","113321","133121","313121","211331","231131","213113","213311","213131","311123","311321","331121","312113","312311","332111","314111","221411","431111","111224","111422","121124","121421","141122","141221","112214","112412","122114","122411","142112","142211","241211","221114","413111","241112","134111","111242","121142","121241","114212","124112","124211","411212","421112","421211","212141","214121","412121","111143","111341","131141","114113","114311","411113","411311","113141","114131","311141","411131","211412","211214","211232","2331112"];
 function migrateOldData(){ const old = localStorage.getItem("pekaot_barcode_v2"); const current = localStorage.getItem(STORAGE_KEY); if(old && !current) localStorage.setItem(STORAGE_KEY, old); }
-function getItems(){ return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+function getItems(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch(e) { return []; } }
 function setItems(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
 function normalizeCode(s){ return (s || "").replace(/\D/g,""); }
-function showPage(id){ document.querySelectorAll(".page,.whitePage").forEach(p => p.classList.remove("active")); document.getElementById(id).classList.add("active"); if(id === "home") renderList(); }
+function showPage(id){ document.querySelectorAll(".page,.whitePage").forEach(p => p.classList.remove("active")); document.getElementById(id).classList.add("active"); window.scrollTo(0,0); if(id === "home") renderList(); }
 function saveItem(){ const name = document.getElementById("name").value.trim(); const code = normalizeCode(document.getElementById("code").value); const notes = document.getElementById("notes").value.trim(); if(!name) return alert("חסר שם פקעה"); if(!code) return alert("חסר מספר ברקוד"); if(code.length % 2 !== 0) return alert("המספר חייב להיות עם כמות זוגית של ספרות"); const items = getItems(); items.unshift({id:Date.now(), name, code, notes}); setItems(items); document.getElementById("name").value = ""; document.getElementById("code").value = ""; document.getElementById("notes").value = ""; showPage("home"); }
 function renderList(){ const items = getItems(); const list = document.getElementById("list"); if(!items.length){ list.innerHTML = '<div class="empty">עדיין אין פקעות שמורות</div>'; return; } list.innerHTML = items.map(x => `<div class="item" onclick="openBarcode(${x.id})">${escapeHtml(x.name)}<div class="num">${escapeHtml(x.code)}</div></div>`).join(""); }
 function openBarcode(id){ const item = getItems().find(x => x.id === id); if(!item) return; document.getElementById("barcodeName").textContent = item.name; document.getElementById("barcodeNumber").textContent = item.code; document.getElementById("barcodeSvg").innerHTML = code128Csvg(item.code); showPage("barcodePage"); }
