@@ -22,11 +22,11 @@ h1{margin:6px 0 8px;font-size:34px;line-height:1.1}
 .itemTop{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:6px;min-height:28px}
 .itemName{line-height:1.16;margin-top:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .itemMeta{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:5px;padding-top:5px;border-top:1px solid #333}
-.openCount{font-size:13px;color:#8e8e8e;font-weight:400;text-align:right;white-space:nowrap;order:2}
+.openCount{font-size:15px;color:#b5b5b5;font-weight:500;text-align:right;white-space:nowrap;order:2}
 .item .num{direction:ltr;text-align:left;font-size:16px;color:#ddd;font-weight:400;word-break:break-all;order:1}
 .itemDate{direction:ltr;color:#8e8e8e;font-size:11px;font-weight:400;white-space:nowrap}
-.itemMenu{position:absolute;left:5px;bottom:8px;width:32px;height:26px;padding:0;border:0;border-radius:9px;background:transparent;color:#bbb;font-size:19px;line-height:22px;font-weight:700;transform:rotate(90deg);z-index:4}
-.itemMenu:active{background:#2a2a2a;transform:rotate(90deg) scale(.96)}
+.itemMenu{position:absolute;left:6px;bottom:7px;width:30px;height:26px;padding:0;border:0;border-radius:9px;background:transparent;color:#aaa;font-size:15px;line-height:26px;font-weight:700;z-index:4}
+.itemMenu:active{background:#2a2a2a;transform:scale(.96)}
 .star{position:static;width:28px;height:28px;padding:0;border-radius:50%;background:transparent;color:#777;font-size:21px;line-height:28px}
 .star.on{color:#ffd54a}
 .bottom{position:fixed;left:0;right:0;bottom:0;padding:12px 18px calc(12px + var(--safe-bottom));background:#000;z-index:20;border-top:1px solid #222}
