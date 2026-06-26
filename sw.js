@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pakapaka-v6';
+const CACHE_NAME = 'pakapaka-v7';
 const FILES_TO_CACHE = [
   './manifest.webmanifest',
   './icon.svg'
