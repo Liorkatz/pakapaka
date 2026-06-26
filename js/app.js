@@ -92,20 +92,42 @@ function renderSection(title, items) {
 }
 
 function renderItem(x) {
-  return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}"><button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemDate">${formatDate(x.createdAt)}</div>${escapeHtml(x.name)}<div class="num">${escapeHtml(x.code)}</div></div></div>`;
+  const countLine = activeTab === 'local' ? `<div class="openCount">נפתחה ${Number(x.openCount || 0)} פעמים</div>` : '';
+  return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}"><button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemDate">${formatDate(x.createdAt)}</div><div class="itemName">${escapeHtml(x.name)}</div>${countLine}<div class="num">${escapeHtml(x.code)}</div></div></div>`;
 }
 
 function bindActions() {
   document.querySelectorAll('.item').forEach(el => {
     el.addEventListener('click', e => {
       if (e.target.dataset.action === 'star') return;
-      openBarcode(el.dataset.id);
+      handleItemClick(el.dataset.id);
     });
     el.addEventListener('touchstart', onTouchStart, { passive: true });
     el.addEventListener('touchmove', onTouchMove, { passive: false });
     el.addEventListener('touchend', onTouchEnd, { passive: true });
   });
   document.querySelectorAll('[data-action="star"]').forEach(el => el.addEventListener('click', e => toggleFavorite(e, el.dataset.id)));
+}
+
+function handleItemClick(id) {
+  if (activeTab === 'shared') return promptCopySharedToLocal(id);
+  openBarcode(id);
+}
+
+function promptCopySharedToLocal(id) {
+  const item = sharedItems.find(x => String(x.id) === String(id));
+  if (!item) return;
+  const existing = getLocalItems().some(x => x.code === item.code);
+  if (existing) return alert('הפקעה כבר קיימת במקומי');
+  const name = prompt('שם לשמירה במקומי:', item.name || '');
+  if (name === null) return;
+  const finalName = name.trim() || item.name || 'פקעה';
+  const result = copySharedToLocal(item, finalName);
+  if (!result.ok) return alert(result.error);
+  alert('נשמר במקומי');
+  activeTab = 'local';
+  localStorage.setItem('pakapaka_active_tab', 'local');
+  renderList();
 }
 
 function toggleFavorite(event, id) {
@@ -177,8 +199,7 @@ function onTouchEnd() {
 }
 
 function openBarcode(id) {
-  const items = activeTab === 'shared' ? sharedItems : getLocalItems();
-  const item = items.find(x => String(x.id) === String(id));
+  const item = incrementLocalOpenCount(id);
   if (!item) return;
   document.getElementById('barcodeName').textContent = item.name;
   document.getElementById('barcodeNumber').textContent = item.code;
