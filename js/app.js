@@ -19,6 +19,18 @@ function updateSaveTargetButtons() {
   document.getElementById('saveSharedBtn').classList.toggle('active', saveTarget === 'shared');
 }
 
+function updateHomeHelp() {
+  const help = document.getElementById('homeHelp');
+  if (!help) return;
+  if (activeTab === 'shared') {
+    help.innerHTML = 'הפקעות ברשימה זו משותפות לכל המשתמשים.<br>לחיצה על פק״ע תשמור אותה ברשימה המקומית שלך.';
+    help.classList.add('sharedHelp');
+  } else {
+    help.textContent = 'מועדפים למעלה. מחיקה: החלקה ימינה.';
+    help.classList.remove('sharedHelp');
+  }
+}
+
 function setTab(tab) {
   activeTab = tab;
   localStorage.setItem('pakapaka_active_tab', tab);
@@ -68,6 +80,7 @@ async function saveItem() {
 function renderList() {
   document.getElementById('tabLocal').classList.toggle('active', activeTab === 'local');
   document.getElementById('tabShared').classList.toggle('active', activeTab === 'shared');
+  updateHomeHelp();
   if (activeTab === 'shared' && !sharedLoaded) {
     loadShared();
     return;
