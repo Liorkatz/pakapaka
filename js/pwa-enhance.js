@@ -5,10 +5,17 @@ const lastSharedSeenKey = 'pakapaka_last_shared_seen_v1';
 
 function addVersionBadge() {
   if (document.getElementById('versionBadge')) return;
-  const d = document.createElement('div');
+  const d = document.createElement('button');
   d.id = 'versionBadge';
   d.className = 'versionBadge';
+  d.type = 'button';
   d.textContent = 'v ' + VERSION;
+  d.title = 'בדיקת עדכון גרסה';
+  d.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (typeof checkForAppUpdate === 'function') checkForAppUpdate(true);
+  });
   const home = document.getElementById('home');
   const topBar = home ? home.querySelector('.topBar') : null;
   if (home && topBar) home.insertBefore(d, topBar);
@@ -69,8 +76,8 @@ async function checkSharedUpdates() {
 }
 
 function patchRefreshAndTabs() {
-  if (window.__v102) return;
-  window.__v102 = true;
+  if (window.__v109) return;
+  window.__v109 = true;
   const oldRefresh = window.refreshList;
   if (typeof oldRefresh === 'function') {
     window.refreshList = async function () {
