@@ -18,6 +18,8 @@ h1{margin:6px 0 8px;font-size:34px;line-height:1.1}
 .deleteHint{position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-start;padding-left:20px;color:#fff;font-size:16px;font-weight:700;direction:ltr}
 .item{position:relative;background:#1b1b1b;border:1px solid #333;border-radius:15px;padding:28px 14px 14px 14px;font-size:20px;font-weight:700;cursor:pointer;min-height:78px;transition:transform .18s ease;touch-action:pan-y}
 .item:active{background:#242424}
+.itemName{line-height:1.25}
+.openCount{font-size:14px;color:#8e8e8e;margin-top:4px;font-weight:400}
 .item .num{direction:ltr;text-align:left;font-size:14px;color:#aaa;margin-top:5px;font-weight:400;word-break:break-all}
 .itemDate{position:absolute;left:13px;top:9px;direction:ltr;color:#8e8e8e;font-size:12px;font-weight:400}
 .star{position:absolute;right:9px;top:6px;width:30px;height:30px;padding:0;border-radius:50%;background:transparent;color:#777;font-size:22px;line-height:30px}
