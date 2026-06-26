@@ -12,7 +12,8 @@ function normalizeLocalItem(x) {
     name: x.name || '',
     code: x.code || '',
     notes: x.notes || '',
-    favorite: !!x.favorite
+    favorite: !!x.favorite,
+    openCount: Number(x.openCount || 0)
   };
 }
 
@@ -31,8 +32,34 @@ function setLocalItems(items) {
 function saveLocal(name, code, notes) {
   const now = Date.now();
   const items = getLocalItems();
-  items.unshift({ id: now, createdAt: now, name, code, notes, favorite: false });
+  items.unshift({ id: now, createdAt: now, name, code, notes, favorite: false, openCount: 0 });
   setLocalItems(items);
+}
+
+function copySharedToLocal(item, name) {
+  const items = getLocalItems();
+  if (items.some(x => x.code === item.code)) return { ok: false, error: 'ברקוד זה כבר קיים במקומי' };
+  const now = Date.now();
+  items.unshift({
+    id: now,
+    createdAt: now,
+    name: name || item.name || '',
+    code: item.code || '',
+    notes: item.notes || '',
+    favorite: false,
+    openCount: 0
+  });
+  setLocalItems(items);
+  return { ok: true };
+}
+
+function incrementLocalOpenCount(id) {
+  const items = getLocalItems();
+  const item = items.find(x => String(x.id) === String(id));
+  if (!item) return null;
+  item.openCount = Number(item.openCount || 0) + 1;
+  setLocalItems(items);
+  return item;
 }
 
 function getSharedFavs() {
