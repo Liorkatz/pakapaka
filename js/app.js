@@ -38,7 +38,7 @@ function setTab(tab) {
   if (tab === 'shared') loadShared();
 }
 
-async function checkForAppUpdate(showCurrentMessage = false) {
+async function checkForAppUpdate(showCurrentMessage = true) {
   try {
     const r = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
     if (!r.ok) return false;
@@ -54,6 +54,7 @@ async function checkForAppUpdate(showCurrentMessage = false) {
     if (showCurrentMessage) alert(`אתה משתמש בגרסה העדכנית ביותר (v${VERSION})`);
     return false;
   } catch (e) {
+    if (showCurrentMessage) alert('בדיקת העדכון נכשלה. נסה שוב מאוחר יותר.');
     return false;
   }
 }
@@ -73,14 +74,7 @@ async function forceAppUpdate(latest) {
 }
 
 async function refreshList() {
-  const hadUpdate = await checkForAppUpdate(true);
-  if (hadUpdate) return;
-  if (activeTab === 'shared') {
-    sharedLoaded = false;
-    loadShared();
-  } else {
-    renderList();
-  }
+  refreshDataOnly();
 }
 
 function refreshDataOnly() {
