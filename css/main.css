@@ -46,7 +46,7 @@ textarea{min-height:74px;resize:vertical}
 .whiteBack{position:fixed;top:calc(12px + var(--safe-top));right:12px;width:auto;padding:11px 17px;border-radius:14px;background:#111;color:#fff;font-size:18px;z-index:10}
 .empty{color:#999;font-size:18px;margin-top:30px;line-height:1.45}
 .smallHelp{color:#888;font-size:15px;margin-top:10px;line-height:1.35}
-.versionBadge{position:fixed;top:calc(8px + var(--safe-top));right:10px;left:auto;background:#161616;color:#aaa;border:1px solid #333;border-radius:999px;padding:5px 9px;font-size:12px;z-index:9999;direction:ltr}
+.versionBadge{position:static;display:block;width:max-content;margin:0 0 8px auto;background:#161616;color:#aaa;border:1px solid #333;border-radius:999px;padding:5px 9px;font-size:12px;line-height:1;z-index:auto;direction:ltr}
 .toastMsg{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;border:1px solid #444;border-radius:18px;padding:12px 18px;font-size:17px;z-index:9999;opacity:0;transition:opacity .2s}
 .toastMsg.show{opacity:1}
 .sharedDot{display:none;position:absolute;top:8px;left:12px;width:9px;height:9px;background:#ff3b30;border-radius:50%}
