@@ -18,13 +18,20 @@
     .page { min-height:100dvh; display:none; padding:calc(18px + var(--safe-top)) 18px 120px; }
     .page.active { display:block; }
     h1 { margin:6px 0 8px; font-size:34px; line-height:1.1; }
-    .subtitle { margin:0 0 22px; color:#aaa; font-size:16px; }
+    .subtitle { margin:0 0 16px; color:#aaa; font-size:16px; }
+    .tabs { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:10px 0 18px; background:#111; border:1px solid #252525; border-radius:18px; padding:5px; }
+    .tab { border:0; border-radius:14px; padding:12px; font-size:18px; background:transparent; color:#999; }
+    .tab.active { background:#fff; color:#000; }
     .list { padding-bottom:20px; }
-    .item { position:relative; background:#1b1b1b; border:1px solid #333; border-radius:18px; padding:18px 18px 54px; margin:12px 0; font-size:24px; font-weight:700; cursor:pointer; min-height:118px; }
-    .item:active { transform:scale(.99); background:#242424; }
+    .itemShell { position:relative; margin:12px 0; border-radius:18px; overflow:hidden; background:#8b1616; }
+    .deleteHint { position:absolute; inset:0; display:flex; align-items:center; justify-content:flex-start; padding-left:22px; color:#fff; font-size:17px; font-weight:700; direction:ltr; }
+    .item { position:relative; background:#1b1b1b; border:1px solid #333; border-radius:18px; padding:18px 18px 54px; font-size:24px; font-weight:700; cursor:pointer; min-height:118px; transition:transform .18s ease; touch-action:pan-y; }
+    .item:active { background:#242424; }
     .item .num { direction:ltr; text-align:left; font-size:16px; color:#aaa; margin-top:8px; font-weight:400; word-break:break-all; }
     .itemDate { position:absolute; left:16px; bottom:15px; direction:ltr; color:#8e8e8e; font-size:13px; font-weight:400; }
-    .deleteBtn { position:absolute; right:16px; bottom:10px; width:auto; padding:8px 13px; border-radius:12px; background:#3a1111; color:#fff; border:1px solid #6b2222; font-size:14px; font-weight:700; }
+    .star { position:absolute; left:14px; top:10px; width:42px; height:42px; padding:0; border-radius:50%; background:transparent; color:#777; font-size:30px; line-height:42px; }
+    .star.on { color:#ffd54a; }
+    .scopeBadge { position:absolute; right:16px; bottom:15px; color:#777; font-size:13px; font-weight:400; }
     .bottom { position:fixed; left:0; right:0; bottom:0; padding:12px 18px calc(12px + var(--safe-bottom)); background:#000; z-index:20; border-top:1px solid #222; }
     button { width:100%; border:0; border-radius:18px; padding:17px; font-size:21px; font-weight:700; background:#fff; color:#000; cursor:pointer; }
     button:active { transform:scale(.99); }
@@ -42,14 +49,18 @@
     #barcodeSvg { width:100%; overflow:hidden; }
     #barcodeSvg svg { width:100%; max-width:760px; height:auto; display:block; margin:0 auto; }
     .whiteBack { position:fixed; top:calc(12px + var(--safe-top)); right:12px; width:auto; padding:11px 17px; border-radius:14px; background:#111; color:#fff; font-size:18px; z-index:10; }
-    .empty { color:#999; font-size:18px; margin-top:30px; }
+    .empty { color:#999; font-size:18px; margin-top:30px; line-height:1.45; }
     .smallHelp { color:#888; font-size:15px; margin-top:10px; line-height:1.35; }
   </style>
 </head>
 <body>
 <section id="home" class="page active">
   <h1>פקעות</h1>
-  <p class="subtitle">הנתונים נשמרים מקומית על המכשיר הזה</p>
+  <p class="subtitle">מועדפים עולים למעלה. מחיקה: החלקה ימינה על פריט.</p>
+  <div class="tabs">
+    <button id="tabLocal" class="tab active" onclick="setTab('local')">מקומי</button>
+    <button id="tabShared" class="tab" onclick="setTab('shared')">משותף</button>
+  </div>
   <div id="list" class="list"></div>
   <div class="bottom"><button onclick="showPage('newPage')">הכנס פקעה חדשה</button></div>
 </section>
@@ -60,7 +71,7 @@
   <label>מספר ברקוד</label><input id="code" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="לדוגמה: 6002634200000004">
   <label>הערות</label><textarea id="notes" placeholder="לא חובה"></textarea>
   <button class="save" onclick="saveItem()">שמור</button>
-  <div class="smallHelp">הברקוד נוצר בפורמט Code 128C, לכן מספר הברקוד חייב להיות עם כמות זוגית של ספרות.</div>
+  <div class="smallHelp">אחרי שמירה תישאל אם לשמור כמקומי או כמשותף. כרגע “משותף” נשמר במכשיר עד שנחבר אחסון ענן.</div>
 </section>
 <section id="barcodePage" class="whitePage">
   <button class="whiteBack" onclick="showPage('home')">חזור</button>
@@ -72,21 +83,30 @@
 </section>
 <script>
 const STORAGE_KEY = "pekaot_barcode_v3";
+let activeTab = localStorage.getItem('pakapaka_active_tab') || 'local';
+let touchState = null;
 const C128 = ["212222","222122","222221","121223","121322","131222","122213","122312","132212","221213","221312","231212","112232","122132","122231","113222","123122","123221","223211","221132","221231","213212","223112","312131","311222","321122","321221","312212","322112","322211","212123","212321","232121","111323","131123","131321","112313","132113","132311","211313","231113","231311","112133","112331","132131","113123","113321","133121","313121","211331","231131","213113","213311","213131","311123","311321","331121","312113","312311","332111","314111","221411","431111","111224","111422","121124","121421","141122","141221","112214","112412","122114","122411","142112","142211","241211","221114","413111","241112","134111","111242","121142","121241","114212","124112","124211","411212","421112","421211","212141","214121","412121","111143","111341","131141","114113","114311","411113","411311","113141","114131","311141","411131","211412","211214","211232","2331112"];
 function migrateOldData(){ const old = localStorage.getItem("pekaot_barcode_v2"); const current = localStorage.getItem(STORAGE_KEY); if(old && !current) localStorage.setItem(STORAGE_KEY, old); }
-function getItems(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch(e) { return []; } }
-function setItems(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+function getItems(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]").map(normalizeItem); } catch(e) { return []; } }
+function normalizeItem(x){ const id = Number(x.id || Date.now()); return { id, createdAt:Number(x.createdAt || id), name:x.name || '', code:x.code || '', notes:x.notes || '', scope:x.scope || 'local', favorite:!!x.favorite }; }
+function setItems(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items.map(normalizeItem))); }
 function normalizeCode(s){ return (s || "").replace(/\D/g,""); }
 function showPage(id){ document.querySelectorAll(".page,.whitePage").forEach(p => p.classList.remove("active")); document.getElementById(id).classList.add("active"); window.scrollTo(0,0); if(id === "home") renderList(); }
-function saveItem(){ const name = document.getElementById("name").value.trim(); const code = normalizeCode(document.getElementById("code").value); const notes = document.getElementById("notes").value.trim(); if(!name) return alert("חסר שם פקעה"); if(!code) return alert("חסר מספר ברקוד"); if(code.length % 2 !== 0) return alert("המספר חייב להיות עם כמות זוגית של ספרות"); const now = Date.now(); const items = getItems(); items.unshift({id:now, createdAt:now, name, code, notes}); setItems(items); document.getElementById("name").value = ""; document.getElementById("code").value = ""; document.getElementById("notes").value = ""; showPage("home"); }
-function renderList(){ const items = getItems(); const list = document.getElementById("list"); if(!items.length){ list.innerHTML = '<div class="empty">עדיין אין פקעות שמורות</div>'; return; } list.innerHTML = items.map(x => `<div class="item" onclick="openBarcode(${x.id})">${escapeHtml(x.name)}<div class="num">${escapeHtml(x.code)}</div><button class="deleteBtn" onclick="deleteItem(event, ${x.id})">מחק</button><div class="itemDate">${formatDate(x.createdAt || x.id)}</div></div>`).join(""); }
-function deleteItem(event, id){ event.stopPropagation(); const item = getItems().find(x => x.id === id); if(!item) return; if(!confirm(`למחוק את ${item.name}?`)) return; setItems(getItems().filter(x => x.id !== id)); renderList(); }
+function setTab(tab){ activeTab = tab; localStorage.setItem('pakapaka_active_tab', tab); renderList(); }
+function saveItem(){ const name = document.getElementById("name").value.trim(); const code = normalizeCode(document.getElementById("code").value); const notes = document.getElementById("notes").value.trim(); if(!name) return alert("חסר שם פקעה"); if(!code) return alert("חסר מספר ברקוד"); if(code.length % 2 !== 0) return alert("המספר חייב להיות עם כמות זוגית של ספרות"); const shared = confirm("לשתף עם כולם?\n\nאישור = משותף\nביטול = מקומי"); const now = Date.now(); const items = getItems(); items.unshift({id:now, createdAt:now, name, code, notes, scope: shared ? 'shared' : 'local', favorite:false}); setItems(items); activeTab = shared ? 'shared' : 'local'; localStorage.setItem('pakapaka_active_tab', activeTab); document.getElementById("name").value = ""; document.getElementById("code").value = ""; document.getElementById("notes").value = ""; showPage("home"); }
+function renderList(){ document.getElementById('tabLocal').classList.toggle('active', activeTab === 'local'); document.getElementById('tabShared').classList.toggle('active', activeTab === 'shared'); let items = getItems().filter(x => x.scope === activeTab); items.sort((a,b) => Number(b.favorite) - Number(a.favorite) || Number(b.createdAt) - Number(a.createdAt)); const list = document.getElementById("list"); if(!items.length){ list.innerHTML = `<div class="empty">אין פקעות ב${activeTab === 'local' ? 'מקומי' : 'משותף'}.</div>`; return; } list.innerHTML = items.map(x => `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${x.id}" onclick="openBarcode(${x.id})"><button class="star ${x.favorite ? 'on' : ''}" onclick="toggleFavorite(event, ${x.id})">★</button>${escapeHtml(x.name)}<div class="num">${escapeHtml(x.code)}</div><div class="scopeBadge">${x.scope === 'shared' ? 'משותף' : 'מקומי'}</div><div class="itemDate">${formatDate(x.createdAt || x.id)}</div></div></div>`).join(""); bindSwipe(); }
+function toggleFavorite(event, id){ event.stopPropagation(); const items = getItems(); const item = items.find(x => x.id === id); if(!item) return; item.favorite = !item.favorite; setItems(items); renderList(); }
+function deleteById(id){ const item = getItems().find(x => x.id === id); if(!item) return; if(!confirm(`למחוק את ${item.name}?`)) { renderList(); return; } setItems(getItems().filter(x => x.id !== id)); renderList(); }
+function bindSwipe(){ document.querySelectorAll('.item').forEach(el => { el.addEventListener('touchstart', onTouchStart, {passive:true}); el.addEventListener('touchmove', onTouchMove, {passive:false}); el.addEventListener('touchend', onTouchEnd, {passive:true}); }); }
+function onTouchStart(e){ const t = e.touches[0]; touchState = { el:e.currentTarget, id:Number(e.currentTarget.dataset.id), startX:t.clientX, startY:t.clientY, moved:false }; }
+function onTouchMove(e){ if(!touchState) return; const t = e.touches[0]; const dx = t.clientX - touchState.startX; const dy = t.clientY - touchState.startY; if(Math.abs(dy) > Math.abs(dx)) return; if(dx > 0){ e.preventDefault(); touchState.moved = true; touchState.el.style.transform = `translateX(${Math.min(dx, 120)}px)`; } }
+function onTouchEnd(){ if(!touchState) return; const current = touchState.el.style.transform.match(/translateX\((\d+)/); const dx = current ? Number(current[1]) : 0; const id = touchState.id; touchState.el.style.transform = ''; const shouldDelete = touchState.moved && dx > 85; touchState = null; if(shouldDelete) deleteById(id); }
 function openBarcode(id){ const item = getItems().find(x => x.id === id); if(!item) return; document.getElementById("barcodeName").textContent = item.name; document.getElementById("barcodeNumber").textContent = item.code; document.getElementById("barcodeSvg").innerHTML = code128Csvg(item.code); showPage("barcodePage"); }
 function formatDate(value){ const d = new Date(Number(value) || Date.now()); return d.toLocaleString('he-IL', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' }); }
 function code128Csvg(num){ num = normalizeCode(num); let values = [105]; for(let i=0; i<num.length; i+=2) values.push(parseInt(num.slice(i,i+2),10)); let checksum = values[0]; for(let i=1; i<values.length; i++) checksum += values[i] * i; checksum %= 103; values.push(checksum,106); let x=0, module=3.0, height=180, bars=""; for(const v of values){ const p = C128[v]; for(let i=0; i<p.length; i++){ const w = parseInt(p[i],10) * module; if(i % 2 === 0) bars += `<rect x="${x.toFixed(2)}" y="0" width="${w.toFixed(2)}" height="${height}" fill="#000"/>`; x += w; } } const width = Math.ceil(x); return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">${bars}</svg>`; }
 function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 if('serviceWorker' in navigator){ window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(()=>{})); }
-migrateOldData(); renderList();
+migrateOldData(); setItems(getItems()); renderList();
 </script>
 </body>
 </html>
