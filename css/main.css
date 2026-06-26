@@ -7,7 +7,8 @@ body{overscroll-behavior:none}
 .topBar{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .refreshBtn{width:auto;background:#1d1d1d;color:#fff;border:1px solid #333;border-radius:14px;padding:10px 13px;font-size:18px;line-height:1}
 h1{margin:6px 0 8px;font-size:34px;line-height:1.1}
-.subtitle{margin:0 0 14px;color:#aaa;font-size:15px;line-height:1.3}
+.subtitle{margin:0 0 14px;color:#aaa;font-size:15px;line-height:1.35;text-align:right}
+.subtitle.sharedHelp{font-size:16px;color:#aaa;line-height:1.45;margin:0 0 14px;text-align:right}
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 14px;background:#111;border:1px solid #252525;border-radius:18px;padding:5px}
 .tab{border:0;border-radius:14px;padding:12px;font-size:18px;background:transparent;color:#999;position:relative}
 .tab.active{background:#fff;color:#000}
