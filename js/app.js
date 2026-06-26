@@ -38,7 +38,52 @@ function setTab(tab) {
   if (tab === 'shared') loadShared();
 }
 
-function refreshList() {
+async function checkForAppUpdate(showCurrentMessage = false) {
+  try {
+    const r = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
+    if (!r.ok) return false;
+    const info = await r.json();
+    const latest = String(info.version || '').trim();
+    if (!latest) return false;
+    if (latest !== VERSION) {
+      const notes = Array.isArray(info.notes) && info.notes.length ? '\n\nמה חדש:\n- ' + info.notes.join('\n- ') : '';
+      const ok = confirm(`קיים עדכון חדש\n\nגרסה נוכחית: ${VERSION}\nגרסה חדשה: ${latest}${notes}\n\nלעדכן עכשיו?`);
+      if (ok) await forceAppUpdate(latest);
+      return true;
+    }
+    if (showCurrentMessage) alert(`אתה משתמש בגרסה העדכנית ביותר (v${VERSION})`);
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function forceAppUpdate(latest) {
+  try {
+    if ('caches' in window) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+    }
+    if (navigator.serviceWorker) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(reg => reg.update().catch(() => null)));
+    }
+  } catch (e) {}
+  window.location.href = `${window.location.pathname}?v=${encodeURIComponent(latest)}&t=${Date.now()}`;
+}
+
+async function refreshList() {
+  const hadUpdate = await checkForAppUpdate(true);
+  if (hadUpdate) return;
+  if (activeTab === 'shared') {
+    sharedLoaded = false;
+    loadShared();
+  } else {
+    renderList();
+  }
+}
+
+function refreshDataOnly() {
   if (activeTab === 'shared') {
     sharedLoaded = false;
     loadShared();
