@@ -163,7 +163,7 @@ function renderSection(title, items) {
 function renderItem(x) {
   const localMeta = activeTab === 'local' ? `<div class="itemMeta"><div class="openCount">נפתחה ${Number(x.openCount || 0)} פעמים</div><div class="num">${escapeHtml(x.code)}</div></div>` : `<div class="num">${escapeHtml(x.code)}</div>`;
   const menu = activeTab === 'local' ? `<button class="itemMenu" data-action="rename" data-id="${escapeAttr(x.id)}">⋯</button>` : '';
-  return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}">${menu}<button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemDate">${formatDate(x.createdAt)}</div><div class="itemName">${escapeHtml(x.name)}</div>${localMeta}</div></div>`;
+  return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}"><div class="itemTop"><button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemName">${escapeHtml(x.name)}</div><div class="itemDate">${formatDate(x.createdAt)}</div></div>${menu}${localMeta}</div></div>`;
 }
 
 function bindActions() {
