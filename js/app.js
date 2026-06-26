@@ -38,6 +38,23 @@ function setTab(tab) {
   if (tab === 'shared') loadShared();
 }
 
+function versionParts(v) {
+  return String(v || '').split('.').map(x => Number(x) || 0);
+}
+
+function isVersionNewer(latest, current) {
+  const a = versionParts(latest);
+  const b = versionParts(current);
+  const len = Math.max(a.length, b.length);
+  for (let i = 0; i < len; i++) {
+    const x = a[i] || 0;
+    const y = b[i] || 0;
+    if (x > y) return true;
+    if (x < y) return false;
+  }
+  return false;
+}
+
 async function checkForAppUpdate(showCurrentMessage = true) {
   try {
     const r = await fetch(`version.json?t=${Date.now()}`, { cache: 'no-store' });
@@ -45,7 +62,7 @@ async function checkForAppUpdate(showCurrentMessage = true) {
     const info = await r.json();
     const latest = String(info.version || '').trim();
     if (!latest) return false;
-    if (latest !== VERSION) {
+    if (isVersionNewer(latest, VERSION)) {
       const notes = Array.isArray(info.notes) && info.notes.length ? '\n\nמה חדש:\n- ' + info.notes.join('\n- ') : '';
       const ok = confirm(`קיים עדכון חדש\n\nגרסה נוכחית: ${VERSION}\nגרסה חדשה: ${latest}${notes}\n\nלעדכן עכשיו?`);
       if (ok) await forceAppUpdate(latest);
