@@ -78,6 +78,25 @@ async function checkSharedUpdates() {
   } catch (e) {}
 }
 
+function patchForceAppUpdate() {
+  window.forceAppUpdate = async function (latest) {
+    const v = encodeURIComponent(latest || Date.now());
+    try {
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(key => caches.delete(key)));
+      }
+    } catch (e) {}
+    try {
+      if (navigator.serviceWorker) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(reg => reg.unregister().catch(() => null)));
+      }
+    } catch (e) {}
+    window.location.replace('./?v=' + v + '&t=' + Date.now());
+  };
+}
+
 function patchSaveItemDoubleSubmit() {
   if (window.__savePatch117) return;
   if (typeof window.saveItem !== 'function') return;
@@ -158,6 +177,7 @@ function updateServiceWorker() {
 function initPwaEnhancements() {
   addVersionBadge();
   sharedDot();
+  patchForceAppUpdate();
   patchRefreshAndTabs();
   patchSaveItemDoubleSubmit();
   enablePullToRefresh();
