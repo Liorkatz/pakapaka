@@ -50,17 +50,25 @@ async function saveShared(name, code, notes) {
   const department = getDepartment();
   if (!department) throw new Error('חסרה מחלקה');
 
-  const r = await fetch(apiUrl(), {
-    method: 'POST',
-    headers: { ...headers(), Prefer: 'return=representation' },
-    body: JSON.stringify({ name, barcode: code, notes, department })
-  });
-  if (!r.ok) {
-    const msg = await errorText(r);
-    if (isDuplicateError(msg)) throw new Error('הברקוד כבר קיים ברשימה המשותפת');
-    throw new Error('השמירה למשותף נכשלה. נסה שוב.');
+  const lockKey = `pakapaka_saving_${code}`;
+  if (window[lockKey]) return true;
+  window[lockKey] = true;
+
+  try {
+    const r = await fetch(apiUrl(), {
+      method: 'POST',
+      headers: { ...headers(), Prefer: 'return=representation' },
+      body: JSON.stringify({ name, barcode: code, notes, department })
+    });
+    if (!r.ok) {
+      const msg = await errorText(r);
+      if (isDuplicateError(msg)) throw new Error('הברקוד כבר קיים ברשימה המשותפת');
+      throw new Error('השמירה למשותף נכשלה. נסה שוב.');
+    }
+    sharedLoaded = false;
+    await loadShared();
+    return true;
+  } finally {
+    window[lockKey] = false;
   }
-  sharedLoaded = false;
-  await loadShared();
-  return true;
 }
