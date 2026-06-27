@@ -1,8 +1,1 @@
-{
-  "version": "1.18",
-  "notes": [
-    "תיקון נעילת שמירה כפולה",
-    "שמירה למשותף לא תשלח פעמיים בלחיצה אחת",
-    "אפשר לזהות שהעדכון ירד לפי v1.18"
-  ]
-}
+{"version":"1.19","notes":["Update button opens versioned link","Cache cleanup before reload"]}
