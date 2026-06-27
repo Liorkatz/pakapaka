@@ -10,11 +10,12 @@ function addVersionBadge() {
   d.className = 'versionBadge';
   d.type = 'button';
   d.textContent = 'v ' + VERSION;
-  d.title = 'בדיקת עדכון גרסה';
+  d.title = 'גרסה / מחלקה / עדכון';
   d.addEventListener('click', e => {
     e.preventDefault();
     e.stopPropagation();
-    if (typeof checkForAppUpdate === 'function') checkForAppUpdate(true);
+    if (typeof showVersionSettings === 'function') showVersionSettings();
+    else if (typeof checkForAppUpdate === 'function') checkForAppUpdate(true);
   });
   const home = document.getElementById('home');
   const topBar = home ? home.querySelector('.topBar') : null;
@@ -59,7 +60,9 @@ function markSharedSeen() {
 
 async function checkSharedUpdates() {
   try {
-    const r = await fetch(SUPABASE_URL + '/rest/v1/' + SHARED_TABLE + '?select=id&order=created_at.desc&limit=1', {
+    const department = typeof getDepartment === 'function' ? getDepartment() : '';
+    if (!department) return;
+    const r = await fetch(SUPABASE_URL + '/rest/v1/' + SHARED_TABLE + '?select=id&department=eq.' + encodeURIComponent(department) + '&order=created_at.desc&limit=1', {
       headers: headers(),
       cache: 'no-store'
     });
