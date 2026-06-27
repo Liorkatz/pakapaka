@@ -17,37 +17,129 @@ function isValidDepartment(value) {
   return /^\d{2}$/.test(String(value || '').trim());
 }
 
-function promptDepartment(message = 'הכנס מספר מחלקה בן 2 ספרות:') {
-  const current = getDepartment();
-  const value = prompt(message, current);
-  if (value === null) return null;
-  const finalValue = onlyDigits(value).slice(0, 2);
-  if (!isValidDepartment(finalValue)) {
-    alert('מספר מחלקה חייב להיות בדיוק 2 ספרות');
-    return null;
-  }
-  localStorage.setItem(DEPARTMENT_KEY, finalValue);
-  sharedItems = [];
-  sharedLoaded = false;
-  return finalValue;
+function ensureAppDialogStyles() {
+  if (document.getElementById('appDialogStyles')) return;
+  const s = document.createElement('style');
+  s.id = 'appDialogStyles';
+  s.textContent = `
+    .appDialogBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;z-index:99999;padding:18px;direction:rtl}
+    .appDialog{width:100%;max-width:480px;background:#171717;border:1px solid #333;border-radius:28px;padding:22px 18px 18px;color:#fff;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+    .appDialogTitle{font-size:26px;font-weight:800;margin:0 0 8px;text-align:right}
+    .appDialogText{font-size:17px;line-height:1.45;color:#cfcfcf;margin:0 0 16px;text-align:right}
+    .appDialogValue{background:#0f0f0f;border:1px solid #2d2d2d;border-radius:18px;padding:13px 14px;margin:12px 0 16px;font-size:18px;color:#e8e8e8;text-align:right}
+    .appDialogInput{width:100%;border-radius:18px;border:1px solid #444;background:#0f0f0f;color:#fff;padding:17px;font-size:28px;text-align:center;letter-spacing:6px;direction:ltr;margin:8px 0 14px}
+    .appDialogError{min-height:20px;color:#ff6961;font-size:15px;text-align:right;margin:0 0 10px}
+    .appDialogActions{display:grid;gap:10px}
+    .appDialogActions.two{grid-template-columns:1fr 1fr}
+    .appDialogBtn{width:100%;border:0;border-radius:18px;padding:16px;font-size:19px;font-weight:800;background:#fff;color:#000}
+    .appDialogBtn.secondary{background:#2a2a2a;color:#fff;border:1px solid #444}
+    .appDialogBtn.danger{background:#8b1616;color:#fff}
+    .appDialogBtn.small{font-size:17px;padding:14px}
+    .inlineBtn{width:auto;display:inline-block;padding:13px 22px;font-size:18px;margin-top:8px}
+  `;
+  document.head.appendChild(s);
 }
 
-function ensureDepartment(message) {
+function closeAppDialog() {
+  const old = document.getElementById('appDialogBackdrop');
+  if (old) old.remove();
+}
+
+function showAppDialog({ title, text, value, actions }) {
+  ensureAppDialogStyles();
+  closeAppDialog();
+  const backdrop = document.createElement('div');
+  backdrop.id = 'appDialogBackdrop';
+  backdrop.className = 'appDialogBackdrop';
+  const dialog = document.createElement('div');
+  dialog.className = 'appDialog';
+  const valueHtml = value ? `<div class="appDialogValue">${escapeHtml(value)}</div>` : '';
+  dialog.innerHTML = `<div class="appDialogTitle">${escapeHtml(title || '')}</div><div class="appDialogText">${text || ''}</div>${valueHtml}<div class="appDialogActions"></div>`;
+  const area = dialog.querySelector('.appDialogActions');
+  if (actions && actions.length === 2) area.classList.add('two');
+  (actions || []).forEach(a => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'appDialogBtn ' + (a.kind || '');
+    b.textContent = a.label;
+    b.addEventListener('click', () => {
+      if (a.close !== false) closeAppDialog();
+      if (typeof a.onClick === 'function') a.onClick();
+    });
+    area.appendChild(b);
+  });
+  backdrop.appendChild(dialog);
+  document.body.appendChild(backdrop);
+}
+
+function showDepartmentDialog({ title = 'בחירת מחלקה', text = 'הכנס מספר מחלקה בן 2 ספרות.', onSaved } = {}) {
+  ensureAppDialogStyles();
+  closeAppDialog();
+  const backdrop = document.createElement('div');
+  backdrop.id = 'appDialogBackdrop';
+  backdrop.className = 'appDialogBackdrop';
+  const dialog = document.createElement('div');
+  dialog.className = 'appDialog';
+  dialog.innerHTML = `
+    <div class="appDialogTitle">${escapeHtml(title)}</div>
+    <div class="appDialogText">${text}</div>
+    <input id="departmentInput" class="appDialogInput" inputmode="numeric" maxlength="2" value="${escapeAttr(getDepartment())}" placeholder="00">
+    <div id="departmentError" class="appDialogError"></div>
+    <div class="appDialogActions two">
+      <button type="button" id="departmentCancel" class="appDialogBtn secondary">ביטול</button>
+      <button type="button" id="departmentSave" class="appDialogBtn">שמור</button>
+    </div>`;
+  backdrop.appendChild(dialog);
+  document.body.appendChild(backdrop);
+  const input = document.getElementById('departmentInput');
+  const err = document.getElementById('departmentError');
+  input.focus();
+  input.select();
+  input.addEventListener('input', () => {
+    input.value = onlyDigits(input.value).slice(0, 2);
+    err.textContent = '';
+  });
+  document.getElementById('departmentCancel').addEventListener('click', closeAppDialog);
+  document.getElementById('departmentSave').addEventListener('click', () => {
+    const finalValue = onlyDigits(input.value).slice(0, 2);
+    if (!isValidDepartment(finalValue)) {
+      err.textContent = 'מספר מחלקה חייב להיות בדיוק 2 ספרות.';
+      return;
+    }
+    localStorage.setItem(DEPARTMENT_KEY, finalValue);
+    sharedItems = [];
+    sharedLoaded = false;
+    closeAppDialog();
+    if (typeof onSaved === 'function') onSaved(finalValue);
+  });
+}
+
+function requireDepartment(next) {
   const current = getDepartment();
-  if (isValidDepartment(current)) return current;
-  return promptDepartment(message || 'כדי להשתמש במשותף צריך לבחור מספר מחלקה בן 2 ספרות:');
+  if (isValidDepartment(current)) {
+    if (typeof next === 'function') next(current);
+    return true;
+  }
+  showDepartmentDialog({
+    title: 'צריך לבחור מחלקה',
+    text: 'כדי להשתמש ברשימה המשותפת צריך להגדיר מספר מחלקה בן 2 ספרות. המספר יישמר במכשיר.',
+    onSaved: next
+  });
+  return false;
 }
 
 function changeDepartment() {
   const oldDepartment = getDepartment() || 'לא נבחרה';
-  const ok = confirm(`שינוי מחלקה יחליף רק את הרשימה המשותפת שמוצגת.\nהפקעות המקומיות לא יימחקו.\n\nמחלקה נוכחית: ${oldDepartment}\n\nלהמשיך?`);
-  if (!ok) return;
-  const department = promptDepartment('הכנס מספר מחלקה חדש בן 2 ספרות:');
-  if (!department) return;
-  activeTab = 'shared';
-  localStorage.setItem('pakapaka_active_tab', 'shared');
-  renderList();
-  loadShared();
+  showDepartmentDialog({
+    title: 'שינוי מחלקה',
+    text: `מחלקה נוכחית: ${escapeHtml(oldDepartment)}<br>הפקעות המקומיות לא יימחקו. רק הרשימה המשותפת תתחלף.`,
+    onSaved: () => {
+      activeTab = 'shared';
+      localStorage.setItem('pakapaka_active_tab', 'shared');
+      renderList();
+      loadShared();
+    }
+  });
 }
 
 function showDepartmentRequired() {
@@ -58,16 +150,20 @@ function showDepartmentRequired() {
 
 function showVersionSettings() {
   const department = getDepartment() || 'לא נבחרה';
-  const msg = `גרסה נוכחית: v${VERSION}\nמחלקה נוכחית: ${department}\n\nאישור = בדיקת עדכונים\nביטול = שינוי מחלקה`;
-  if (confirm(msg)) {
-    checkForAppUpdate(true);
-  } else {
-    changeDepartment();
-  }
+  showAppDialog({
+    title: 'הגדרות',
+    text: 'ניהול גרסה ומחלקה.',
+    value: `גרסה נוכחית: v${VERSION} · מחלקה: ${department}`,
+    actions: [
+      { label: 'בדיקת עדכונים', onClick: () => checkForAppUpdate(true) },
+      { label: 'שינוי מחלקה', kind: 'secondary', onClick: changeDepartment },
+      { label: 'סגור', kind: 'secondary small' }
+    ]
+  });
 }
 
 function setSaveTarget(target) {
-  if (target === 'shared' && !ensureDepartment('כדי לשמור למשותף צריך לבחור מספר מחלקה בן 2 ספרות:')) {
+  if (target === 'shared' && !requireDepartment(() => setSaveTarget('shared'))) {
     saveTarget = 'local';
   } else {
     saveTarget = target;
@@ -96,7 +192,7 @@ function updateHomeHelp() {
 }
 
 function setTab(tab) {
-  if (tab === 'shared' && !ensureDepartment()) {
+  if (tab === 'shared' && !requireDepartment(() => setTab('shared'))) {
     activeTab = 'local';
     localStorage.setItem('pakapaka_active_tab', 'local');
     renderList();
@@ -133,15 +229,21 @@ async function checkForAppUpdate(showCurrentMessage = true) {
     const latest = String(info.version || '').trim();
     if (!latest) return false;
     if (isVersionNewer(latest, VERSION)) {
-      const notes = Array.isArray(info.notes) && info.notes.length ? '\n\nמה חדש:\n- ' + info.notes.join('\n- ') : '';
-      const ok = confirm(`קיים עדכון חדש\n\nגרסה נוכחית: ${VERSION}\nגרסה חדשה: ${latest}${notes}\n\nלעדכן עכשיו?`);
-      if (ok) await forceAppUpdate(latest);
+      const notes = Array.isArray(info.notes) && info.notes.length ? '<br><br>מה חדש:<br>• ' + info.notes.map(escapeHtml).join('<br>• ') : '';
+      showAppDialog({
+        title: 'קיים עדכון חדש',
+        text: `גרסה נוכחית: ${escapeHtml(VERSION)}<br>גרסה חדשה: ${escapeHtml(latest)}${notes}`,
+        actions: [
+          { label: 'עדכן עכשיו', onClick: () => forceAppUpdate(latest) },
+          { label: 'לא עכשיו', kind: 'secondary' }
+        ]
+      });
       return true;
     }
-    if (showCurrentMessage) alert(`אתה משתמש בגרסה העדכנית ביותר (v${VERSION})`);
+    if (showCurrentMessage) showAppDialog({ title: 'אין עדכון חדש', text: `אתה משתמש בגרסה העדכנית ביותר: v${escapeHtml(VERSION)}`, actions: [{ label: 'סגור' }] });
     return false;
   } catch (e) {
-    if (showCurrentMessage) alert('בדיקת העדכון נכשלה. נסה שוב מאוחר יותר.');
+    if (showCurrentMessage) showAppDialog({ title: 'בדיקת העדכון נכשלה', text: 'נסה שוב מאוחר יותר.', actions: [{ label: 'סגור' }] });
     return false;
   }
 }
@@ -166,7 +268,7 @@ async function refreshList() {
 
 function refreshDataOnly() {
   if (activeTab === 'shared') {
-    if (!ensureDepartment()) return showDepartmentRequired();
+    if (!requireDepartment()) return showDepartmentRequired();
     sharedLoaded = false;
     loadShared();
   } else {
@@ -182,11 +284,11 @@ async function saveItem() {
   const name = document.getElementById('name').value.trim();
   const notes = document.getElementById('notes').value.trim();
   const built = buildCode();
-  if (!name) return alert('חסר שם פקעה');
-  if (!built.ok) return alert(built.error);
-  if (saveTarget === 'shared' && !ensureDepartment('כדי לשמור למשותף צריך לבחור מספר מחלקה בן 2 ספרות:')) return;
-  if (saveTarget === 'local' && getLocalItems().some(x => x.code === built.code)) return alert('ברקוד זה כבר קיים במקומי');
-  if (saveTarget === 'shared' && await sharedCodeExists(built.code)) return alert('ברקוד זה כבר קיים במחלקה הזאת');
+  if (!name) return showAppDialog({ title: 'חסר שם פקעה', text: 'יש להזין שם לפני שמירה.', actions: [{ label: 'סגור' }] });
+  if (!built.ok) return showAppDialog({ title: 'ברקוד לא תקין', text: escapeHtml(built.error), actions: [{ label: 'סגור' }] });
+  if (saveTarget === 'shared' && !requireDepartment()) return;
+  if (saveTarget === 'local' && getLocalItems().some(x => x.code === built.code)) return showAppDialog({ title: 'כפילות', text: 'ברקוד זה כבר קיים במקומי.', actions: [{ label: 'סגור' }] });
+  if (saveTarget === 'shared' && await sharedCodeExists(built.code)) return showAppDialog({ title: 'כפילות', text: 'ברקוד זה כבר קיים במחלקה הזאת.', actions: [{ label: 'סגור' }] });
 
   if (saveTarget === 'shared') {
     await saveShared(name, built.code, notes);
@@ -268,7 +370,7 @@ function renameLocalItem(event, id) {
   const name = prompt('שם חדש לפקעה:', item.name || '');
   if (name === null) return;
   const finalName = name.trim();
-  if (!finalName) return alert('שם לא יכול להיות ריק');
+  if (!finalName) return showAppDialog({ title: 'שם לא תקין', text: 'שם לא יכול להיות ריק.', actions: [{ label: 'סגור' }] });
   item.name = finalName;
   setLocalItems(items);
   renderList();
@@ -278,13 +380,13 @@ function promptCopySharedToLocal(id) {
   const item = sharedItems.find(x => String(x.id) === String(id));
   if (!item) return;
   const existing = getLocalItems().some(x => x.code === item.code);
-  if (existing) return alert('הפקעה כבר קיימת במקומי');
+  if (existing) return showAppDialog({ title: 'כבר קיים', text: 'הפקעה כבר קיימת במקומי.', actions: [{ label: 'סגור' }] });
   const name = prompt('שם לשמירה במקומי:', item.name || '');
   if (name === null) return;
   const finalName = name.trim() || item.name || 'פקעה';
   const result = copySharedToLocal(item, finalName);
-  if (!result.ok) return alert(result.error);
-  alert('נשמר במקומי');
+  if (!result.ok) return showAppDialog({ title: 'שגיאה', text: escapeHtml(result.error), actions: [{ label: 'סגור' }] });
+  showAppDialog({ title: 'נשמר במקומי', text: 'הפקעה נשמרה לרשימה המקומית.', actions: [{ label: 'סגור' }] });
   activeTab = 'local';
   localStorage.setItem('pakapaka_active_tab', 'local');
   renderList();
@@ -311,15 +413,24 @@ function toggleFavorite(event, id) {
 async function deleteById(id) {
   const item = (activeTab === 'shared' ? sharedItems : getLocalItems()).find(x => String(x.id) === String(id));
   if (!item) return;
-  if (!confirm(`למחוק את ${item.name}?`)) {
-    renderList();
-    return;
-  }
+  showAppDialog({
+    title: 'מחיקת פקעה',
+    text: `למחוק את ${escapeHtml(item.name)}?`,
+    actions: [
+      { label: 'מחק', kind: 'danger', onClick: () => confirmDeleteById(id) },
+      { label: 'ביטול', kind: 'secondary', onClick: renderList }
+    ]
+  });
+}
+
+async function confirmDeleteById(id) {
+  const item = (activeTab === 'shared' ? sharedItems : getLocalItems()).find(x => String(x.id) === String(id));
+  if (!item) return;
   if (activeTab === 'shared') {
     const department = getDepartment();
     const r = await fetch(apiUrl(`?id=eq.${encodeURIComponent(id)}&department=eq.${encodeURIComponent(department)}`), { method: 'DELETE', headers: headers() });
     if (!r.ok) {
-      alert('מחיקה מהמשותף נכשלה:\n' + await errorText(r));
+      showAppDialog({ title: 'מחיקה נכשלה', text: escapeHtml(await errorText(r)), actions: [{ label: 'סגור' }] });
       renderList();
       return;
     }
