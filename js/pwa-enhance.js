@@ -124,11 +124,8 @@ function enablePullToRefresh() {
 
 function updateServiceWorker() {
   try {
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      navigator.serviceWorker.getRegistration().then(reg => {
-        if (reg) reg.update();
-      });
-    }
+    if (!navigator.serviceWorker) return;
+    navigator.serviceWorker.register('./sw.js?v=' + VERSION).then(reg => reg.update()).catch(() => {});
   } catch (e) {}
 }
 
