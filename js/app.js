@@ -9,8 +9,69 @@ function showPage(id) {
   if (id === 'home') renderList();
 }
 
+function getDepartment() {
+  return String(localStorage.getItem(DEPARTMENT_KEY) || '').trim();
+}
+
+function isValidDepartment(value) {
+  return /^\d{2}$/.test(String(value || '').trim());
+}
+
+function promptDepartment(message = 'הכנס מספר מחלקה בן 2 ספרות:') {
+  const current = getDepartment();
+  const value = prompt(message, current);
+  if (value === null) return null;
+  const finalValue = onlyDigits(value).slice(0, 2);
+  if (!isValidDepartment(finalValue)) {
+    alert('מספר מחלקה חייב להיות בדיוק 2 ספרות');
+    return null;
+  }
+  localStorage.setItem(DEPARTMENT_KEY, finalValue);
+  sharedItems = [];
+  sharedLoaded = false;
+  return finalValue;
+}
+
+function ensureDepartment(message) {
+  const current = getDepartment();
+  if (isValidDepartment(current)) return current;
+  return promptDepartment(message || 'כדי להשתמש במשותף צריך לבחור מספר מחלקה בן 2 ספרות:');
+}
+
+function changeDepartment() {
+  const oldDepartment = getDepartment() || 'לא נבחרה';
+  const ok = confirm(`שינוי מחלקה יחליף רק את הרשימה המשותפת שמוצגת.\nהפקעות המקומיות לא יימחקו.\n\nמחלקה נוכחית: ${oldDepartment}\n\nלהמשיך?`);
+  if (!ok) return;
+  const department = promptDepartment('הכנס מספר מחלקה חדש בן 2 ספרות:');
+  if (!department) return;
+  activeTab = 'shared';
+  localStorage.setItem('pakapaka_active_tab', 'shared');
+  renderList();
+  loadShared();
+}
+
+function showDepartmentRequired() {
+  const list = document.getElementById('list');
+  if (!list) return;
+  list.innerHTML = '<div class="empty">כדי לראות או לשמור פקעות משותפות צריך לבחור מספר מחלקה בן 2 ספרות.<br><br><button class="inlineBtn" onclick="changeDepartment()">בחר מחלקה</button></div>';
+}
+
+function showVersionSettings() {
+  const department = getDepartment() || 'לא נבחרה';
+  const msg = `גרסה נוכחית: v${VERSION}\nמחלקה נוכחית: ${department}\n\nאישור = בדיקת עדכונים\nביטול = שינוי מחלקה`;
+  if (confirm(msg)) {
+    checkForAppUpdate(true);
+  } else {
+    changeDepartment();
+  }
+}
+
 function setSaveTarget(target) {
-  saveTarget = target;
+  if (target === 'shared' && !ensureDepartment('כדי לשמור למשותף צריך לבחור מספר מחלקה בן 2 ספרות:')) {
+    saveTarget = 'local';
+  } else {
+    saveTarget = target;
+  }
   updateSaveTargetButtons();
 }
 
@@ -23,7 +84,10 @@ function updateHomeHelp() {
   const help = document.getElementById('homeHelp');
   if (!help) return;
   if (activeTab === 'shared') {
-    help.innerHTML = 'הפקעות ברשימה זו משותפות לכל המשתמשים.<br>לחיצה על פק״ע תשמור אותה ברשימה המקומית שלך.';
+    const department = getDepartment();
+    help.innerHTML = department
+      ? `פקעות משותפות של מחלקה ${escapeHtml(department)}.<br>לחיצה על פק״ע תשמור אותה ברשימה המקומית שלך.`
+      : 'כדי להשתמש במשותף צריך לבחור מספר מחלקה בן 2 ספרות.';
     help.classList.add('sharedHelp');
   } else {
     help.textContent = 'מועדפים למעלה. מחיקה: החלקה ימינה.';
@@ -32,6 +96,12 @@ function updateHomeHelp() {
 }
 
 function setTab(tab) {
+  if (tab === 'shared' && !ensureDepartment()) {
+    activeTab = 'local';
+    localStorage.setItem('pakapaka_active_tab', 'local');
+    renderList();
+    return;
+  }
   activeTab = tab;
   localStorage.setItem('pakapaka_active_tab', tab);
   renderList();
@@ -96,6 +166,7 @@ async function refreshList() {
 
 function refreshDataOnly() {
   if (activeTab === 'shared') {
+    if (!ensureDepartment()) return showDepartmentRequired();
     sharedLoaded = false;
     loadShared();
   } else {
@@ -113,8 +184,9 @@ async function saveItem() {
   const built = buildCode();
   if (!name) return alert('חסר שם פקעה');
   if (!built.ok) return alert(built.error);
+  if (saveTarget === 'shared' && !ensureDepartment('כדי לשמור למשותף צריך לבחור מספר מחלקה בן 2 ספרות:')) return;
   if (saveTarget === 'local' && getLocalItems().some(x => x.code === built.code)) return alert('ברקוד זה כבר קיים במקומי');
-  if (saveTarget === 'shared' && await sharedCodeExists(built.code)) return alert('ברקוד זה כבר קיים במשותף');
+  if (saveTarget === 'shared' && await sharedCodeExists(built.code)) return alert('ברקוד זה כבר קיים במחלקה הזאת');
 
   if (saveTarget === 'shared') {
     await saveShared(name, built.code, notes);
@@ -137,6 +209,10 @@ function renderList() {
   document.getElementById('tabLocal').classList.toggle('active', activeTab === 'local');
   document.getElementById('tabShared').classList.toggle('active', activeTab === 'shared');
   updateHomeHelp();
+  if (activeTab === 'shared' && !getDepartment()) {
+    showDepartmentRequired();
+    return;
+  }
   if (activeTab === 'shared' && !sharedLoaded) {
     loadShared();
     return;
@@ -240,7 +316,8 @@ async function deleteById(id) {
     return;
   }
   if (activeTab === 'shared') {
-    const r = await fetch(apiUrl(`?id=eq.${encodeURIComponent(id)}`), { method: 'DELETE', headers: headers() });
+    const department = getDepartment();
+    const r = await fetch(apiUrl(`?id=eq.${encodeURIComponent(id)}&department=eq.${encodeURIComponent(department)}`), { method: 'DELETE', headers: headers() });
     if (!r.ok) {
       alert('מחיקה מהמשותף נכשלה:\n' + await errorText(r));
       renderList();
@@ -294,6 +371,7 @@ function openBarcode(id) {
 function initApp() {
   migrateOldData();
   setLocalItems(getLocalItems());
+  if (activeTab === 'shared' && !getDepartment()) activeTab = 'local';
   renderList();
 }
 
