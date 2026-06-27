@@ -122,7 +122,7 @@ function requireDepartment(next) {
   }
   showDepartmentDialog({
     title: 'צריך לבחור מחלקה',
-    text: 'כדי להשתמש ברשימה המשותפת צריך להגדיר מספר מחלקה בן 2 ספרות. המספר יישמר במכשיר.',
+    text: 'כדי לשמור לרשימה המשותפת צריך להגדיר מספר מחלקה בן 2 ספרות. המספר יישמר במכשיר.',
     onSaved: next
   });
   return false;
@@ -145,7 +145,7 @@ function changeDepartment() {
 function showDepartmentRequired() {
   const list = document.getElementById('list');
   if (!list) return;
-  list.innerHTML = '<div class="empty">כדי לראות או לשמור פקעות משותפות צריך לבחור מספר מחלקה בן 2 ספרות.<br><br><button class="inlineBtn" onclick="changeDepartment()">בחר מחלקה</button></div>';
+  list.innerHTML = '<div class="empty">לא נבחרה מחלקה לרשימה המשותפת.<br>אפשר לבחור מחלקה עכשיו, או לבחור מחלקה רק בזמן שמירה למשותף.<br><br><button class="inlineBtn" onclick="changeDepartment()">בחר מחלקה</button></div>';
 }
 
 function showVersionSettings() {
@@ -163,11 +163,7 @@ function showVersionSettings() {
 }
 
 function setSaveTarget(target) {
-  if (target === 'shared' && !requireDepartment(() => setSaveTarget('shared'))) {
-    saveTarget = 'local';
-  } else {
-    saveTarget = target;
-  }
+  saveTarget = target;
   updateSaveTargetButtons();
 }
 
@@ -183,7 +179,7 @@ function updateHomeHelp() {
     const department = getDepartment();
     help.innerHTML = department
       ? `פקעות משותפות של מחלקה ${escapeHtml(department)}.<br>לחיצה על פק״ע תשמור אותה ברשימה המקומית שלך.`
-      : 'כדי להשתמש במשותף צריך לבחור מספר מחלקה בן 2 ספרות.';
+      : 'רשימה משותפת. כדי לראות פקעות או לשמור למשותף צריך לבחור מחלקה.';
     help.classList.add('sharedHelp');
   } else {
     help.textContent = 'מועדפים למעלה. מחיקה: החלקה ימינה.';
@@ -192,16 +188,10 @@ function updateHomeHelp() {
 }
 
 function setTab(tab) {
-  if (tab === 'shared' && !requireDepartment(() => setTab('shared'))) {
-    activeTab = 'local';
-    localStorage.setItem('pakapaka_active_tab', 'local');
-    renderList();
-    return;
-  }
   activeTab = tab;
   localStorage.setItem('pakapaka_active_tab', tab);
   renderList();
-  if (tab === 'shared') loadShared();
+  if (tab === 'shared' && getDepartment()) loadShared();
 }
 
 function versionParts(v) {
@@ -268,7 +258,7 @@ async function refreshList() {
 
 function refreshDataOnly() {
   if (activeTab === 'shared') {
-    if (!requireDepartment()) return showDepartmentRequired();
+    if (!getDepartment()) return showDepartmentRequired();
     sharedLoaded = false;
     loadShared();
   } else {
@@ -286,7 +276,7 @@ async function saveItem() {
   const built = buildCode();
   if (!name) return showAppDialog({ title: 'חסר שם פקעה', text: 'יש להזין שם לפני שמירה.', actions: [{ label: 'סגור' }] });
   if (!built.ok) return showAppDialog({ title: 'ברקוד לא תקין', text: escapeHtml(built.error), actions: [{ label: 'סגור' }] });
-  if (saveTarget === 'shared' && !requireDepartment()) return;
+  if (saveTarget === 'shared' && !requireDepartment(() => saveItem())) return;
   if (saveTarget === 'local' && getLocalItems().some(x => x.code === built.code)) return showAppDialog({ title: 'כפילות', text: 'ברקוד זה כבר קיים במקומי.', actions: [{ label: 'סגור' }] });
   if (saveTarget === 'shared' && await sharedCodeExists(built.code)) return showAppDialog({ title: 'כפילות', text: 'ברקוד זה כבר קיים במחלקה הזאת.', actions: [{ label: 'סגור' }] });
 
@@ -482,7 +472,6 @@ function openBarcode(id) {
 function initApp() {
   migrateOldData();
   setLocalItems(getLocalItems());
-  if (activeTab === 'shared' && !getDepartment()) activeTab = 'local';
   renderList();
 }
 
