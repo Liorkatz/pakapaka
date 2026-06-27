@@ -5,6 +5,7 @@ function showPage(id) {
   if (id === 'newPage') {
     saveTarget = activeTab;
     updateSaveTargetButtons();
+    updateDepartmentNotice();
   }
   if (id === 'home') renderList();
 }
@@ -22,7 +23,7 @@ function ensureAppDialogStyles() {
   const s = document.createElement('style');
   s.id = 'appDialogStyles';
   s.textContent = `
-    .appDialogBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:flex-end;justify-content:center;z-index:99999;padding:18px;direction:rtl}
+    .appDialogBackdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;z-index:99999;padding:18px;direction:rtl}
     .appDialog{width:100%;max-width:480px;background:#171717;border:1px solid #333;border-radius:28px;padding:22px 18px 18px;color:#fff;box-shadow:0 18px 50px rgba(0,0,0,.55)}
     .appDialogTitle{font-size:26px;font-weight:800;margin:0 0 8px;text-align:right}
     .appDialogText{font-size:17px;line-height:1.45;color:#cfcfcf;margin:0 0 16px;text-align:right}
@@ -36,6 +37,9 @@ function ensureAppDialogStyles() {
     .appDialogBtn.danger{background:#8b1616;color:#fff}
     .appDialogBtn.small{font-size:17px;padding:14px}
     .inlineBtn{width:auto;display:inline-block;padding:13px 22px;font-size:18px;margin-top:8px}
+    .saveDeptNotice{display:none;margin:10px 0 12px;padding:12px 14px;border-radius:16px;border:1px solid #333;background:#141414;color:#ddd;font-size:16px;line-height:1.35;text-align:right}
+    .saveDeptNotice.good{border-color:#2d5a37;color:#dfffe7;background:#102015}
+    .saveDeptNotice.warn{border-color:#5a4a20;color:#ffe7a8;background:#211a0d}
   `;
   document.head.appendChild(s);
 }
@@ -110,6 +114,7 @@ function showDepartmentDialog({ title = 'בחירת מחלקה', text = 'הכנ�
     sharedItems = [];
     sharedLoaded = false;
     closeAppDialog();
+    updateDepartmentNotice();
     if (typeof onSaved === 'function') onSaved(finalValue);
   });
 }
@@ -148,6 +153,39 @@ function showDepartmentRequired() {
   list.innerHTML = '<div class="empty">לא נבחרה מחלקה לרשימה המשותפת.<br>אפשר לבחור מחלקה עכשיו, או לבחור מחלקה רק בזמן שמירה למשותף.<br><br><button class="inlineBtn" onclick="changeDepartment()">בחר מחלקה</button></div>';
 }
 
+function ensureDepartmentNotice() {
+  ensureAppDialogStyles();
+  let notice = document.getElementById('saveDeptNotice');
+  if (notice) return notice;
+  const tabs = document.querySelector('.saveTabs');
+  if (!tabs) return null;
+  notice = document.createElement('div');
+  notice.id = 'saveDeptNotice';
+  notice.className = 'saveDeptNotice';
+  tabs.insertAdjacentElement('afterend', notice);
+  return notice;
+}
+
+function updateDepartmentNotice() {
+  const notice = ensureDepartmentNotice();
+  if (!notice) return;
+  const department = getDepartment();
+  notice.classList.remove('good', 'warn');
+  if (saveTarget !== 'shared') {
+    notice.style.display = 'none';
+    notice.textContent = '';
+    return;
+  }
+  notice.style.display = 'block';
+  if (department) {
+    notice.classList.add('good');
+    notice.textContent = `השמירה למשותף משויכת למחלקה ${department}`;
+  } else {
+    notice.classList.add('warn');
+    notice.textContent = 'לא נבחרה מחלקה. בזמן שמירה למשותף תידרש לבחור מספר מחלקה.';
+  }
+}
+
 function showVersionSettings() {
   const department = getDepartment() || 'לא נבחרה';
   showAppDialog({
@@ -165,6 +203,7 @@ function showVersionSettings() {
 function setSaveTarget(target) {
   saveTarget = target;
   updateSaveTargetButtons();
+  updateDepartmentNotice();
 }
 
 function updateSaveTargetButtons() {
