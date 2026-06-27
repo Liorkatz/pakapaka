@@ -33,15 +33,17 @@ async function loadShared() {
 }
 
 async function sharedCodeExists(code) {
-  const department = getDepartment();
-  if (!department) return false;
-  const q = `?select=id&barcode=eq.${encodeURIComponent(code)}&department=eq.${encodeURIComponent(department)}&limit=1`;
+  const q = `?select=id,department&barcode=eq.${encodeURIComponent(code)}&limit=1`;
   const r = await fetch(apiUrl(q), {
     headers: headers(),
     cache: 'no-store'
   });
   if (!r.ok) return false;
   return (await r.json()).length > 0;
+}
+
+function isDuplicateError(msg) {
+  return /duplicate key|unique constraint|Pakatable_barcode_key/i.test(String(msg || ''));
 }
 
 async function saveShared(name, code, notes) {
@@ -55,10 +57,10 @@ async function saveShared(name, code, notes) {
   });
   if (!r.ok) {
     const msg = await errorText(r);
-    alert('שמירה למשותף נכשלה:\n' + msg);
-    throw new Error(msg);
+    if (isDuplicateError(msg)) throw new Error('הברקוד כבר קיים ברשימה המשותפת');
+    throw new Error('השמירה למשותף נכשלה. נסה שוב.');
   }
   sharedLoaded = false;
   await loadShared();
-  alert(`נשמר למשותף — מחלקה ${department}`);
+  return true;
 }
