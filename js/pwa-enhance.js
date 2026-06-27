@@ -78,6 +78,32 @@ async function checkSharedUpdates() {
   } catch (e) {}
 }
 
+function patchSaveItemDoubleSubmit() {
+  if (window.__savePatch117) return;
+  if (typeof window.saveItem !== 'function') return;
+  window.__savePatch117 = true;
+  const originalSaveItem = window.saveItem;
+  window.saveItem = async function () {
+    if (window.__savingItemNow) return;
+    window.__savingItemNow = true;
+    const btn = document.querySelector('#newPage .save');
+    const oldText = btn ? btn.textContent : '';
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'שומר...';
+    }
+    try {
+      return await originalSaveItem.apply(this, arguments);
+    } finally {
+      window.__savingItemNow = false;
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = oldText || 'שמור';
+      }
+    }
+  };
+}
+
 function patchRefreshAndTabs() {
   if (window.__v109) return;
   window.__v109 = true;
@@ -133,6 +159,7 @@ function initPwaEnhancements() {
   addVersionBadge();
   sharedDot();
   patchRefreshAndTabs();
+  patchSaveItemDoubleSubmit();
   enablePullToRefresh();
   checkSharedUpdates();
   updateServiceWorker();
