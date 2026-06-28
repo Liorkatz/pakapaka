@@ -113,7 +113,6 @@ function itfSvg(text) {
     x += widthUnits * module;
   }
 
-  // ITF start pattern: narrow bar, narrow space, narrow bar, narrow space.
   addBar(1);
   addSpace(1);
   addBar(1);
@@ -128,11 +127,14 @@ function itfSvg(text) {
     }
   }
 
-  // ITF stop pattern: wide bar, narrow space, narrow bar.
   addBar(3);
   addSpace(1);
   addBar(1);
 
   const width = Math.ceil(x + quiet);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" data-encoded="${code}">${bars}</svg>`;
+}
+
+function code128Bsvg(text) {
+  return itfSvg(text);
 }
