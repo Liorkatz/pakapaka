@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.16">
+<link rel="stylesheet" href="css/main.css?v=1.24">
 <title>פקעות</title>
 </head>
 <body>
@@ -34,16 +34,30 @@
 </section>
 
 <section id="barcodePage" class="whitePage">
-  <button class="whiteBack" onclick="showPage('home')">חזור</button>
-  <div class="barcodeWrap"><div class="barcodeName" id="barcodeName"></div><div class="barcodeNumber" id="barcodeNumber"></div><div id="barcodeSvg"></div></div>
+  <div class="barcodeWrap">
+    <div class="barcodeName" id="barcodeName"></div>
+    <div class="barcodeNumber" id="barcodeNumber"></div>
+    <div id="barcodeSvg"></div>
+    <div class="barcodeActions">
+      <button class="barcodeBackBtn" onclick="showPage('home')">חזרה</button>
+      <button class="barcodeScannedBtn" onclick="handleBarcodeScanned()">נסרק</button>
+    </div>
+  </div>
 </section>
 
-<script src="js/config.js?v=1.16"></script>
-<script src="js/utils.js?v=1.16"></script>
-<script src="js/storage.js?v=1.16"></script>
-<script src="js/barcode.js?v=1.16"></script>
-<script src="js/shared.js?v=1.16"></script>
-<script src="js/app.js?v=1.16"></script>
-<script src="js/pwa-enhance.js?v=1.16"></script>
+<script src="js/config.js?v=1.24"></script>
+<script src="js/utils.js?v=1.24"></script>
+<script src="js/storage.js?v=1.24"></script>
+<script src="js/barcode.js?v=1.24"></script>
+<script src="js/shared.js?v=1.24"></script>
+<script src="js/app.js?v=1.24"></script>
+<script src="js/pwa-enhance.js?v=1.24"></script>
+<script>
+function handleBarcodeScanned() {
+  const el = document.getElementById('barcodeNumber');
+  if (el) incrementLocalScanCountByCode(el.textContent);
+  showPage('home');
+}
+</script>
 </body>
 </html>
