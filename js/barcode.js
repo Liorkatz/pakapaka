@@ -76,20 +76,10 @@ function buildCode() {
   return { ok: true, code, base, suffix };
 }
 
-function itfMod10CheckDigit(code) {
-  code = onlyDigits(code);
-  let sum = 0;
-  for (let i = 0; i < code.length; i++) {
-    const digit = Number(code[code.length - 1 - i]);
-    sum += digit * (i % 2 === 0 ? 3 : 1);
-  }
-  return String((10 - (sum % 10)) % 10);
-}
-
 function normalizeItfCode(code) {
   code = onlyDigits(code);
   if (!code) return '';
-  if (code.length % 2 === 1) return code + itfMod10CheckDigit(code);
+  if (code.length % 2 === 1) return code + '0';
   return code;
 }
 
@@ -132,7 +122,7 @@ function itfSvg(text) {
   addBar(1);
 
   const width = Math.ceil(x + quiet);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" data-encoded="${code}">${bars}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" data-symbology="itf" data-encoded="${code}">${bars}</svg>`;
 }
 
 function code128Bsvg(text) {
