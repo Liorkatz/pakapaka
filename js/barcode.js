@@ -1,15 +1,14 @@
-const CODE39_PATTERNS = {
-  '0': 'nnnwwnwnn',
-  '1': 'wnnwnnnnw',
-  '2': 'nnwwnnnnw',
-  '3': 'wnwwnnnnn',
-  '4': 'nnnwwnnnw',
-  '5': 'wnnwwnnnn',
-  '6': 'nnwwwnnnn',
-  '7': 'nnnwnnwnw',
-  '8': 'wnnwnnwnn',
-  '9': 'nnwwnnwnn',
-  '*': 'nwnnwnwnn'
+const ITF_PATTERNS = {
+  '0': 'nnwwn',
+  '1': 'wnnnw',
+  '2': 'nwnnw',
+  '3': 'wwnnn',
+  '4': 'nnwnw',
+  '5': 'wnwnn',
+  '6': 'nwwnn',
+  '7': 'nnnww',
+  '8': 'wnnwn',
+  '9': 'nwnwn'
 };
 
 function updateBaseCounter() {
@@ -77,45 +76,65 @@ function buildCode() {
   return { ok: true, code, base, suffix };
 }
 
-function code39Svg(text) {
-  const code = onlyDigits(text);
-  if (!/^\d+$/.test(code)) return '';
+function itfMod10CheckDigit(code) {
+  code = onlyDigits(code);
+  let sum = 0;
+  for (let i = 0; i < code.length; i++) {
+    const digit = Number(code[code.length - 1 - i]);
+    sum += digit * (i % 2 === 0 ? 3 : 1);
+  }
+  return String((10 - (sum % 10)) % 10);
+}
 
-  const narrow = 3.0;
-  const wide = 7.5;
+function normalizeItfCode(code) {
+  code = onlyDigits(code);
+  if (!code) return '';
+  if (code.length % 2 === 1) return code + itfMod10CheckDigit(code);
+  return code;
+}
+
+function itfSvg(text) {
+  const code = normalizeItfCode(text);
+  if (!/^\d+$/.test(code) || code.length % 2 !== 0) return '';
+
+  const module = 2.9;
   const height = 180;
-  const quiet = narrow * 10;
-  const gap = narrow;
-  const fullCode = `*${code}*`;
+  const quiet = module * 10;
   let x = quiet;
   let bars = '';
 
-  function addBar(width) {
-    bars += `<rect x="${x.toFixed(2)}" y="0" width="${width.toFixed(2)}" height="${height}" fill="#000"/>`;
-    x += width;
+  function addBar(widthUnits) {
+    const w = widthUnits * module;
+    bars += `<rect x="${x.toFixed(2)}" y="0" width="${w.toFixed(2)}" height="${height}" fill="#000"/>`;
+    x += w;
   }
 
-  function addSpace(width) {
-    x += width;
+  function addSpace(widthUnits) {
+    x += widthUnits * module;
   }
 
-  for (let c = 0; c < fullCode.length; c++) {
-    const pattern = CODE39_PATTERNS[fullCode[c]];
-    if (!pattern) return '';
+  addBar(1);
+  addSpace(1);
+  addBar(1);
+  addSpace(1);
 
-    for (let i = 0; i < pattern.length; i++) {
-      const w = pattern[i] === 'w' ? wide : narrow;
-      if (i % 2 === 0) addBar(w);
-      else addSpace(w);
+  for (let i = 0; i < code.length; i += 2) {
+    const barsPattern = ITF_PATTERNS[code[i]];
+    const spacesPattern = ITF_PATTERNS[code[i + 1]];
+    for (let j = 0; j < 5; j++) {
+      addBar(barsPattern[j] === 'w' ? 3 : 1);
+      addSpace(spacesPattern[j] === 'w' ? 3 : 1);
     }
-
-    if (c < fullCode.length - 1) addSpace(gap);
   }
+
+  addBar(3);
+  addSpace(1);
+  addBar(1);
 
   const width = Math.ceil(x + quiet);
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" data-symbology="code39" data-encoded="${code}">${bars}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" data-encoded="${code}">${bars}</svg>`;
 }
 
 function code128Bsvg(text) {
-  return code39Svg(text);
+  return itfSvg(text);
 }
