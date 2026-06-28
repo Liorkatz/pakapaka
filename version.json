@@ -1,1 +1,1 @@
-{"version":"1.19","notes":["Update button opens versioned link","Cache cleanup before reload"]}
+{"version":"1.20","notes":["Barcode renderer changed to ITF / Interleaved 2 of 5","Odd-length codes now get a mod-10 check digit for barcode rendering"]}
