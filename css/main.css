@@ -53,7 +53,10 @@ textarea{min-height:74px;resize:vertical}
 .barcodeNumber{direction:ltr;font-size:24px;letter-spacing:1px;margin-bottom:14px;word-break:break-all}
 #barcodeSvg{width:100%;overflow:hidden}
 #barcodeSvg svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto}
-.whiteBack{position:fixed;top:calc(12px + var(--safe-top));right:12px;width:auto;padding:11px 17px;border-radius:14px;background:#111;color:#fff;font-size:18px;z-index:10}
+.barcodeActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px auto 0;max-width:520px;direction:rtl}
+.barcodeActions button{padding:16px 12px;border-radius:18px;font-size:22px}
+.barcodeBackBtn{background:#222;color:#fff;border:1px solid #444}
+.barcodeScannedBtn{background:#000;color:#fff}
 .empty{color:#999;font-size:18px;margin-top:30px;line-height:1.45}
 .smallHelp{color:#888;font-size:15px;margin-top:10px;line-height:1.35}
 .versionBadge{position:static;display:block;width:max-content;margin:0 0 8px auto;background:#161616;color:#aaa;border:1px solid #333;border-radius:999px;padding:5px 9px;font-size:12px;line-height:1;z-index:auto;direction:ltr}
