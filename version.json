@@ -1,1 +1,1 @@
-{"version":"1.21","notes":["Barcode renderer changed from ITF to Code 39","No hidden check digit is added to the barcode"]}
+{"version":"1.22","notes":["Reverted the Code 39 test back to the previous ITF renderer","Continuing barcode pattern investigation"]}
