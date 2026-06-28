@@ -1,1 +1,1 @@
-{"version":"1.22","notes":["Reverted the Code 39 test back to the previous ITF renderer","Continuing barcode pattern investigation"]}
+{"version":"1.23","notes":["ITF renderer now pads odd-length barcode data with a trailing 0","Verified against original examples by decoding bar and space patterns"]}
