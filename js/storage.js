@@ -55,7 +55,13 @@ function copySharedToLocal(item, name) {
 
 function incrementLocalOpenCount(id) {
   const items = getLocalItems();
-  const item = items.find(x => String(x.id) === String(id));
+  return items.find(x => String(x.id) === String(id)) || null;
+}
+
+function incrementLocalScanCountByCode(code) {
+  code = String(code || '').trim();
+  const items = getLocalItems();
+  const item = items.find(x => String(x.code) === code);
   if (!item) return null;
   item.openCount = Number(item.openCount || 0) + 1;
   setLocalItems(items);
