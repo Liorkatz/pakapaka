@@ -1,1 +1,1 @@
-{"version":"1.23","notes":["ITF renderer now pads odd-length barcode data with a trailing 0","Verified against original examples by decoding bar and space patterns"]}
+{"version":"1.24","notes":["Added two buttons under generated barcode: חזרה and נסרק","Opening a barcode no longer increments the counter","Pressing נסרק increments the counter and returns to the main screen"]}
