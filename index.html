@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.24">
+<link rel="stylesheet" href="css/main.css?v=1.25">
 <title>פקעות</title>
 </head>
 <body>
@@ -45,19 +45,27 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.24"></script>
-<script src="js/utils.js?v=1.24"></script>
-<script src="js/storage.js?v=1.24"></script>
-<script src="js/barcode.js?v=1.24"></script>
-<script src="js/shared.js?v=1.24"></script>
-<script src="js/app.js?v=1.24"></script>
-<script src="js/pwa-enhance.js?v=1.24"></script>
+<script src="js/config.js?v=1.25"></script>
+<script src="js/utils.js?v=1.25"></script>
+<script src="js/storage.js?v=1.25"></script>
+<script src="js/barcode.js?v=1.25"></script>
+<script src="js/shared.js?v=1.25"></script>
+<script src="js/app.js?v=1.25"></script>
+<script src="js/pwa-enhance.js?v=1.25"></script>
 <script>
 function handleBarcodeScanned() {
   const el = document.getElementById('barcodeNumber');
   if (el) incrementLocalScanCountByCode(el.textContent);
   showPage('home');
 }
+
+showDepartmentRequired = function() {
+  const list = document.getElementById('list');
+  if (!list) return;
+  list.innerHTML = '<div class="empty departmentRequiredBox" onclick="changeDepartment()">לא נבחרה מחלקה לרשימה המשותפת.<br>לחץ כאן כדי להכניס מספר מחלקה.</div>';
+};
+
+if (typeof activeTab !== 'undefined' && activeTab === 'shared' && !getDepartment()) showDepartmentRequired();
 </script>
 </body>
 </html>
