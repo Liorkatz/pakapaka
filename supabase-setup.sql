@@ -1,7 +1,3 @@
--- Pakapaka admin + scan stats setup
--- Run this once in Supabase SQL Editor.
--- Do not commit your real admin password into GitHub.
-
 create table if not exists public.pakapaka_settings (
   key text primary key,
   value text not null,
@@ -49,8 +45,3 @@ for update
 to anon
 using (true)
 with check (true);
-
--- Insert the admin password manually in Supabase, not in GitHub:
--- insert into public.pakapaka_settings (key, value)
--- values ('admin_password', 'PUT_PASSWORD_HERE')
--- on conflict (key) do update set value = excluded.value, updated_at = now();
