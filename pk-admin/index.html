@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#0b1220">
+<title>פקע פקע | ניהול</title>
+<link rel="stylesheet" href="admin.css?v=1.26">
+</head>
+<body>
+<main class="adminShell">
+  <section id="loginScreen" class="screen active">
+    <div class="loginCard">
+      <div class="lockIcon">🔒</div>
+      <h1>פקע פקע</h1>
+      <p>מרכז הניהול</p>
+      <input id="adminPassword" type="password" autocomplete="current-password" placeholder="סיסמה">
+      <div id="loginError" class="errorText"></div>
+      <button id="loginBtn">כניסה</button>
+    </div>
+  </section>
+
+  <section id="dashboardScreen" class="screen">
+    <header class="adminHeader">
+      <div>
+        <h1>מרכז הניהול</h1>
+        <p id="lastUpdated">טוען נתונים...</p>
+      </div>
+      <button id="logoutBtn" class="smallBtn">יציאה</button>
+    </header>
+
+    <div id="setupError" class="setupError"></div>
+
+    <section class="cardsGrid">
+      <article class="statCard">
+        <span>סה״כ סריקות</span>
+        <strong id="totalScans">0</strong>
+      </article>
+      <article class="statCard highlight">
+        <span>מחלקה מובילה</span>
+        <strong id="topDepartment">—</strong>
+      </article>
+      <article class="statCard">
+        <span>פקעות נסרקות</span>
+        <strong id="trackedItems">0</strong>
+      </article>
+    </section>
+
+    <section class="panelBlock">
+      <div class="blockTitle">דירוג מחלקות לפי סריקות</div>
+      <div id="departmentsList" class="listBox"></div>
+    </section>
+
+    <section class="panelBlock">
+      <div class="blockTitle">הפקעות הכי נסרקות</div>
+      <div id="topItemsList" class="listBox"></div>
+    </section>
+  </section>
+</main>
+
+<script src="../js/config.js?v=1.26"></script>
+<script src="../js/utils.js?v=1.26"></script>
+<script src="admin.js?v=1.26"></script>
+</body>
+</html>

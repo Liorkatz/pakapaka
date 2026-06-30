@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.25">
+<link rel="stylesheet" href="css/main.css?v=1.26">
 <title>פקעות</title>
 </head>
 <body>
@@ -45,17 +45,22 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.25"></script>
-<script src="js/utils.js?v=1.25"></script>
-<script src="js/storage.js?v=1.25"></script>
-<script src="js/barcode.js?v=1.25"></script>
-<script src="js/shared.js?v=1.25"></script>
-<script src="js/app.js?v=1.25"></script>
-<script src="js/pwa-enhance.js?v=1.25"></script>
+<script src="js/config.js?v=1.26"></script>
+<script src="js/utils.js?v=1.26"></script>
+<script src="js/storage.js?v=1.26"></script>
+<script src="js/barcode.js?v=1.26"></script>
+<script src="js/shared.js?v=1.26"></script>
+<script src="js/stats.js?v=1.26"></script>
+<script src="js/app.js?v=1.26"></script>
+<script src="js/pwa-enhance.js?v=1.26"></script>
 <script>
 function handleBarcodeScanned() {
   const el = document.getElementById('barcodeNumber');
-  if (el) incrementLocalScanCountByCode(el.textContent);
+  const nameEl = document.getElementById('barcodeName');
+  const barcode = el ? el.textContent : '';
+  const name = nameEl ? nameEl.textContent : '';
+  if (el) incrementLocalScanCountByCode(barcode);
+  if (typeof recordPakapakaScan === 'function') recordPakapakaScan({ barcode, name });
   showPage('home');
 }
 
