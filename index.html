@@ -9,11 +9,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.26">
+<link rel="stylesheet" href="css/main.css?v=1.27">
 <title>פקעות</title>
 </head>
 <body>
 <section id="home" class="page active">
+  <div class="versionBadge">v1.27 · 03/07/2026</div>
   <div class="topBar"><h1>פקעות</h1><button class="refreshBtn" onclick="refreshList()">↻</button></div>
   <p id="homeHelp" class="subtitle">מועדפים למעלה. מחיקה: החלקה ימינה.</p>
   <div class="tabs"><button id="tabLocal" class="tab active" onclick="setTab('local')">מקומי</button><button id="tabShared" class="tab" onclick="setTab('shared')">משותף</button></div>
@@ -45,14 +46,14 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.26"></script>
-<script src="js/utils.js?v=1.26"></script>
-<script src="js/storage.js?v=1.26"></script>
-<script src="js/barcode.js?v=1.26"></script>
-<script src="js/shared.js?v=1.26"></script>
-<script src="js/stats.js?v=1.26"></script>
-<script src="js/app.js?v=1.26"></script>
-<script src="js/pwa-enhance.js?v=1.26"></script>
+<script src="js/config.js?v=1.27"></script>
+<script src="js/utils.js?v=1.27"></script>
+<script src="js/storage.js?v=1.27"></script>
+<script src="js/barcode.js?v=1.27"></script>
+<script src="js/shared.js?v=1.27"></script>
+<script src="js/stats.js?v=1.27"></script>
+<script src="js/app.js?v=1.27"></script>
+<script src="js/pwa-enhance.js?v=1.27"></script>
 <script>
 function handleBarcodeScanned() {
   const el = document.getElementById('barcodeNumber');
