@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>מחשבון ברוטו נטו</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --accent:#2563eb;
+      --good:#16a34a;
+      --bad:#dc2626;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      padding:16px;
+    }
+    .app{
+      max-width:520px;
+      margin:0 auto;
+    }
+    .version{
+      position:fixed;
+      top:8px;
+      left:10px;
+      font-size:12px;
+      color:var(--muted);
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:4px 8px;
+    }
+    h1{
+      font-size:24px;
+      margin:22px 0 14px;
+      text-align:center;
+    }
+    .top{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .box{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      min-height:138px;
+      box-shadow:0 6px 18px rgba(0,0,0,.05);
+    }
+    .label{
+      font-size:15px;
+      color:var(--muted);
+      margin-bottom:10px;
+      font-weight:700;
+    }
+    input{
+      width:100%;
+      font-size:28px;
+      font-weight:800;
+      border:0;
+      outline:0;
+      background:#f9fafb;
+      border-radius:14px;
+      padding:12px;
+      text-align:center;
+      direction:ltr;
+    }
+    .money{
+      font-size:30px;
+      font-weight:900;
+      text-align:center;
+      margin-top:13px;
+      color:var(--good);
+      direction:ltr;
+    }
+    .sub{
+      font-size:13px;
+      color:var(--muted);
+      text-align:center;
+      margin-top:8px;
+    }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 6px 18px rgba(0,0,0,.05);
+      margin-top:12px;
+    }
+    .summary{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:8px;
+      margin:8px 0 10px;
+    }
+    .mini{
+      background:#f9fafb;
+      border-radius:14px;
+      padding:10px;
+      text-align:center;
+    }
+    .mini b{display:block;font-size:18px;margin-top:4px;direction:ltr}
+    .mini span{color:var(--muted);font-size:13px}
+    h2{
+      font-size:18px;
+      margin:4px 0 10px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+      overflow:hidden;
+      border-radius:12px;
+    }
+    th,td{
+      border-bottom:1px solid var(--line);
+      padding:10px 6px;
+      text-align:right;
+      vertical-align:top;
+    }
+    th{
+      color:var(--muted);
+      font-weight:800;
+      background:#f9fafb;
+    }
+    td.num, th.num{
+      text-align:left;
+      direction:ltr;
+      white-space:nowrap;
+    }
+    .totalRow td{
+      font-weight:900;
+    }
+    .bad{color:var(--bad)}
+    .note{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      margin-top:12px;
+    }
+    @media (max-width:390px){
+      body{padding:10px}
+      .top{gap:8px}
+      .box{padding:11px}
+      input,.money{font-size:24px}
+      table{font-size:12px}
+      th,td{padding:8px 4px}
+    }
+  </style>
+</head>
+<body>
+  <div class="version">v1.0.0</div>
+  <main class="app">
+    <h1>מחשבון ברוטו → נטו</h1>
+
+    <section class="top">
+      <div class="box">
+        <div class="label">ברוטו</div>
+        <input id="gross" type="number" inputmode="numeric" min="0" step="100" value="18000" />
+        <div class="sub">הכנסה חודשית ברוטו</div>
+      </div>
+
+      <div class="box">
+        <div class="label">נטו</div>
+        <div id="net" class="money">₪0</div>
+        <div class="sub">אחרי מס הכנסה, ביטוח לאומי ובריאות</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="summary">
+        <div class="mini"><span>מס הכנסה</span><b id="incomeTax">₪0</b></div>
+        <div class="mini"><span>ביטוח לאומי + בריאות</span><b id="btl">₪0</b></div>
+      </div>
+      <div class="summary">
+        <div class="mini"><span>סה״כ ניכויים</span><b id="deductions" class="bad">₪0</b></div>
+        <div class="mini"><span>נטו מול ברוטו</span><b id="ratio">0%</b></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>פירוט מדרגות מס</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>מדרגת שכר</th>
+            <th class="num">מס</th>
+            <th class="num">סכום</th>
+          </tr>
+        </thead>
+        <tbody id="taxRows"></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>פירוט ביטוח לאומי ובריאות</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>מדרגה</th>
+            <th class="num">שיעור עובד</th>
+            <th class="num">סכום</th>
+          </tr>
+        </thead>
+        <tbody id="btlRows"></tbody>
+      </table>
+      <div class="note">
+        חישוב בסיסי לשכיר תושב ישראל מתחת לגיל פרישה לשנת 2026. כולל 2.25 נקודות זיכוי תושב ישראל בלבד.
+        לא כולל פנסיה, קרן השתלמות, רכב, זיכויים נוספים, תיאום מס או הפרשות אחרות.
+      </div>
+    </section>
+  </main>
+
+<script>
+const fmt = n => new Intl.NumberFormat('he-IL', {style:'currency', currency:'ILS', maximumFractionDigits:0}).format(Math.round(n));
+const fmt2 = n => new Intl.NumberFormat('he-IL', {maximumFractionDigits:2}).format(n);
+
+const TAX_CREDIT = 544.5; // 2.25 נקודות זיכוי חודשיות לשנת 2026
+const taxBrackets = [
+  {upTo:7010, rate:0.10},
+  {upTo:10060, rate:0.14},
+  {upTo:19000, rate:0.20},
+  {upTo:25100, rate:0.31},
+  {upTo:46690, rate:0.35},
+  {upTo:60130, rate:0.47},
+  {upTo:Infinity, rate:0.50}
+];
+
+const btlBrackets = [
+  {upTo:7703, rate:0.0427, label:'עד 7,703 ₪'},
+  {upTo:51910, rate:0.1217, label:'7,704–51,910 ₪'},
+  {upTo:Infinity, rate:0, label:'מעל 51,910 ₪'}
+];
+
+function bracketLabel(prev, upTo){
+  const from = prev + 1;
+  if (!isFinite(upTo)) return `${fmt(from)} ומעלה`;
+  return `${fmt(from)}–${fmt(upTo)}`;
+}
+
+function calcProgressive(gross, brackets){
+  let prev = 0, total = 0, rows = [];
+  for (const b of brackets){
+    const upper = b.upTo;
+    const taxable = Math.max(0, Math.min(gross, upper) - prev);
+    const amount = taxable * b.rate;
+    if (taxable > 0){
+      rows.push({label:bracketLabel(prev, upper), rate:b.rate, taxable, amount});
+      total += amount;
+    }
+    prev = upper;
+    if (gross <= upper) break;
+  }
+  return {total, rows};
+}
+
+function calcBtl(gross){
+  let prev = 0, total = 0, rows = [];
+  for (const b of btlBrackets){
+    const taxable = Math.max(0, Math.min(gross, b.upTo) - prev);
+    const amount = taxable * b.rate;
+    if (taxable > 0){
+      rows.push({label:b.label, rate:b.rate, taxable, amount});
+      total += amount;
+    }
+    prev = b.upTo;
+    if (gross <= b.upTo) break;
+  }
+  return {total, rows};
+}
+
+function render(){
+  const gross = Math.max(0, Number(document.getElementById('gross').value || 0));
+
+  const taxRaw = calcProgressive(gross, taxBrackets);
+  const taxAfterCredit = Math.max(0, taxRaw.total - TAX_CREDIT);
+  const btl = calcBtl(gross);
+  const deductions = taxAfterCredit + btl.total;
+  const net = Math.max(0, gross - deductions);
+
+  document.getElementById('net').textContent = fmt(net);
+  document.getElementById('incomeTax').textContent = fmt(taxAfterCredit);
+  document.getElementById('btl').textContent = fmt(btl.total);
+  document.getElementById('deductions').textContent = fmt(deductions);
+  document.getElementById('ratio').textContent = gross ? `${fmt2((net/gross)*100)}%` : '0%';
+
+  const taxRows = document.getElementById('taxRows');
+  taxRows.innerHTML = taxRaw.rows.map(r => `
+    <tr>
+      <td>${r.label}<br><span style="color:#6b7280">חויב: ${fmt(r.taxable)}</span></td>
+      <td class="num">${Math.round(r.rate*100)}%</td>
+      <td class="num">${fmt(r.amount)}</td>
+    </tr>
+  `).join('') + `
+    <tr><td>נקודות זיכוי תושב</td><td class="num">2.25</td><td class="num">-${fmt(TAX_CREDIT)}</td></tr>
+    <tr class="totalRow"><td>מס הכנסה לתשלום</td><td></td><td class="num">${fmt(taxAfterCredit)}</td></tr>
+  `;
+
+  const btlRows = document.getElementById('btlRows');
+  btlRows.innerHTML = btl.rows.map(r => `
+    <tr>
+      <td>${r.label}<br><span style="color:#6b7280">חויב: ${fmt(r.taxable)}</span></td>
+      <td class="num">${fmt2(r.rate*100)}%</td>
+      <td class="num">${fmt(r.amount)}</td>
+    </tr>
+  `).join('') + `
+    <tr class="totalRow"><td>סה״כ ביטוח לאומי ובריאות</td><td></td><td class="num">${fmt(btl.total)}</td></tr>
+  `;
+}
+
+document.getElementById('gross').addEventListener('input', render);
+render();
+</script>
+</body>
+</html>
