@@ -29,6 +29,13 @@ button:active{transform:scale(.99)}
 .statCard em{display:block;margin-top:8px;color:#bdbdbd;font-size:13px;font-style:normal;line-height:1.35}
 .statCard.highlight{background:#fff;color:#000;border-color:#fff}
 .statCard.highlight span,.statCard.highlight em{color:#555}
+.topDepartmentCard{background:#fff;color:#000;border-radius:26px;padding:18px;margin:0 0 16px;border:1px solid #fff}
+.topDepartmentCard span{display:block;color:#555;font-size:14px;font-weight:800;margin-bottom:8px}
+.topDepartmentCard strong{display:block;font-size:30px;line-height:1.1;margin-bottom:14px}
+.topDepartmentStats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.topDepartmentStats div{background:#f2f2f2;border-radius:16px;padding:10px 8px;text-align:center}
+.topDepartmentStats b{display:block;font-size:20px;line-height:1;direction:ltr}
+.topDepartmentStats small{display:block;margin-top:6px;color:#555;font-size:12px}
 .panelBlock{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:14px;margin:0 0 14px}
 .blockTitle{font-size:17px;font-weight:800;margin:2px 2px 12px}
 .deptRow{padding:13px 2px;border-top:1px solid var(--line)}
