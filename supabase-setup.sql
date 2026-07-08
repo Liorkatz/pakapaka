@@ -14,8 +14,17 @@ create table if not exists public.pakapaka_scan_stats (
   unique (department, barcode)
 );
 
+create table if not exists public.pakapaka_devices (
+  device_id text primary key,
+  department text not null,
+  total_scans bigint not null default 0,
+  first_scan_at timestamptz not null default now(),
+  last_scan_at timestamptz not null default now()
+);
+
 alter table public.pakapaka_settings enable row level security;
 alter table public.pakapaka_scan_stats enable row level security;
+alter table public.pakapaka_devices enable row level security;
 
 drop policy if exists "pakapaka settings read" on public.pakapaka_settings;
 create policy "pakapaka settings read"
@@ -41,6 +50,28 @@ with check (true);
 drop policy if exists "pakapaka scan stats update" on public.pakapaka_scan_stats;
 create policy "pakapaka scan stats update"
 on public.pakapaka_scan_stats
+for update
+to anon
+using (true)
+with check (true);
+
+drop policy if exists "pakapaka devices read" on public.pakapaka_devices;
+create policy "pakapaka devices read"
+on public.pakapaka_devices
+for select
+to anon
+using (true);
+
+drop policy if exists "pakapaka devices insert" on public.pakapaka_devices;
+create policy "pakapaka devices insert"
+on public.pakapaka_devices
+for insert
+to anon
+with check (true);
+
+drop policy if exists "pakapaka devices update" on public.pakapaka_devices;
+create policy "pakapaka devices update"
+on public.pakapaka_devices
 for update
 to anon
 using (true)

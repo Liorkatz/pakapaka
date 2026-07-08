@@ -1,6 +1,7 @@
 const ADMIN_SETTINGS_TABLE = 'pakapaka_settings';
-const ADMIN_STATS_TABLE = 'pakapaka_scan_stats';
+const ADMIN_DEVICES_TABLE = 'pakapaka_devices';
 const ADMIN_SESSION_KEY = 'pakapaka_admin_ok_v1';
+const ACTIVE_DAYS = 7;
 
 function adminApiUrl(table, query = '') {
   return `${SUPABASE_URL}/rest/v1/${table}${query}`;
@@ -13,6 +14,15 @@ function showScreen(id) {
 
 function formatNumber(value) {
   return Number(value || 0).toLocaleString('he-IL');
+}
+
+function activeSinceIso() {
+  return new Date(Date.now() - ACTIVE_DAYS * 24 * 60 * 60 * 1000).toISOString();
+}
+
+function isActiveDevice(row) {
+  const t = Date.parse(row.last_scan_at || '');
+  return Number.isFinite(t) && t >= Date.parse(activeSinceIso());
 }
 
 async function fetchAdminPassword() {
@@ -55,59 +65,52 @@ async function login() {
   }
 }
 
-async function loadStats() {
-  const q = '?select=department,barcode,name,scan_count,last_scanned_at&order=scan_count.desc';
-  const r = await fetch(adminApiUrl(ADMIN_STATS_TABLE, q), {
+async function loadDevices() {
+  const q = '?select=device_id,department,total_scans,last_scan_at&order=last_scan_at.desc';
+  const r = await fetch(adminApiUrl(ADMIN_DEVICES_TABLE, q), {
     headers: headers(),
     cache: 'no-store'
   });
-  if (!r.ok) throw new Error('לא הצלחתי לקרוא את טבלת הסריקות');
+  if (!r.ok) throw new Error('לא הצלחתי לקרוא את טבלת המשתמשים');
   return await r.json();
 }
 
-function groupDepartments(rows) {
+function groupDepartments(devices) {
   const map = new Map();
-  rows.forEach(row => {
+  devices.forEach(row => {
     const department = String(row.department || 'ללא מחלקה');
-    const count = Number(row.scan_count || 0);
-    map.set(department, (map.get(department) || 0) + count);
+    const current = map.get(department) || {
+      department,
+      users: 0,
+      activeUsers: 0,
+      totalScans: 0
+    };
+    current.users += 1;
+    current.totalScans += Number(row.total_scans || 0);
+    if (isActiveDevice(row)) current.activeUsers += 1;
+    map.set(department, current);
   });
-  return [...map.entries()]
-    .map(([department, scans]) => ({ department, scans }))
-    .sort((a, b) => b.scans - a.scans || String(a.department).localeCompare(String(b.department), 'he'));
+  return [...map.values()].sort((a, b) => {
+    return b.activeUsers - a.activeUsers || b.users - a.users || b.totalScans - a.totalScans || String(a.department).localeCompare(String(b.department), 'he');
+  });
 }
 
 function renderDepartmentRows(rows) {
   const box = document.getElementById('departmentsList');
   if (!rows.length) {
-    box.innerHTML = '<div class="empty">אין עדיין סריקות להצגה.</div>';
+    box.innerHTML = '<div class="empty">אין עדיין משתמשים להצגה.</div>';
     return;
   }
   box.innerHTML = rows.map((row, index) => `
-    <div class="row">
-      <div>
+    <div class="deptRow">
+      <div class="deptHead">
         <div class="rowTitle">${index + 1}. מחלקה ${escapeHtml(row.department)}</div>
-        <div class="rowSub">דירוג לפי סריקות</div>
+        <div class="rowCount">${formatNumber(row.activeUsers)} פעילים</div>
       </div>
-      <div class="rowCount">${formatNumber(row.scans)}</div>
-    </div>
-  `).join('');
-}
-
-function renderTopItems(rows) {
-  const box = document.getElementById('topItemsList');
-  const top = rows.slice(0, 10);
-  if (!top.length) {
-    box.innerHTML = '<div class="empty">אין עדיין פקעות נסרקות.</div>';
-    return;
-  }
-  box.innerHTML = top.map((row, index) => `
-    <div class="row">
-      <div>
-        <div class="rowTitle">${index + 1}. ${escapeHtml(row.name || 'פקעה')}</div>
-        <div class="rowSub">${escapeHtml(row.barcode || '')} · מחלקה ${escapeHtml(row.department || '')}</div>
+      <div class="deptStats">
+        <span>${formatNumber(row.users)} משתמשים</span>
+        <span>${formatNumber(row.totalScans)} סריקות</span>
       </div>
-      <div class="rowCount">${formatNumber(row.scan_count)}</div>
     </div>
   `).join('');
 }
@@ -119,20 +122,21 @@ async function showDashboard() {
   setupError.textContent = '';
 
   try {
-    const rows = await loadStats();
-    const total = rows.reduce((sum, row) => sum + Number(row.scan_count || 0), 0);
-    const departments = groupDepartments(rows);
-    const topDepartment = departments[0];
+    const devices = await loadDevices();
+    const departments = groupDepartments(devices);
+    const activeDevices = devices.filter(isActiveDevice);
+    const activeDepartments = departments.filter(x => x.activeUsers > 0);
+    const totalScans = devices.reduce((sum, row) => sum + Number(row.total_scans || 0), 0);
 
-    document.getElementById('totalScans').textContent = formatNumber(total);
-    document.getElementById('topDepartment').textContent = topDepartment ? topDepartment.department : '—';
-    document.getElementById('trackedItems').textContent = formatNumber(rows.length);
+    document.getElementById('activeUsers').textContent = formatNumber(activeDevices.length);
+    document.getElementById('activeDepartments').textContent = formatNumber(activeDepartments.length);
+    document.getElementById('totalUsers').textContent = formatNumber(devices.length);
+    document.getElementById('totalScans').textContent = formatNumber(totalScans);
     document.getElementById('lastUpdated').textContent = 'עודכן עכשיו';
 
     renderDepartmentRows(departments);
-    renderTopItems(rows);
   } catch (e) {
-    setupError.textContent = `${e.message || 'שגיאה בטעינת נתונים'}. ודא שהרצת את קובץ supabase-setup.sql ב-Supabase.`;
+    setupError.textContent = `${e.message || 'שגיאה בטעינת נתונים'}. יש להריץ את עדכון הטבלאות ב-Supabase.`;
     setupError.classList.add('show');
     document.getElementById('lastUpdated').textContent = 'אין נתונים להצגה';
   }
