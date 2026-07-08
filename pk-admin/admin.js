@@ -2,6 +2,9 @@ const ADMIN_SETTINGS_TABLE = 'pakapaka_settings';
 const ADMIN_DEVICES_TABLE = 'pakapaka_devices';
 const ADMIN_SESSION_KEY = 'pakapaka_admin_ok_v1';
 const ACTIVE_DAYS = 7;
+let pullStartY = null;
+let pullArmed = false;
+let pullReloading = false;
 
 function adminApiUrl(table, query = '') {
   return `${SUPABASE_URL}/rest/v1/${table}${query}`;
@@ -142,6 +145,48 @@ async function showDashboard() {
   }
 }
 
+function fullReload() {
+  if (pullReloading) return;
+  pullReloading = true;
+  const indicator = document.getElementById('pullRefresh');
+  if (indicator) {
+    indicator.textContent = 'מרענן...';
+    indicator.classList.add('show', 'ready');
+  }
+  window.location.replace(`${window.location.pathname}?refresh=${Date.now()}`);
+}
+
+function setPullIndicator(visible, ready) {
+  const indicator = document.getElementById('pullRefresh');
+  if (!indicator) return;
+  indicator.textContent = ready ? 'שחרר לרענון' : 'משוך לרענון';
+  indicator.classList.toggle('show', !!visible);
+  indicator.classList.toggle('ready', !!ready);
+}
+
+function initPullToFullRefresh() {
+  document.addEventListener('touchstart', e => {
+    if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== '1') return;
+    if (window.scrollY > 0 || pullReloading) return;
+    pullStartY = e.touches[0].clientY;
+    pullArmed = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (pullStartY === null || pullReloading) return;
+    const distance = e.touches[0].clientY - pullStartY;
+    if (distance > 30) setPullIndicator(true, distance > 105);
+    pullArmed = distance > 105;
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    if (pullArmed) fullReload();
+    else setPullIndicator(false, false);
+    pullStartY = null;
+    pullArmed = false;
+  }, { passive: true });
+}
+
 function logout() {
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   showScreen('loginScreen');
@@ -153,6 +198,7 @@ function initAdmin() {
   document.getElementById('adminPassword').addEventListener('keydown', e => {
     if (e.key === 'Enter') login();
   });
+  initPullToFullRefresh();
 
   if (sessionStorage.getItem(ADMIN_SESSION_KEY) === '1') showDashboard();
 }

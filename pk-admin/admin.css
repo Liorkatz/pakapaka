@@ -3,6 +3,9 @@
 html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:var(--bg);color:var(--ink)}
 button,input{font-family:inherit}
 .adminShell{min-height:100dvh;padding:calc(14px + var(--safe-top)) 14px calc(22px + var(--safe-bottom))}
+.pullRefresh{position:fixed;top:calc(8px + var(--safe-top));left:50%;transform:translate(-50%,-70px);z-index:50;background:#fff;color:#000;border-radius:999px;padding:10px 16px;font-size:14px;font-weight:800;opacity:0;transition:transform .18s ease,opacity .18s ease;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.pullRefresh.show{transform:translate(-50%,0);opacity:1}
+.pullRefresh.ready{background:#dfffe7;color:#0f3b1b}
 .screen{display:none;min-height:calc(100dvh - 36px)}
 .screen.active{display:block}
 #loginScreen.active{display:flex;align-items:center;justify-content:center}
