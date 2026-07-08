@@ -118,6 +118,13 @@ function renderDepartmentRows(rows) {
   `).join('');
 }
 
+function renderTopDepartment(row) {
+  document.getElementById('topDepartmentNumber').textContent = row ? `מחלקה ${row.department}` : '—';
+  document.getElementById('topDepartmentActiveUsers').textContent = formatNumber(row ? row.activeUsers : 0);
+  document.getElementById('topDepartmentUsers').textContent = formatNumber(row ? row.users : 0);
+  document.getElementById('topDepartmentScans').textContent = formatNumber(row ? row.totalScans : 0);
+}
+
 async function showDashboard() {
   showScreen('dashboardScreen');
   const setupError = document.getElementById('setupError');
@@ -137,11 +144,13 @@ async function showDashboard() {
     document.getElementById('totalScans').textContent = formatNumber(totalScans);
     document.getElementById('lastUpdated').textContent = 'עודכן עכשיו';
 
+    renderTopDepartment(departments[0] || null);
     renderDepartmentRows(departments);
   } catch (e) {
     setupError.textContent = `${e.message || 'שגיאה בטעינת נתונים'}. יש להריץ את עדכון הטבלאות ב-Supabase.`;
     setupError.classList.add('show');
     document.getElementById('lastUpdated').textContent = 'אין נתונים להצגה';
+    renderTopDepartment(null);
   }
 }
 
