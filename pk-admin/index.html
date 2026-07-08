@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#050505">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.28">
+<link rel="stylesheet" href="admin.css?v=1.29">
 </head>
 <body>
 <main class="adminShell">
@@ -52,6 +52,16 @@
       </article>
     </section>
 
+    <section class="topDepartmentCard">
+      <span>המחלקה הפעילה ביותר</span>
+      <strong id="topDepartmentNumber">—</strong>
+      <div class="topDepartmentStats">
+        <div><b id="topDepartmentActiveUsers">0</b><small>פעילים</small></div>
+        <div><b id="topDepartmentUsers">0</b><small>משתמשים</small></div>
+        <div><b id="topDepartmentScans">0</b><small>סריקות</small></div>
+      </div>
+    </section>
+
     <section class="panelBlock">
       <div class="blockTitle">מחלקות לפי משתמשים פעילים</div>
       <div id="departmentsList" class="listBox"></div>
@@ -59,8 +69,8 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.28"></script>
-<script src="../js/utils.js?v=1.28"></script>
-<script src="admin.js?v=1.28"></script>
+<script src="../js/config.js?v=1.29"></script>
+<script src="../js/utils.js?v=1.29"></script>
+<script src="admin.js?v=1.29"></script>
 </body>
 </html>
