@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#0b1220">
+<meta name="theme-color" content="#050505">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.26">
+<link rel="stylesheet" href="admin.css?v=1.27">
 </head>
 <body>
 <main class="adminShell">
@@ -32,34 +32,34 @@
     <div id="setupError" class="setupError"></div>
 
     <section class="cardsGrid">
+      <article class="statCard highlight">
+        <span>משתמשים פעילים</span>
+        <strong id="activeUsers">0</strong>
+        <em>סרקו לפחות פעם אחת ב־7 ימים</em>
+      </article>
+      <article class="statCard">
+        <span>מחלקות פעילות</span>
+        <strong id="activeDepartments">0</strong>
+      </article>
+      <article class="statCard">
+        <span>סה״כ משתמשים</span>
+        <strong id="totalUsers">0</strong>
+      </article>
       <article class="statCard">
         <span>סה״כ סריקות</span>
         <strong id="totalScans">0</strong>
       </article>
-      <article class="statCard highlight">
-        <span>מחלקה מובילה</span>
-        <strong id="topDepartment">—</strong>
-      </article>
-      <article class="statCard">
-        <span>פקעות נסרקות</span>
-        <strong id="trackedItems">0</strong>
-      </article>
     </section>
 
     <section class="panelBlock">
-      <div class="blockTitle">דירוג מחלקות לפי סריקות</div>
+      <div class="blockTitle">מחלקות לפי משתמשים פעילים</div>
       <div id="departmentsList" class="listBox"></div>
-    </section>
-
-    <section class="panelBlock">
-      <div class="blockTitle">הפקעות הכי נסרקות</div>
-      <div id="topItemsList" class="listBox"></div>
     </section>
   </section>
 </main>
 
-<script src="../js/config.js?v=1.26"></script>
-<script src="../js/utils.js?v=1.26"></script>
-<script src="admin.js?v=1.26"></script>
+<script src="../js/config.js?v=1.27"></script>
+<script src="../js/utils.js?v=1.27"></script>
+<script src="admin.js?v=1.27"></script>
 </body>
 </html>
