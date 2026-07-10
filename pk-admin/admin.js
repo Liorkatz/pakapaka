@@ -1,6 +1,7 @@
 const ADMIN_SETTINGS_TABLE = 'pakapaka_settings';
 const ADMIN_DEVICES_TABLE = 'pakapaka_devices';
 const ADMIN_SESSION_KEY = 'pakapaka_admin_ok_v1';
+const NO_DEPARTMENT_LABEL = 'ללא מחלקה';
 const ACTIVE_DAYS = 7;
 let pullStartY = null;
 let pullArmed = false;
@@ -26,6 +27,14 @@ function activeSinceIso() {
 function isActiveDevice(row) {
   const t = Date.parse(row.last_scan_at || '');
   return Number.isFinite(t) && t >= Date.parse(activeSinceIso());
+}
+
+function isRealDepartment(value) {
+  return String(value || '').trim() !== NO_DEPARTMENT_LABEL;
+}
+
+function departmentTitle(value) {
+  return isRealDepartment(value) ? `מחלקה ${value}` : NO_DEPARTMENT_LABEL;
 }
 
 async function fetchAdminPassword() {
@@ -81,7 +90,7 @@ async function loadDevices() {
 function groupDepartments(devices) {
   const map = new Map();
   devices.forEach(row => {
-    const department = String(row.department || 'ללא מחלקה');
+    const department = String(row.department || '').trim() || NO_DEPARTMENT_LABEL;
     const current = map.get(department) || {
       department,
       users: 0,
@@ -93,7 +102,11 @@ function groupDepartments(devices) {
     if (isActiveDevice(row)) current.activeUsers += 1;
     map.set(department, current);
   });
+
   return [...map.values()].sort((a, b) => {
+    const aNoDepartment = !isRealDepartment(a.department);
+    const bNoDepartment = !isRealDepartment(b.department);
+    if (aNoDepartment !== bNoDepartment) return aNoDepartment ? 1 : -1;
     return b.activeUsers - a.activeUsers || b.users - a.users || b.totalScans - a.totalScans || String(a.department).localeCompare(String(b.department), 'he');
   });
 }
@@ -105,9 +118,9 @@ function renderDepartmentRows(rows) {
     return;
   }
   box.innerHTML = rows.map((row, index) => `
-    <div class="deptRow">
+    <div class="deptRow ${isRealDepartment(row.department) ? '' : 'noDepartmentRow'}">
       <div class="deptHead">
-        <div class="rowTitle">${index + 1}. מחלקה ${escapeHtml(row.department)}</div>
+        <div class="rowTitle">${isRealDepartment(row.department) ? `${index + 1}. ` : '⚠️ '}${escapeHtml(departmentTitle(row.department))}</div>
         <div class="rowCount">${formatNumber(row.activeUsers)} פעילים</div>
       </div>
       <div class="deptStats">
@@ -119,7 +132,7 @@ function renderDepartmentRows(rows) {
 }
 
 function renderTopDepartment(row) {
-  document.getElementById('topDepartmentNumber').textContent = row ? `מחלקה ${row.department}` : '—';
+  document.getElementById('topDepartmentNumber').textContent = row ? departmentTitle(row.department) : '—';
   document.getElementById('topDepartmentActiveUsers').textContent = formatNumber(row ? row.activeUsers : 0);
   document.getElementById('topDepartmentUsers').textContent = formatNumber(row ? row.users : 0);
   document.getElementById('topDepartmentScans').textContent = formatNumber(row ? row.totalScans : 0);
@@ -134,8 +147,9 @@ async function showDashboard() {
   try {
     const devices = await loadDevices();
     const departments = groupDepartments(devices);
+    const realDepartments = departments.filter(x => isRealDepartment(x.department));
     const activeDevices = devices.filter(isActiveDevice);
-    const activeDepartments = departments.filter(x => x.activeUsers > 0);
+    const activeDepartments = realDepartments.filter(x => x.activeUsers > 0);
     const totalScans = devices.reduce((sum, row) => sum + Number(row.total_scans || 0), 0);
 
     document.getElementById('activeUsers').textContent = formatNumber(activeDevices.length);
@@ -144,7 +158,7 @@ async function showDashboard() {
     document.getElementById('totalScans').textContent = formatNumber(totalScans);
     document.getElementById('lastUpdated').textContent = 'עודכן עכשיו';
 
-    renderTopDepartment(departments[0] || null);
+    renderTopDepartment(realDepartments[0] || null);
     renderDepartmentRows(departments);
   } catch (e) {
     setupError.textContent = `${e.message || 'שגיאה בטעינת נתונים'}. יש להריץ את עדכון הטבלאות ב-Supabase.`;
