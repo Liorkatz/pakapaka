@@ -13,7 +13,8 @@ function normalizeLocalItem(x) {
     code: x.code || '',
     notes: x.notes || '',
     favorite: !!x.favorite,
-    openCount: Number(x.openCount || 0)
+    openCount: Number(x.openCount || 0),
+    lastScannedAt: Number(x.lastScannedAt || 0)
   };
 }
 
@@ -32,7 +33,7 @@ function setLocalItems(items) {
 function saveLocal(name, code, notes) {
   const now = Date.now();
   const items = getLocalItems();
-  items.unshift({ id: now, createdAt: now, name, code, notes, favorite: false, openCount: 0 });
+  items.unshift({ id: now, createdAt: now, name, code, notes, favorite: false, openCount: 0, lastScannedAt: 0 });
   setLocalItems(items);
 }
 
@@ -47,7 +48,8 @@ function copySharedToLocal(item, name) {
     code: item.code || '',
     notes: item.notes || '',
     favorite: false,
-    openCount: 0
+    openCount: 0,
+    lastScannedAt: 0
   });
   setLocalItems(items);
   return { ok: true };
@@ -64,6 +66,7 @@ function incrementLocalScanCountByCode(code) {
   const item = items.find(x => String(x.code) === code);
   if (!item) return null;
   item.openCount = Number(item.openCount || 0) + 1;
+  item.lastScannedAt = Date.now();
   setLocalItems(items);
   return item;
 }
