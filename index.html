@@ -9,8 +9,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.27">
+<link rel="stylesheet" href="css/main.css?v=1.28">
 <title>פקעות</title>
+<style>
+.lastScannedText{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
+</style>
 </head>
 <body>
 <section id="home" class="page active">
@@ -45,15 +48,34 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.27"></script>
-<script src="js/utils.js?v=1.27"></script>
-<script src="js/storage.js?v=1.27"></script>
-<script src="js/barcode.js?v=1.27"></script>
-<script src="js/shared.js?v=1.27"></script>
-<script src="js/stats.js?v=1.27"></script>
-<script src="js/app.js?v=1.27"></script>
-<script src="js/pwa-enhance.js?v=1.27"></script>
+<script src="js/config.js?v=1.28"></script>
+<script src="js/utils.js?v=1.28"></script>
+<script src="js/storage.js?v=1.28"></script>
+<script src="js/barcode.js?v=1.28"></script>
+<script src="js/shared.js?v=1.28"></script>
+<script src="js/stats.js?v=1.28"></script>
+<script src="js/app.js?v=1.28"></script>
+<script src="js/pwa-enhance.js?v=1.28"></script>
 <script>
+function formatLastScannedDate(value) {
+  const timestamp = Number(value || 0);
+  if (!timestamp) return '';
+  const d = new Date(timestamp);
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${month}/${day} ${hours}:${minutes}`;
+}
+
+const originalRenderItem = renderItem;
+renderItem = function(x) {
+  const html = originalRenderItem(x);
+  if (activeTab !== 'local' || !Number(x.lastScannedAt || 0)) return html;
+  const scanText = `<span class="lastScannedText">נסרק לאחרונה: ${formatLastScannedDate(x.lastScannedAt)}</span>`;
+  return html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${escapeHtml(x.name)}${scanText}</div>`);
+};
+
 function handleBarcodeScanned() {
   const el = document.getElementById('barcodeNumber');
   const nameEl = document.getElementById('barcodeName');
@@ -70,6 +92,7 @@ showDepartmentRequired = function() {
   list.innerHTML = '<div class="empty departmentRequiredBox" onclick="changeDepartment()">לא נבחרה מחלקה לרשימה המשותפת.<br>לחץ כאן כדי להכניס מספר מחלקה.</div>';
 };
 
+renderList();
 if (typeof activeTab !== 'undefined' && activeTab === 'shared' && !getDepartment()) showDepartmentRequired();
 </script>
 </body>
