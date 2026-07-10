@@ -1,6 +1,7 @@
 const SCAN_STATS_TABLE = 'pakapaka_scan_stats';
 const DEVICE_STATS_TABLE = 'pakapaka_devices';
 const DEVICE_ID_KEY = 'pakapaka_device_id_v1';
+const NO_DEPARTMENT_LABEL = 'ללא מחלקה';
 
 function scanStatsUrl(query = '') {
   return `${SUPABASE_URL}/rest/v1/${SCAN_STATS_TABLE}${query}`;
@@ -109,11 +110,12 @@ async function recordItemScan(department, barcode, name, now) {
 
 async function recordPakapakaScan(data = {}) {
   try {
-    const department = typeof getDepartment === 'function' ? getDepartment() : '';
+    const selectedDepartment = typeof getDepartment === 'function' ? String(getDepartment() || '').trim() : '';
+    const department = selectedDepartment || NO_DEPARTMENT_LABEL;
     const barcode = String(data.barcode || '').trim();
     const name = String(data.name || '').trim();
 
-    if (!department || !barcode) return false;
+    if (!barcode) return false;
 
     const now = new Date().toISOString();
     await Promise.all([
