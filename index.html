@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.29">
+<link rel="stylesheet" href="css/main.css?v=1.30">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -52,14 +52,14 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.29"></script>
-<script src="js/utils.js?v=1.29"></script>
-<script src="js/storage.js?v=1.29"></script>
-<script src="js/barcode.js?v=1.29"></script>
-<script src="js/shared.js?v=1.29"></script>
-<script src="js/stats.js?v=1.29"></script>
-<script src="js/app.js?v=1.29"></script>
-<script src="js/pwa-enhance.js?v=1.29"></script>
+<script src="js/config.js?v=1.30"></script>
+<script src="js/utils.js?v=1.30"></script>
+<script src="js/storage.js?v=1.30"></script>
+<script src="js/barcode.js?v=1.30"></script>
+<script src="js/shared.js?v=1.30"></script>
+<script src="js/stats.js?v=1.30"></script>
+<script src="js/app.js?v=1.30"></script>
+<script src="js/pwa-enhance.js?v=1.30"></script>
 <script>
 function formatLastScannedDate(value) {
   const timestamp = Number(value || 0);
@@ -82,7 +82,7 @@ function isToday(value) {
 
 const originalRenderItem = renderItem;
 renderItem = function(x) {
-  const html = originalRenderItem(x);
+  let html = originalRenderItem(x).replace('נפתחה ', 'נסרק ');
   if (activeTab !== 'local' || !Number(x.lastScannedAt || 0)) return html;
   const todayClass = isToday(x.lastScannedAt) ? ' today' : '';
   const scanText = `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(x.lastScannedAt)}</span>`;
@@ -90,18 +90,20 @@ renderItem = function(x) {
 };
 
 async function shareApp() {
+  const url = window.location.href.split('#')[0];
+  const instructions = 'פתח את הקישור בספארי. לאחר מכן לחץ על כפתור השיתוף ובחר „הוסף למסך הבית”.';
   const shareData = {
     title: 'פקע פקע',
-    text: 'אפליקציית פקע פקע',
-    url: window.location.href.split('#')[0]
+    text: `אפליקציית פקע פקע\n\n${instructions}`,
+    url
   };
   try {
     if (navigator.share) {
       await navigator.share(shareData);
       return;
     }
-    await navigator.clipboard.writeText(shareData.url);
-    showAppDialog({ title: 'הקישור הועתק', text: 'קישור האפליקציה הועתק ללוח.', actions: [{ label: 'סגור' }] });
+    await navigator.clipboard.writeText(`${shareData.text}\n\n${url}`);
+    showAppDialog({ title: 'ההודעה הועתקה', text: 'הקישור והוראות ההתקנה הועתקו ללוח.', actions: [{ label: 'סגור' }] });
   } catch (error) {
     if (error && error.name === 'AbortError') return;
     showAppDialog({ title: 'השיתוף לא זמין', text: 'לא ניתן לפתוח את חלון השיתוף במכשיר הזה.', actions: [{ label: 'סגור' }] });
