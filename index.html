@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.31">
+<link rel="stylesheet" href="css/main.css?v=1.32">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -17,14 +17,20 @@
 .topBarActions{display:flex;align-items:center;gap:8px;direction:ltr}
 .shareBtn{width:42px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;background:#1d1d1d;color:#fff;border:1px solid #333;border-radius:14px}
 .shareBtn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.versionHistory{display:grid;gap:9px;margin-top:4px;text-align:right}
-.versionEntry{border:1px solid #333;border-radius:16px;background:#111;overflow:hidden}
-.versionEntry summary{cursor:pointer;padding:13px 14px;font-size:17px;font-weight:800;color:#fff;list-style:none;position:relative}
+.versionScreen{position:fixed;inset:0;z-index:100000;background:#000;color:#fff;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px));direction:rtl}
+.versionScreenHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid #262626;flex:0 0 auto}
+.versionScreenTitle{font-size:28px;font-weight:800;margin:0}
+.versionCloseBtn{width:auto;padding:10px 16px;border-radius:14px;background:#222;color:#fff;border:1px solid #444;font-size:16px}
+.versionScreenBody{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 0 4px;flex:1 1 auto}
+.versionHistory{display:grid;gap:10px;text-align:right}
+.versionEntry{border:1px solid #333;border-radius:16px;background:#141414;overflow:hidden}
+.versionEntry summary{cursor:pointer;padding:15px 16px;font-size:18px;font-weight:800;color:#fff;list-style:none;position:relative;display:flex;align-items:center;justify-content:space-between}
 .versionEntry summary::-webkit-details-marker{display:none}
-.versionEntry summary::before{content:'▶';display:inline-block;margin-left:8px;color:#999;font-size:12px;transition:transform .15s ease}
-.versionEntry[open] summary::before{transform:rotate(90deg)}
-.versionChanges{padding:0 14px 13px;color:#d0d0d0;font-size:15px;line-height:1.55}
-.versionChange{display:block;margin-top:4px}
+.versionEntry summary::after{content:'⌄';color:#999;font-size:18px;transform:rotate(90deg);transition:transform .15s ease}
+.versionEntry[open] summary::after{transform:rotate(0deg)}
+.versionChanges{padding:0 16px 15px;color:#d0d0d0;font-size:16px;line-height:1.55;border-top:1px solid #282828}
+.versionChange{display:block;margin-top:9px}
+.versionEmpty{color:#aaa;font-size:17px;padding:24px 4px;text-align:center}
 </style>
 </head>
 <body>
@@ -60,14 +66,14 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.31"></script>
-<script src="js/utils.js?v=1.31"></script>
-<script src="js/storage.js?v=1.31"></script>
-<script src="js/barcode.js?v=1.31"></script>
-<script src="js/shared.js?v=1.31"></script>
-<script src="js/stats.js?v=1.31"></script>
-<script src="js/app.js?v=1.31"></script>
-<script src="js/pwa-enhance.js?v=1.31"></script>
+<script src="js/config.js?v=1.32"></script>
+<script src="js/utils.js?v=1.32"></script>
+<script src="js/storage.js?v=1.32"></script>
+<script src="js/barcode.js?v=1.32"></script>
+<script src="js/shared.js?v=1.32"></script>
+<script src="js/stats.js?v=1.32"></script>
+<script src="js/app.js?v=1.32"></script>
+<script src="js/pwa-enhance.js?v=1.32"></script>
 <script>
 function formatLastScannedDate(value) {
   const timestamp = Number(value || 0);
@@ -100,11 +106,7 @@ renderItem = function(x) {
 async function shareApp() {
   const url = `${window.location.origin}${window.location.pathname}`;
   const instructions = 'פתח את הקישור בספארי. לאחר מכן לחץ על כפתור השיתוף ובחר „הוסף למסך הבית”.';
-  const shareData = {
-    title: 'פקע פקע',
-    text: `אפליקציית פקע פקע\n\n${instructions}`,
-    url
-  };
+  const shareData = { title: 'פקע פקע', text: `אפליקציית פקע פקע\n\n${instructions}`, url };
   try {
     if (navigator.share) {
       await navigator.share(shareData);
@@ -120,19 +122,26 @@ async function shareApp() {
 
 function renderVersionHistory(history) {
   const entries = Array.isArray(history) ? history : [];
-  if (!entries.length) return '<div class="appDialogText">אין היסטוריית שינויים זמינה.</div>';
+  if (!entries.length) return '<div class="versionEmpty">אין היסטוריית שינויים זמינה.</div>';
   return `<div class="versionHistory">${entries.map((entry, index) => {
     const changes = Array.isArray(entry.changes) ? entry.changes : [];
     return `<details class="versionEntry"${index === 0 ? ' open' : ''}><summary>גרסה ${escapeHtml(entry.version || '')}</summary><div class="versionChanges">${changes.map(change => `<span class="versionChange">• ${escapeHtml(change)}</span>`).join('')}</div></details>`;
   }).join('')}</div>`;
 }
 
+function closeVersionHistory() {
+  const screen = document.getElementById('versionHistoryScreen');
+  if (screen) screen.remove();
+}
+
 function showVersionHistory(history) {
-  showAppDialog({
-    title: 'היסטוריית שינויים',
-    text: renderVersionHistory(history),
-    actions: [{ label: 'סגור' }]
-  });
+  closeAppDialog();
+  closeVersionHistory();
+  const screen = document.createElement('div');
+  screen.id = 'versionHistoryScreen';
+  screen.className = 'versionScreen';
+  screen.innerHTML = `<div class="versionScreenHeader"><h2 class="versionScreenTitle">מה חדש?</h2><button type="button" class="versionCloseBtn" onclick="closeVersionHistory()">סגור</button></div><div class="versionScreenBody">${renderVersionHistory(history)}</div>`;
+  document.body.appendChild(screen);
 }
 
 async function loadVersionInfo() {
