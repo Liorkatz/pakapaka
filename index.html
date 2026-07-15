@@ -9,15 +9,19 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.28">
+<link rel="stylesheet" href="css/main.css?v=1.29">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
+.lastScannedText.today{color:#3b82f6;font-weight:700}
+.topBarActions{display:flex;align-items:center;gap:8px;direction:ltr}
+.shareBtn{width:42px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;background:#1d1d1d;color:#fff;border:1px solid #333;border-radius:14px}
+.shareBtn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
 <section id="home" class="page active">
-  <div class="topBar"><h1>פקעות</h1><button class="refreshBtn" onclick="refreshList()">↻</button></div>
+  <div class="topBar"><h1>פקעות</h1><div class="topBarActions"><button class="shareBtn" onclick="shareApp()" aria-label="שתף את האפליקציה" title="שתף את האפליקציה"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3"></path><path d="m7 8 5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg></button><button class="refreshBtn" onclick="refreshList()">↻</button></div></div>
   <p id="homeHelp" class="subtitle">מועדפים למעלה. מחיקה: החלקה ימינה.</p>
   <div class="tabs"><button id="tabLocal" class="tab active" onclick="setTab('local')">מקומי</button><button id="tabShared" class="tab" onclick="setTab('shared')">משותף</button></div>
   <div id="list" class="list"></div>
@@ -48,14 +52,14 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.28"></script>
-<script src="js/utils.js?v=1.28"></script>
-<script src="js/storage.js?v=1.28"></script>
-<script src="js/barcode.js?v=1.28"></script>
-<script src="js/shared.js?v=1.28"></script>
-<script src="js/stats.js?v=1.28"></script>
-<script src="js/app.js?v=1.28"></script>
-<script src="js/pwa-enhance.js?v=1.28"></script>
+<script src="js/config.js?v=1.29"></script>
+<script src="js/utils.js?v=1.29"></script>
+<script src="js/storage.js?v=1.29"></script>
+<script src="js/barcode.js?v=1.29"></script>
+<script src="js/shared.js?v=1.29"></script>
+<script src="js/stats.js?v=1.29"></script>
+<script src="js/app.js?v=1.29"></script>
+<script src="js/pwa-enhance.js?v=1.29"></script>
 <script>
 function formatLastScannedDate(value) {
   const timestamp = Number(value || 0);
@@ -68,13 +72,41 @@ function formatLastScannedDate(value) {
   return `${month}/${day} ${hours}:${minutes}`;
 }
 
+function isToday(value) {
+  const timestamp = Number(value || 0);
+  if (!timestamp) return false;
+  const d = new Date(timestamp);
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+}
+
 const originalRenderItem = renderItem;
 renderItem = function(x) {
   const html = originalRenderItem(x);
   if (activeTab !== 'local' || !Number(x.lastScannedAt || 0)) return html;
-  const scanText = `<span class="lastScannedText">נסרק לאחרונה: ${formatLastScannedDate(x.lastScannedAt)}</span>`;
+  const todayClass = isToday(x.lastScannedAt) ? ' today' : '';
+  const scanText = `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(x.lastScannedAt)}</span>`;
   return html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${escapeHtml(x.name)}${scanText}</div>`);
 };
+
+async function shareApp() {
+  const shareData = {
+    title: 'פקע פקע',
+    text: 'אפליקציית פקע פקע',
+    url: window.location.href.split('#')[0]
+  };
+  try {
+    if (navigator.share) {
+      await navigator.share(shareData);
+      return;
+    }
+    await navigator.clipboard.writeText(shareData.url);
+    showAppDialog({ title: 'הקישור הועתק', text: 'קישור האפליקציה הועתק ללוח.', actions: [{ label: 'סגור' }] });
+  } catch (error) {
+    if (error && error.name === 'AbortError') return;
+    showAppDialog({ title: 'השיתוף לא זמין', text: 'לא ניתן לפתוח את חלון השיתוף במכשיר הזה.', actions: [{ label: 'סגור' }] });
+  }
+}
 
 function handleBarcodeScanned() {
   const el = document.getElementById('barcodeNumber');
