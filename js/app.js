@@ -504,7 +504,7 @@ function openBarcode(id) {
   if (!item) return;
   document.getElementById('barcodeName').textContent = item.name;
   document.getElementById('barcodeNumber').textContent = item.code;
-  document.getElementById('barcodeSvg').innerHTML = code128Bsvg(item.code);
+  renderItfCanvas(document.getElementById('barcodeSvg'), item.code);
   showPage('barcodePage');
 }
 
