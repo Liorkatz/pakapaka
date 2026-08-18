@@ -128,3 +128,58 @@ function itfSvg(text) {
 function code128Bsvg(text) {
   return itfSvg(text);
 }
+
+
+function renderItfCanvas(container, text) {
+  const code = normalizeItfCode(text);
+  if (!container || !/^\d+$/.test(code) || code.length % 2 !== 0) return false;
+
+  const narrow = 4;
+  const wide = 12;
+  const quiet = 40;
+  const height = 300;
+  let x = quiet;
+  const bars = [];
+
+  function addBar(width) {
+    bars.push({ x, width });
+    x += width;
+  }
+
+  function addSpace(width) {
+    x += width;
+  }
+
+  addBar(narrow);
+  addSpace(narrow);
+  addBar(narrow);
+  addSpace(narrow);
+
+  for (let i = 0; i < code.length; i += 2) {
+    const barsPattern = ITF_PATTERNS[code[i]];
+    const spacesPattern = ITF_PATTERNS[code[i + 1]];
+    for (let j = 0; j < 5; j++) {
+      addBar(barsPattern[j] === 'w' ? wide : narrow);
+      addSpace(spacesPattern[j] === 'w' ? wide : narrow);
+    }
+  }
+
+  addBar(wide);
+  addSpace(narrow);
+  addBar(narrow);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = x + quiet;
+  canvas.height = height;
+  canvas.setAttribute('role', 'img');
+  canvas.setAttribute('aria-label', 'ברקוד ' + text);
+
+  const ctx = canvas.getContext('2d', { alpha: false });
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#000000';
+  bars.forEach(bar => ctx.fillRect(bar.x, 0, bar.width, height));
+
+  container.replaceChildren(canvas);
+  return true;
+}
