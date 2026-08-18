@@ -1,4 +1,4 @@
-:root{--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px)}
+:root{--safe-bottom:env(safe-area-inset-bottom,0px);--safe-top:env(safe-area-inset-top,0px);color-scheme:only light}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:#000;color:#fff}
 body{overscroll-behavior:none}
@@ -46,13 +46,13 @@ textarea{min-height:74px;resize:vertical}
 .fieldCounter{font-size:13px;color:#888;margin-top:7px;line-height:1.2;text-align:right}
 .fieldCounter.done{color:#4cd964;font-weight:700}
 .save{margin-top:22px;margin-bottom:18px}
-.whitePage{background:#fff;color:#000;text-align:center;display:none;min-height:100dvh;padding:calc(20px + var(--safe-top)) 16px calc(20px + var(--safe-bottom))}
+.whitePage{background:#fff!important;color:#000!important;color-scheme:only light;forced-color-adjust:none;text-align:center;display:none;min-height:100dvh;padding:calc(20px + var(--safe-top)) 16px calc(20px + var(--safe-bottom))}
 .whitePage.active{display:flex;flex-direction:column;justify-content:center;align-items:center}
 .barcodeWrap{width:100%;max-width:760px}
 .barcodeName{font-size:34px;font-weight:700;margin-bottom:22px;line-height:1.15}
 .barcodeNumber{direction:ltr;font-size:24px;letter-spacing:1px;margin-bottom:14px;word-break:break-all}
-#barcodeSvg{width:100%;overflow:hidden}
-#barcodeSvg svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto}
+#barcodeSvg{width:100%;overflow:hidden;background:#fff!important;color-scheme:only light;forced-color-adjust:none}
+#barcodeSvg svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto;background:#fff!important;color-scheme:only light;forced-color-adjust:none}
 .barcodeActions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px auto 0;max-width:520px;direction:rtl}
 .barcodeActions button{padding:16px 12px;border-radius:18px;font-size:22px}
 .barcodeBackBtn{background:#222;color:#fff;border:1px solid #444}
