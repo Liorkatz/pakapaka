@@ -33,24 +33,26 @@ async function loadShared() {
 }
 
 async function sharedCodeExists(code) {
-  const q = `?select=id,department&barcode=eq.${encodeURIComponent(code)}&limit=1`;
+  const department = getDepartment();
+  if (!department) return false;
+  const q = `?select=id&department=eq.${encodeURIComponent(department)}&barcode=eq.${encodeURIComponent(code)}&limit=1`;
   const r = await fetch(apiUrl(q), {
     headers: headers(),
     cache: 'no-store'
   });
-  if (!r.ok) return false;
+  if (!r.ok) throw new Error('בדיקת כפילות נכשלה. נסה שוב.');
   return (await r.json()).length > 0;
 }
 
 function isDuplicateError(msg) {
-  return /duplicate key|unique constraint|Pakatable_barcode_key/i.test(String(msg || ''));
+  return /duplicate key|unique constraint|Pakatable_department_barcode_key|Pakatable_barcode_key/i.test(String(msg || ''));
 }
 
 async function saveShared(name, code, notes) {
   const department = getDepartment();
   if (!department) throw new Error('חסרה מחלקה');
 
-  const lockKey = `pakapaka_saving_${code}`;
+  const lockKey = `pakapaka_saving_${department}_${code}`;
   if (window[lockKey]) return true;
   window[lockKey] = true;
 
@@ -62,7 +64,7 @@ async function saveShared(name, code, notes) {
     });
     if (!r.ok) {
       const msg = await errorText(r);
-      if (isDuplicateError(msg)) throw new Error('הברקוד כבר קיים ברשימה המשותפת');
+      if (isDuplicateError(msg)) throw new Error('הברקוד כבר קיים במחלקה הזאת');
       throw new Error('השמירה למשותף נכשלה. נסה שוב.');
     }
     sharedLoaded = false;
