@@ -23,6 +23,56 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Validate repository security
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f index.html
+          test -f js/config.js
+          test -f js/utils.js
+          test -f js/shared.js
+          test -f pk-admin/index.html
+
+          if grep -R -nE 'service_role|SUPABASE_SERVICE_ROLE|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY' \
+            --exclude-dir=.git --exclude='*.md' .; then
+            echo 'Potential privileged secret or private key found in repository.' >&2
+            exit 1
+          fi
+
+      - name: Verify Supabase connectivity
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'NODE' > /tmp/pakapaka-supabase.env
+          const fs = require('fs');
+          const vm = require('vm');
+          const code = fs.readFileSync('js/config.js', 'utf8');
+          const sandbox = { localStorage: { getItem: () => null } };
+          vm.createContext(sandbox);
+          vm.runInContext(`${code}; this.__cfg = { SUPABASE_URL, SUPABASE_KEY, SHARED_TABLE };`, sandbox);
+          const { SUPABASE_URL, SUPABASE_KEY, SHARED_TABLE } = sandbox.__cfg;
+          if (!/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(SUPABASE_URL)) throw new Error('Invalid Supabase URL');
+          if (!String(SUPABASE_KEY).startsWith('sb_publishable_')) throw new Error('Only a publishable Supabase key may be shipped to the browser');
+          if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(SHARED_TABLE)) throw new Error('Invalid shared table name');
+          console.log(`SUPABASE_URL=${SUPABASE_URL}`);
+          console.log(`SUPABASE_KEY=${SUPABASE_KEY}`);
+          console.log(`SHARED_TABLE=${SHARED_TABLE}`);
+          NODE
+
+          source /tmp/pakapaka-supabase.env
+          http_code="$(curl --silent --show-error --output /tmp/pakapaka-db-check.json --write-out '%{http_code}' \
+            --connect-timeout 10 --max-time 20 \
+            -H "apikey: ${SUPABASE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_KEY}" \
+            "${SUPABASE_URL}/rest/v1/${SHARED_TABLE}?select=id&limit=1")"
+          if [[ ! "${http_code}" =~ ^2 ]]; then
+            echo "Supabase connectivity check failed with HTTP ${http_code}." >&2
+            cat /tmp/pakapaka-db-check.json >&2
+            exit 1
+          fi
+          echo "Supabase connectivity verified (HTTP ${http_code})."
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
