@@ -35,7 +35,7 @@ jobs:
           test -f pk-admin/index.html
 
           if grep -R -nE 'service_role|SUPABASE_SERVICE_ROLE|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY' \
-            --exclude-dir=.git --exclude='*.md' .; then
+            --exclude-dir=.git --exclude='*.md' --exclude='pages.yml' .; then
             echo 'Potential privileged secret or private key found in repository.' >&2
             exit 1
           fi
