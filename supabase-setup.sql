@@ -43,10 +43,26 @@ alter table public.pakapaka_admin_sessions enable row level security;
 -- Sensitive tables: no direct browser access.
 revoke all on public.pakapaka_settings from anon, authenticated;
 revoke all on public.pakapaka_scan_stats from anon, authenticated;
-revoke all on public.pakapaka_devices from anon;
+revoke all on public.pakapaka_devices from anon, authenticated;
 revoke all on public.pakapaka_admin_sessions from anon, authenticated;
 
--- Shared list: public read and validated insert only. No public update/delete.
+-- Retire the unused legacy shared table if it still exists, without deleting data.
+do $$
+begin
+  if to_regclass('public.pakapaka_items') is not null then
+    execute 'alter table public.pakapaka_items enable row level security';
+    execute 'drop policy if exists "Anyone can read pakapaka" on public.pakapaka_items';
+    execute 'drop policy if exists "Anyone can insert pakapaka" on public.pakapaka_items';
+    execute 'drop policy if exists "Anyone can delete pakapaka" on public.pakapaka_items';
+    execute 'revoke all on public.pakapaka_items from anon, authenticated';
+  end if;
+end $$;
+
+-- Shared list: least privilege, public read and validated insert only.
+revoke all on public."Pakatable" from anon, authenticated;
+grant select, insert on public."Pakatable" to anon, authenticated;
+grant usage, select on sequence public."Pakatable_id_seq" to anon, authenticated;
+
 drop policy if exists "Anyone can read Pakatable" on public."Pakatable";
 drop policy if exists "Anyone can insert Pakatable" on public."Pakatable";
 drop policy if exists "Anyone can delete Pakatable" on public."Pakatable";
@@ -62,7 +78,7 @@ create policy "Pakatable public insert"
 on public."Pakatable" for insert
 to anon, authenticated
 with check (
-  department ~ '^[0-9]{2}$'
+  department ~ '^[0-9]{1,3}$'
   and length(btrim(coalesce(name, ''))) between 1 and 60
   and barcode ~ '^[0-9]{15}$'
   and length(coalesce(notes, '')) <= 250
@@ -92,7 +108,7 @@ begin
   if p_department <> 'ללא מחלקה' and p_department !~ '^[0-9]{1,3}$' then
     raise exception 'invalid department';
   end if;
-  if length(p_barcode) < 1 or length(p_barcode) > 200 then
+  if p_barcode !~ '^[0-9]{15}$' then
     raise exception 'invalid barcode';
   end if;
 
@@ -196,3 +212,6 @@ revoke execute on function public.pakapaka_admin_logout(text) from public, authe
 grant execute on function public.pakapaka_admin_login(text) to anon;
 grant execute on function public.pakapaka_admin_devices(text) to anon;
 grant execute on function public.pakapaka_admin_logout(text) to anon;
+
+-- Legacy auth-based admin helper is not part of the current application path.
+revoke execute on function public.is_pakapaka_admin() from public, anon, authenticated;
