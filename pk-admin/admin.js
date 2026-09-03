@@ -1,14 +1,16 @@
-const ADMIN_SETTINGS_TABLE = 'pakapaka_settings';
-const ADMIN_DEVICES_TABLE = 'pakapaka_devices';
-const ADMIN_SESSION_KEY = 'pakapaka_admin_ok_v1';
+const ADMIN_SESSION_KEY = 'pakapaka_admin_token_v2';
 const NO_DEPARTMENT_LABEL = 'ללא מחלקה';
 const ACTIVE_DAYS = 7;
 let pullStartY = null;
 let pullArmed = false;
 let pullReloading = false;
 
-function adminApiUrl(table, query = '') {
-  return `${SUPABASE_URL}/rest/v1/${table}${query}`;
+function adminRpcUrl(name) {
+  return `${SUPABASE_URL}/rest/v1/rpc/${name}`;
+}
+
+function getAdminToken() {
+  return String(sessionStorage.getItem(ADMIN_SESSION_KEY) || '');
 }
 
 function showScreen(id) {
@@ -37,20 +39,10 @@ function departmentTitle(value) {
   return isRealDepartment(value) ? `מחלקה ${value}` : NO_DEPARTMENT_LABEL;
 }
 
-async function fetchAdminPassword() {
-  const q = '?select=value&key=eq.admin_password&limit=1';
-  const r = await fetch(adminApiUrl(ADMIN_SETTINGS_TABLE, q), {
-    headers: headers(),
-    cache: 'no-store'
-  });
-  if (!r.ok) throw new Error('לא הצלחתי לקרוא את טבלת ההגדרות');
-  const rows = await r.json();
-  return rows[0] ? String(rows[0].value || '') : '';
-}
-
 async function login() {
   const input = document.getElementById('adminPassword');
   const err = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
   err.textContent = '';
 
   const typed = String(input.value || '');
@@ -59,31 +51,47 @@ async function login() {
     return;
   }
 
+  btn.disabled = true;
   try {
-    const password = await fetchAdminPassword();
-    if (!password) {
-      err.textContent = 'לא נמצאה סיסמת ניהול בטבלה.';
-      return;
-    }
-    if (typed !== password) {
+    const r = await fetch(adminRpcUrl('pakapaka_admin_login'), {
+      method: 'POST',
+      headers: headers(),
+      cache: 'no-store',
+      body: JSON.stringify({ p_password: typed })
+    });
+    if (!r.ok) throw new Error('שגיאה באימות מול השרת');
+    const token = await r.json();
+    if (!token) {
       err.textContent = 'סיסמה לא נכונה.';
       return;
     }
-    sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+    sessionStorage.setItem(ADMIN_SESSION_KEY, String(token));
     input.value = '';
-    showDashboard();
+    await showDashboard();
   } catch (e) {
     err.textContent = e.message || 'שגיאה בכניסה.';
+  } finally {
+    btn.disabled = false;
   }
 }
 
 async function loadDevices() {
-  const q = '?select=device_id,department,total_scans,last_scan_at&order=last_scan_at.desc';
-  const r = await fetch(adminApiUrl(ADMIN_DEVICES_TABLE, q), {
+  const token = getAdminToken();
+  if (!token) throw new Error('פג תוקף החיבור');
+
+  const r = await fetch(adminRpcUrl('pakapaka_admin_devices'), {
+    method: 'POST',
     headers: headers(),
-    cache: 'no-store'
+    cache: 'no-store',
+    body: JSON.stringify({ p_token: token })
   });
-  if (!r.ok) throw new Error('לא הצלחתי לקרוא את טבלת המשתמשים');
+
+  if (r.status === 401 || r.status === 403 || r.status === 400) {
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
+    showScreen('loginScreen');
+    throw new Error('פג תוקף החיבור. היכנס מחדש');
+  }
+  if (!r.ok) throw new Error('לא הצלחתי לקרוא את נתוני הניהול');
   return await r.json();
 }
 
@@ -161,7 +169,7 @@ async function showDashboard() {
     renderTopDepartment(realDepartments[0] || null);
     renderDepartmentRows(departments);
   } catch (e) {
-    setupError.textContent = `${e.message || 'שגיאה בטעינת נתונים'}. יש להריץ את עדכון הטבלאות ב-Supabase.`;
+    setupError.textContent = e.message || 'שגיאה בטעינת נתונים';
     setupError.classList.add('show');
     document.getElementById('lastUpdated').textContent = 'אין נתונים להצגה';
     renderTopDepartment(null);
@@ -189,7 +197,7 @@ function setPullIndicator(visible, ready) {
 
 function initPullToFullRefresh() {
   document.addEventListener('touchstart', e => {
-    if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== '1') return;
+    if (!getAdminToken()) return;
     if (window.scrollY > 0 || pullReloading) return;
     pullStartY = e.touches[0].clientY;
     pullArmed = false;
@@ -210,9 +218,21 @@ function initPullToFullRefresh() {
   }, { passive: true });
 }
 
-function logout() {
+async function logout() {
+  const token = getAdminToken();
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   showScreen('loginScreen');
+  if (!token) return;
+  try {
+    await fetch(adminRpcUrl('pakapaka_admin_logout'), {
+      method: 'POST',
+      headers: headers(),
+      cache: 'no-store',
+      body: JSON.stringify({ p_token: token })
+    });
+  } catch (e) {
+    // Local logout already completed.
+  }
 }
 
 function initAdmin() {
@@ -223,7 +243,7 @@ function initAdmin() {
   });
   initPullToFullRefresh();
 
-  if (sessionStorage.getItem(ADMIN_SESSION_KEY) === '1') showDashboard();
+  if (getAdminToken()) showDashboard();
 }
 
 initAdmin();
