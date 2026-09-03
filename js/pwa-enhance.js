@@ -193,6 +193,28 @@ function patchRefreshAndTabs() {
   }
 }
 
+function patchSharedDeleteGesture() {
+  if (window.__sharedDeletePatch135) return;
+  window.__sharedDeletePatch135 = true;
+  const oldTouchStart = window.onTouchStart;
+  if (typeof oldTouchStart === 'function') {
+    window.onTouchStart = function(e) {
+      if (activeTab === 'shared') {
+        touchState = null;
+        return;
+      }
+      return oldTouchStart.apply(this, arguments);
+    };
+  }
+  const oldDeleteById = window.deleteById;
+  if (typeof oldDeleteById === 'function') {
+    window.deleteById = function(id) {
+      if (activeTab === 'shared') return;
+      return oldDeleteById.apply(this, arguments);
+    };
+  }
+}
+
 function enablePullToRefresh() {
   document.addEventListener('touchstart', e => {
     const h = document.getElementById('home');
@@ -229,6 +251,7 @@ function initPwaEnhancements() {
   patchForceAppUpdate();
   patchRefreshAndTabs();
   patchSaveItemDoubleSubmit();
+  patchSharedDeleteGesture();
   enablePullToRefresh();
   checkSharedUpdates();
   updateServiceWorker();
