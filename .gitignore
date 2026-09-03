@@ -1,0 +1,24 @@
+# Local environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+secrets/
+credentials/
+
+# Database exports / local data
+*.sql.gz
+*.dump
+*.backup
+*.db
+*.sqlite
+*.sqlite3
+
+# Local tooling
+.DS_Store
+Thumbs.db
+node_modules/
