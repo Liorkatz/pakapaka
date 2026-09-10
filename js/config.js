@@ -1,4 +1,4 @@
-const VERSION = '1.35';
+const VERSION = '1.36';
 const STORAGE_KEY = 'pekaot_barcode_v3';
 const SHARED_FAV_KEY = 'pakapaka_shared_favorites_v1';
 const DEPARTMENT_KEY = 'pakapaka_department_v1';
@@ -12,3 +12,11 @@ let sharedItems = [];
 let sharedLoaded = false;
 let touchState = null;
 let isSaving = false;
+
+window.addEventListener('load', () => {
+  if (document.querySelector('script[data-pakapaka-hours]')) return;
+  const script = document.createElement('script');
+  script.src = `js/hours.js?v=${encodeURIComponent(VERSION)}`;
+  script.dataset.pakapakaHours = '1';
+  document.body.appendChild(script);
+});
