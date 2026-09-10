@@ -13,10 +13,12 @@ let sharedLoaded = false;
 let touchState = null;
 let isSaving = false;
 
-window.addEventListener('load', () => {
-  if (document.querySelector('script[data-pakapaka-hours]')) return;
-  const script = document.createElement('script');
-  script.src = `js/hours.js?v=${encodeURIComponent(VERSION)}`;
-  script.dataset.pakapakaHours = '1';
-  document.body.appendChild(script);
-});
+if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+  window.addEventListener('load', () => {
+    if (document.querySelector('script[data-pakapaka-hours]')) return;
+    const script = document.createElement('script');
+    script.src = `js/hours.js?v=${encodeURIComponent(VERSION)}`;
+    script.dataset.pakapakaHours = '1';
+    document.body.appendChild(script);
+  });
+}
