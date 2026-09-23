@@ -1,3 +1,5 @@
+let suppressItemClickUntil = 0;
+
 function showPage(id) {
   document.querySelectorAll('.page,.whitePage').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -376,6 +378,11 @@ function bindActions() {
   document.querySelectorAll('.item').forEach(el => {
     el.addEventListener('click', e => {
       if (e.target.dataset.action === 'star') return;
+      if (Date.now() < suppressItemClickUntil) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
       handleItemClick(el.dataset.id);
     });
     el.addEventListener('touchstart', onTouchStart, { passive: true });
@@ -391,7 +398,7 @@ function handleItemClick(id) {
 }
 
 function renameLocalItem(event, id) {
-  event.stopPropagation();
+  if (event) event.stopPropagation();
   if (activeTab !== 'local') return;
   const items = getLocalItems();
   const item = items.find(x => String(x.id) === String(id));
@@ -472,7 +479,27 @@ async function confirmDeleteById(id) {
 
 function onTouchStart(e) {
   const t = e.touches[0];
-  touchState = { el: e.currentTarget, id: e.currentTarget.dataset.id, startX: t.clientX, startY: t.clientY, moved: false };
+  const el = e.currentTarget;
+  const state = {
+    el,
+    id: el.dataset.id,
+    startX: t.clientX,
+    startY: t.clientY,
+    moved: false,
+    longPressed: false,
+    longPressTimer: null
+  };
+  touchState = state;
+
+  if (activeTab === 'local') {
+    state.longPressTimer = setTimeout(() => {
+      if (touchState !== state || state.moved) return;
+      state.longPressed = true;
+      suppressItemClickUntil = Date.now() + 900;
+      if (navigator.vibrate) navigator.vibrate(20);
+      renameLocalItem(null, state.id);
+    }, 650);
+  }
 }
 
 function onTouchMove(e) {
@@ -480,6 +507,15 @@ function onTouchMove(e) {
   const t = e.touches[0];
   const dx = t.clientX - touchState.startX;
   const dy = t.clientY - touchState.startY;
+
+  if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+    touchState.moved = true;
+    if (touchState.longPressTimer) {
+      clearTimeout(touchState.longPressTimer);
+      touchState.longPressTimer = null;
+    }
+  }
+
   if (Math.abs(dy) > Math.abs(dx)) return;
   if (dx > 0) {
     e.preventDefault();
@@ -490,11 +526,13 @@ function onTouchMove(e) {
 
 function onTouchEnd() {
   if (!touchState) return;
+  if (touchState.longPressTimer) clearTimeout(touchState.longPressTimer);
   const current = touchState.el.style.transform.match(/translateX\((\d+)/);
   const dx = current ? Number(current[1]) : 0;
   const id = touchState.id;
+  const longPressed = touchState.longPressed;
   touchState.el.style.transform = '';
-  const shouldDelete = touchState.moved && dx > 85;
+  const shouldDelete = !longPressed && touchState.moved && dx > 85;
   touchState = null;
   if (shouldDelete) deleteById(id);
 }
