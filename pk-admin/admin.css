@@ -88,3 +88,7 @@ html{-webkit-text-size-adjust:100%;overflow-x:hidden}body{overflow-x:hidden}
 .loginFootnote{text-align:center;color:#858585;font-size:12px;margin-top:42px}
 .loginFootnote span{color:#65b987;font-size:10px;margin-left:6px}
 @media(max-width:390px){.newLogin{padding:16px 5px 28px}.loginLogo{margin-bottom:20px}.newLoginForm{margin-top:26px}}
+
+/* Secondary credential field */
+.secondaryPasswordLabel{margin-top:18px}
+.passwordHint{font-size:13px;color:#a3a3a3;line-height:1.45;margin:10px 2px 0}
