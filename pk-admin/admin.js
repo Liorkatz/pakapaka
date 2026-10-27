@@ -240,6 +240,38 @@ async function logout() {
   }
 }
 
+
+function initPasswordManagement(){
+  const panel=document.getElementById('adminChangePasswordPanel');
+  document.getElementById('changeAdminPasswordBtn').addEventListener('click',()=>{panel.hidden=!panel.hidden;});
+  for(const [inputId,buttonId] of [['dashboardNewPassword','toggleDashboardPassword'],['dashboardConfirmPassword','toggleDashboardConfirm']]){
+    const input=document.getElementById(inputId),button=document.getElementById(buttonId);
+    button.addEventListener('click',()=>{input.type=input.type==='password'?'text':'password';button.textContent=input.type==='password'?'הצג':'הסתר';});
+  }
+  document.getElementById('saveDashboardPassword').addEventListener('click',async()=>{
+    const password=document.getElementById('dashboardNewPassword').value;
+    const confirm=document.getElementById('dashboardConfirmPassword').value;
+    const status=document.getElementById('dashboardPasswordStatus');
+    const button=document.getElementById('saveDashboardPassword');
+    if(password.length<6||password.length>128){status.textContent='יש להזין 6 עד 128 תווים.';return;}
+    if(password!==confirm){status.textContent='אימות הסיסמה לא תואם.';return;}
+    const token=getAdminToken();
+    if(!token){status.textContent='עליך להיכנס מחדש לפאנל.';return;}
+    button.disabled=true;status.textContent='שומר סיסמה...';
+    try{
+      const response=await fetch(adminRpcUrl('pakapaka_admin_change_password'),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_token:token,p_new_password:password})});
+      const result=await response.json().catch(()=>null);
+      if(!response.ok||result!==true)throw new Error('השרת לא אישר את השינוי.');
+      document.getElementById('dashboardNewPassword').value='';
+      document.getElementById('dashboardConfirmPassword').value='';
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      showScreen('loginScreen');
+      document.getElementById('loginError').textContent='הסיסמה הוחלפה. היכנס מחדש.';
+    }catch(e){status.textContent=e.message||'שגיאה בשמירה';}
+    finally{button.disabled=false;}
+  });
+}
+
 function initAdmin() {
   document.getElementById('loginBtn').addEventListener('click', login);
   document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -247,6 +279,7 @@ function initAdmin() {
     if (e.key === 'Enter') login();
   });
   initPullToFullRefresh();
+  initPasswordManagement();
 
   if (getAdminToken()) showDashboard();
 }
