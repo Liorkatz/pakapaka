@@ -186,11 +186,11 @@ renderItem = function(x) {
   const scanText = visibleScan ? `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(scanTime)}</span>` : '';
   html = html.replace(/<div class="itemDate">[\s\S]*?<\/div>/, '');
   html = html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${cleanName}</div>`);
-  if (correction) html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div><span class="scanCorrectionTag">${correction}</span></div>`);
-  if (scanText) {
-    if (html.includes('class="itemMeta"')) html = html.replace('<div class="itemMeta">','<div class="itemMeta">'+scanText);
-    else html = html.replace('</div></div></div>',scanText+'</div></div></div>');
+  if (!html.includes('class="itemMeta"')) {
+    html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="itemMeta"><div class="num">${escapeHtml(x.code)}</div></div>`);
   }
+  if (correction) html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div><span class="scanCorrectionTag">${correction}</span></div>`);
+  if (scanText) html = html.replace('<div class="itemMeta">','<div class="itemMeta">'+scanText);
   return html;
 };
 
