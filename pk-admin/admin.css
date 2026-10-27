@@ -68,3 +68,23 @@ html{-webkit-text-size-adjust:100%;overflow-x:hidden}body{overflow-x:hidden}
 #resetScreen .loginCard{max-height:none}#recoveryLink{font-size:16px;min-height:90px}
 .adminHeader,.adminHeader>div,.deptHead,.rowTitle,.cardsGrid,.panelBlock{min-width:0}
 @media(max-width:390px){.loginCard{padding:20px 13px}.topDepartmentStats{gap:5px}.topDepartmentStats div{padding:8px 3px}.topDepartmentStats b{font-size:18px}.rowCount{font-size:12px;padding:7px}}
+
+/* Admin sign-in, version 1.47 */
+#loginScreen.active{display:flex;align-items:center;justify-content:center}
+.newLogin{width:100%;max-width:420px;padding:24px 12px 30px;text-align:right}
+.loginLogo{height:66px;width:66px;display:grid;place-items:center;border-radius:21px;background:#f5f5f5;color:#090909;font-size:24px;font-weight:900;box-shadow:0 12px 42px #ffffff14;margin-bottom:28px}
+.loginEyebrow{font-size:13px;font-weight:700;color:#b8b8b8;letter-spacing:.4px;margin-bottom:9px}
+.loginIntro h1{font-size:clamp(34px,9vw,42px);font-weight:800;letter-spacing:-1.3px}
+.loginIntro p{font-size:17px;margin-top:10px}
+.newLoginForm{margin-top:34px}
+.newLoginForm label{display:block;font-weight:700;font-size:15px;margin-bottom:10px}
+.passwordRow{position:relative}
+.newLoginForm .passwordRow input{margin:0;width:100%;padding:17px 17px 17px 75px;text-align:right;font-size:17px;border:1px solid #444;border-radius:17px;min-height:58px}
+.newLoginForm .passwordRow input:focus{border-color:#ccc}
+.newLoginForm .showPassword{position:absolute;left:7px;top:7px;width:auto;min-height:44px;border-radius:12px;padding:8px 13px;background:#222;color:#dedede;font-size:14px}
+.newLoginForm .errorText{margin:10px 0 7px;min-height:24px;text-align:right}
+.newLoginForm .loginSubmit{min-height:57px;border-radius:17px;font-size:18px;margin-top:5px}
+.newLoginForm .loginForgot{background:transparent;border:0;color:#ddd;font-size:15px;min-height:48px;padding:12px;margin-top:6px;text-decoration:underline}
+.loginFootnote{text-align:center;color:#858585;font-size:12px;margin-top:42px}
+.loginFootnote span{color:#65b987;font-size:10px;margin-left:6px}
+@media(max-width:390px){.newLogin{padding:16px 5px 28px}.loginLogo{margin-bottom:20px}.newLoginForm{margin-top:26px}}
