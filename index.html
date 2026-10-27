@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.44">
+<link rel="stylesheet" href="css/main.css?v=1.45">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -32,12 +32,28 @@
 .versionChanges{padding:0 16px 15px;color:#d0d0d0;font-size:16px;line-height:1.55;border-top:1px solid #282828}
 .versionChange{display:block;margin-top:9px}
 .versionEmpty{color:#aaa;font-size:17px;padding:24px 4px;text-align:center}
+.departmentManagerSummary{border:1px solid #484848;border-radius:20px;background:#171717;color:#fff;padding:16px;margin:12px 0 16px;direction:rtl}
+.departmentManagerSummary[hidden]{display:none!important}
+.managerSummaryTitle{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:13px;font-size:18px}
+.managerSummaryTitle span{font-size:12px;color:#bbb}
+.managerSummaryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.managerSummaryGrid>div{background:#262626;border-radius:13px;padding:12px 4px;text-align:center;min-width:0}
+.managerSummaryGrid strong{font-size:26px;display:block;direction:ltr}
+.managerSummaryGrid span{font-size:12px;color:#ccc;display:block;margin-top:4px}
 </style>
 </head>
 <body>
 <section id="home" class="page active">
   <div class="topBar"><h1>פקעות <span class="topVersion" id="topVersion"></span></h1><div class="topBarActions"><button class="shareBtn" onclick="shareApp()" aria-label="שתף את האפליקציה" title="שתף את האפליקציה"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3"></path><path d="m7 8 5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg></button><button class="refreshBtn" onclick="refreshList()">↻</button></div></div>
   <p id="homeHelp" class="subtitle">מועדפים למעלה. מחיקה: החלקה ימינה.</p>
+  <section id="departmentManagerSummary" class="departmentManagerSummary" hidden aria-live="polite">
+    <div class="managerSummaryTitle"><strong id="managerSummaryTitle">נתוני מחלקה</strong><span>מנהל מחלקה</span></div>
+    <div class="managerSummaryGrid">
+      <div><strong id="managerSummaryUsers">—</strong><span>משתמשים</span></div>
+      <div><strong id="managerSummaryActive">—</strong><span>פעילים השבוע</span></div>
+      <div><strong id="managerSummaryScans">—</strong><span>סריקות</span></div>
+    </div>
+  </section>
   <div class="tabs"><button id="tabLocal" class="tab active" onclick="setTab('local')">מקומי</button><button id="tabShared" class="tab" onclick="setTab('shared')">משותף</button></div>
   <div id="list" class="list"></div>
   <div class="bottom"><button onclick="showPage('newPage')">הכנס פקעה חדשה</button></div>
@@ -67,14 +83,14 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.44"></script>
-<script src="js/utils.js?v=1.44"></script>
-<script src="js/storage.js?v=1.44"></script>
-<script src="js/barcode.js?v=1.44"></script>
-<script src="js/shared.js?v=1.44"></script>
-<script src="js/stats.js?v=1.44"></script>
-<script src="js/app.js?v=1.44"></script>
-<script src="js/pwa-enhance.js?v=1.44"></script>
+<script src="js/config.js?v=1.45"></script>
+<script src="js/utils.js?v=1.45"></script>
+<script src="js/storage.js?v=1.45"></script>
+<script src="js/barcode.js?v=1.45"></script>
+<script src="js/shared.js?v=1.45"></script>
+<script src="js/stats.js?v=1.45"></script>
+<script src="js/app.js?v=1.45"></script>
+<script src="js/pwa-enhance.js?v=1.45"></script>
 <script>
 document.getElementById("topVersion").textContent = "v" + VERSION;
 function formatLastScannedDate(value) {
