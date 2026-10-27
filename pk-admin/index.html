@@ -8,11 +8,11 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.54">
+<link rel="stylesheet" href="admin.css?v=1.55">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopVersion">v1.54</div>
+<div class="adminTopVersion">v1.55</div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -56,7 +56,7 @@
 <p id="verifyFeedback" role="status" aria-live="polite" class="verifyFeedback"></p>
 </div>
 <div id="setNewPassword" hidden>
-<input id="newAdminPassword" type="password" autocomplete="new-password" minlength="6" placeholder="סיסמה חדשה (6 תווים לפחות)">
+<div class="passwordRow"><input id="newAdminPassword" type="password" autocomplete="new-password" minlength="6" placeholder="סיסמה חדשה (6 תווים לפחות)"><button id="toggleRecoveryPassword" type="button" class="smallBtn passwordEye">הצג</button></div>
 <button id="saveNewPassword" type="button">שמור סיסמה חדשה</button>
 </div>
 <button class="secondaryLink" id="resetCancelBtn" type="button">חזרה לכניסה</button>
@@ -126,14 +126,14 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.54"></script>
-<script src="../js/utils.js?v=1.54"></script>
-<script src="admin.js?v=1.54"></script>
-<script src="admin-recovery-v7.js?v=1.54"></script>
-<script src="admin-login-ui.js?v=1.54"></script>
+<script src="../js/config.js?v=1.55"></script>
+<script src="../js/utils.js?v=1.55"></script>
+<script src="admin.js?v=1.55"></script>
+<script src="admin-recovery-v7.js?v=1.55"></script>
+<script src="admin-login-ui.js?v=1.55"></script>
 <script>
 (function(){
-  const current = '1.54';
+  const current = '1.55';
   let checking = false;
   async function checkForUpdate(){
     if (checking || document.hidden) return;
