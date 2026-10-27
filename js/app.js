@@ -609,7 +609,23 @@ async function requestDepartmentManager(){
    if(!res.ok)throw new Error('השליחה נכשלה.');
    if(state==='device_not_registered')throw new Error('יש לבצע סריקה אחת במחלקה לפני שליחת הבקשה.');
    if(state!=='pending')throw new Error('פרטי הבקשה אינם תקינים.');
-   localStorage.setItem(secretKey,secret);feedback.textContent='הבקשה נשלחה וממתינה לאישור. חזור למסך זה כדי לראות את ההחלטה.';
+   localStorage.setItem(secretKey,secret);localStorage.removeItem('pakapaka_manager_request_notified_v1');feedback.textContent='הבקשה נשלחה וממתינה לאישור. חזור למסך זה כדי לראות את ההחלטה.';
   }catch(e){feedback.textContent=e.message||'שגיאה בשליחת הבקשה';}finally{submit.disabled=false;}
  });
 }
+
+async function checkDepartmentManagerDecision(){
+ const secret=localStorage.getItem('pakapaka_manager_request_secret_v1');
+ if(!secret||typeof getDeviceId!=='function')return;
+ try{
+  const response=await fetch(SUPABASE_URL+'/rest/v1/rpc/pakapaka_manager_request_status',{method:'POST',headers:headers(),body:JSON.stringify({p_device_id:getDeviceId(),p_secret:secret}),cache:'no-store'});
+  if(!response.ok)return;
+  const state=await response.json();
+  if(state!=='approved'&&state!=='rejected')return;
+  if(localStorage.getItem('pakapaka_manager_request_notified_v1')===state)return;
+  localStorage.setItem('pakapaka_manager_request_notified_v1',state);
+  showAppDialog({title:'בקשת מנהל מחלקה',text:state==='approved'?'הבקשה אושרה. נתוני מנהל המחלקה זמינים בהגדרות.':'הבקשה נדחתה. ניתן להגיש בקשה חדשה.',actions:[{label:'סגור'}]});
+ }catch{}
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkDepartmentManagerDecision();});
+window.addEventListener('load',()=>setTimeout(checkDepartmentManagerDecision,1200));
