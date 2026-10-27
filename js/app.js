@@ -197,6 +197,7 @@ function showVersionSettings() {
     actions: [
       { label: 'בדיקת עדכונים', onClick: () => checkForAppUpdate(true) },
       { label: 'שינוי מחלקה', kind: 'secondary', onClick: changeDepartment },
+      { label: 'ניהול מחלקה', kind: 'secondary', onClick: openDepartmentManager },
       { label: 'סגור', kind: 'secondary small' }
     ]
   });
@@ -553,3 +554,31 @@ function initApp() {
 }
 
 initApp();
+
+async function openDepartmentManager(){
+  const deviceId=typeof getDeviceId==='function'?getDeviceId():'';
+  const stored=localStorage.getItem('pakapaka_manager_code_v1')||'';
+  ensureAppDialogStyles();
+  closeAppDialog();
+  const overlay=document.createElement('div');
+  overlay.id='appDialogBackdrop';overlay.className='appDialogBackdrop';
+  overlay.innerHTML='<div class="appDialog"><div class="appDialogTitle">ניהול מחלקה</div><p class="appDialogText">קוד הרשאה אישי ניתן על ידי מנהל המערכת. הרשאה זו מציגה סיכומי פעילות של המחלקה בלבד.</p><input id="managerAccessInput" class="appDialogInput" type="password" autocomplete="off" placeholder="קוד הרשאה"><button id="managerAccessToggle" class="appDialogBtn secondary small" type="button">הצג קוד</button><div id="managerAccessFeedback" class="appDialogText"></div><div class="appDialogActions"><button id="managerAccessVerify" class="appDialogBtn" type="button">הצג נתוני מחלקה</button><button id="managerAccessClose" class="appDialogBtn secondary" type="button">סגור</button></div></div>';
+  document.body.appendChild(overlay);
+  const input=document.getElementById('managerAccessInput'),status=document.getElementById('managerAccessFeedback');
+  input.value=stored;
+  document.getElementById('managerAccessClose').addEventListener('click',closeAppDialog);
+  document.getElementById('managerAccessToggle').addEventListener('click',()=>{input.type=input.type==='password'?'text':'password';});
+  document.getElementById('managerAccessVerify').addEventListener('click',async()=>{
+    const code=input.value.trim();
+    if(!deviceId||!code){status.textContent='יש להזין קוד הרשאה שקיבלת ממנהל המערכת.';return;}
+    status.textContent='בודק הרשאה...';
+    try{
+      const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/pakapaka_manager_stats',{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_device_id:deviceId,p_code:code})});
+      if(!r.ok)throw new Error('אין אפשרות לטעון נתונים כרגע.');
+      const data=await r.json();
+      if(!data){localStorage.removeItem('pakapaka_manager_code_v1');throw new Error('הקוד אינו תקין עבור מכשיר זה.');}
+      localStorage.setItem('pakapaka_manager_code_v1',code);
+      status.textContent='מחלקה '+data.department+' · משתמשים: '+data.users+' · פעילים בשבוע האחרון: '+data.active_users+' · סריקות: '+data.scans;
+    }catch(e){status.textContent=e.message||'שגיאה באימות הרשאה';}
+  });
+}
