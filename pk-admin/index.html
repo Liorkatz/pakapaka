@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#050505">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.48">
+<link rel="stylesheet" href="admin.css?v=1.49">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopVersion">v1.48</div>
+<div class="adminTopVersion">v1.49</div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -43,13 +43,13 @@
   <section id="resetScreen" class="screen">
 <div class="loginCard">
 <h1>שחזור סיסמה</h1>
-<p>קישור אימות יישלח לכתובת המנהל שהוגדרה</p>
+<p>אימות זהות באמצעות קוד או קישור שנשלח למייל המנהל</p>
 <button id="sendResetBtn" type="button">שלח קישור למייל</button>
 <p id="resetMessage" role="status"></p>
 <div id="recoveryFallback">
-<p class="recoveryHint">אם הקישור במייל פתח דף localhost שלא עובד, העתק את הכתובת המלאה משורת הכתובת בספארי והדבק כאן. היא משמשת רק בדפדפן שלך.</p>
-<textarea id="recoveryLink" rows="3" dir="ltr" placeholder="הדבק כאן כתובת localhost עם קוד אימות" autocomplete="off" spellcheck="false"></textarea>
-<button type="button" id="useRecoveryLink" class="secondaryLink">המשך עם הקישור שהעתקתי</button>
+<p class="recoveryHint">אפשר להדביק כאן קוד אימות בן 6 ספרות מהמייל, או את כתובת הקישור המלאה אם נפתחה שגיאת localhost.</p>
+<textarea id="recoveryLink" rows="3" dir="ltr" placeholder="קוד אימות או קישור מלא מהמייל" autocomplete="off" spellcheck="false"></textarea>
+<button type="button" id="useRecoveryLink" class="secondaryLink">אמת קוד והמשך</button>
 </div>
 <div id="setNewPassword" hidden>
 <input id="newAdminPassword" type="password" autocomplete="new-password" minlength="12" placeholder="סיסמה חדשה (12 תווים לפחות)">
@@ -106,10 +106,10 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.48"></script>
-<script src="../js/utils.js?v=1.48"></script>
-<script src="admin.js?v=1.48"></script>
-<script src="admin-recovery-v6.js?v=1.48"></script>
-<script src="admin-login-ui.js?v=1.48"></script>
+<script src="../js/config.js?v=1.49"></script>
+<script src="../js/utils.js?v=1.49"></script>
+<script src="admin.js?v=1.49"></script>
+<script src="admin-recovery-v7.js?v=1.49"></script>
+<script src="admin-login-ui.js?v=1.49"></script>
 </body>
 </html>
