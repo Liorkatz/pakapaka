@@ -8,11 +8,11 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.55">
+<link rel="stylesheet" href="admin.css?v=1.56">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopVersion">v1.55</div>
+<div class="adminTopVersion">v1.56</div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -79,8 +79,8 @@
       <p id="dashboardPasswordStatus" role="status"></p>
       <button id="saveDashboardPassword" type="button">שמור סיסמה חדשה</button>
     </section>
-    <section class="panelBlock">
-      <div class="blockTitle">הגדרת מנהל מחלקה</div>
+    <section class="panelBlock"><div class="blockTitle">בקשות לניהול מחלקה</div><button id="refreshManagerRequests" type="button">רענן בקשות</button><div id="managerRequestList">טוען בקשות...</div></section>
+    <section class="panelBlock"><div class="blockTitle">הגדרת מנהל מחלקה</div>
       <p>בחר מכשיר והפק קוד הרשאה אישי. המשתמש יזין אותו בהגדרות האפליקציה ויראה נתוני מחלקה מורחבים בלבד.</p>
       <select id="managerDeviceSelect" class="managerSelect"><option value="">בחר משתמש לפי מכשיר ומחלקה</option></select>
       <button id="assignManagerBtn" type="button">הגדר מנהל למשתמש</button>
@@ -126,14 +126,14 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.55"></script>
-<script src="../js/utils.js?v=1.55"></script>
-<script src="admin.js?v=1.55"></script>
-<script src="admin-recovery-v7.js?v=1.55"></script>
-<script src="admin-login-ui.js?v=1.55"></script>
+<script src="../js/config.js?v=1.56"></script>
+<script src="../js/utils.js?v=1.56"></script>
+<script src="admin.js?v=1.56"></script>
+<script src="admin-recovery-v7.js?v=1.56"></script>
+<script src="admin-login-ui.js?v=1.56"></script>
 <script>
 (function(){
-  const current = '1.55';
+  const current = '1.56';
   let checking = false;
   async function checkForUpdate(){
     if (checking || document.hidden) return;
