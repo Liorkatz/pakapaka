@@ -34,7 +34,9 @@ async function checkDeveloperReplies(){
   if(!newest||newest<=Number(localStorage.getItem(seenKey)||0)||document.getElementById('developerReplyAlert'))return;
   const alert=document.createElement('button');
   alert.id='developerReplyAlert';alert.type='button';alert.className='developerReplyAlert';
-  alert.textContent='✉️ התקבלה תשובה חדשה מהמפתח — פתח שיחה';
+  alert.textContent='✉️';
+  alert.setAttribute('aria-label','תשובה חדשה מהמפתח — פתח שיחה');
+  alert.title='תשובה חדשה מהמפתח';
   alert.onclick=()=>{alert.remove();openContact();};
   document.body.appendChild(alert);
  }catch{}finally{notificationBusy=false;}
