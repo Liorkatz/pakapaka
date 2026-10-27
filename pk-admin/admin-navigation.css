@@ -1,0 +1,6 @@
+/* Every navigation destination is visible without horizontal scrolling. */
+#dashboardScreen .adminNav{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px!important;overflow:visible!important;margin:0 0 16px!important;padding:2px 0 4px!important;direction:rtl}
+#dashboardScreen .adminNav button{width:100%!important;min-width:0!important;white-space:normal!important;display:flex;align-items:center;justify-content:center;gap:7px;min-height:52px!important;padding:10px 8px!important;font-size:clamp(13px,3.6vw,15px)!important;line-height:1.25;text-align:center}
+#dashboardScreen .adminNav button:last-child:nth-child(odd){grid-column:1/-1}
+#dashboardScreen .adminNav .adminInboxBadge{flex-shrink:0}
+@media(min-width:650px){#dashboardScreen .adminNav{grid-template-columns:repeat(5,minmax(0,1fr))}#dashboardScreen .adminNav button:last-child:nth-child(odd){grid-column:auto}}
