@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.57">
+<link rel="stylesheet" href="css/main.css?v=1.58">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -85,6 +85,12 @@
 .itemTop .lastScannedText{justify-self:start!important;max-width:34vw!important}
 .item>.barcodeGroup{margin-top:8px!important;margin-inline-start:0!important;justify-content:flex-start!important;max-width:100%!important}
 .itemMeta>.barcodeGroup{margin:0!important;justify-content:flex-start!important}
+/* 1.58: don't truncate item names; keep corrections beside barcode on lower row */
+.itemTop .itemName{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;line-height:1.25!important}
+.itemTop{align-items:start!important}
+.itemTop .lastScannedText{align-self:start!important;min-width:0!important}
+.itemMeta>.barcodeGroup,.item>.barcodeGroup{display:flex!important;direction:rtl!important;align-items:center!important;gap:7px!important;max-width:100%!important;flex-wrap:wrap!important}
+.itemMeta>.barcodeGroup .scanCorrectionTag,.item>.barcodeGroup .scanCorrectionTag{margin:0!important;flex-shrink:0!important}
 </style>
 </head>
 <body>
@@ -128,16 +134,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.57"></script>
-<script src="js/utils.js?v=1.57"></script>
-<script src="js/storage.js?v=1.57"></script>
-<script src="js/barcode.js?v=1.57"></script>
-<script src="js/shared.js?v=1.57"></script>
-<script src="js/stats.js?v=1.57"></script>
-<script src="js/app.js?v=1.57"></script>
-<script src="js/pwa-enhance.js?v=1.57"></script>
-<script src="js/manager-summary.js?v=1.57"></script>
-<script src="js/developer-contact.js?v=1.57"></script>
+<script src="js/config.js?v=1.58"></script>
+<script src="js/utils.js?v=1.58"></script>
+<script src="js/storage.js?v=1.58"></script>
+<script src="js/barcode.js?v=1.58"></script>
+<script src="js/shared.js?v=1.58"></script>
+<script src="js/stats.js?v=1.58"></script>
+<script src="js/app.js?v=1.58"></script>
+<script src="js/pwa-enhance.js?v=1.58"></script>
+<script src="js/manager-summary.js?v=1.58"></script>
+<script src="js/developer-contact.js?v=1.58"></script>
 <script>
 
 function formatLastScannedDate(value) {
