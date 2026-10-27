@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.61">
+<link rel="stylesheet" href="css/main.css?v=1.62">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -119,6 +119,17 @@
 .itemMeta .scanCorrectionTag{background:#292929!important;border:1px solid #555!important;border-radius:10px!important;color:#ddd!important;padding:5px 8px!important;font-size:12px!important;white-space:nowrap!important}
 .itemMeta>.scanHistoryBtn{margin-inline-start:auto!important;flex-shrink:0!important}
 @media(max-width:390px){.itemTop>.lastScannedText{font-size:11px!important;gap:3px!important}.lastScanClock{width:13px;height:13px}.itemMeta>.barcodeGroup{gap:5px!important}.itemMeta .scanCorrectionTag{font-size:10px!important;padding:4px!important}}
+/* v1.62 unified card layout */
+.itemTop{display:grid!important;grid-template-columns:28px minmax(0,1fr) auto!important;gap:8px!important;align-items:center!important;direction:rtl!important}
+.itemTop>.star{grid-column:1!important;grid-row:1!important}
+.itemTop>.itemName{grid-column:2!important;grid-row:1!important;min-width:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;line-height:1.25!important}
+.itemTop>.lastScannedText{grid-column:3!important;grid-row:1!important;display:inline-flex!important;align-items:center!important;gap:4px!important;max-width:130px!important;margin:0!important;white-space:nowrap!important;text-align:left!important;font-size:12px!important;justify-self:end!important}
+.itemMeta{display:flex!important;flex-direction:row!important;direction:rtl!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
+.itemMeta>.barcodeGroup{display:flex!important;align-items:center!important;direction:rtl!important;gap:8px!important;max-width:75%!important;min-width:0!important;margin:0!important}
+.itemMeta .barcodeGroup .num{text-align:right!important;direction:ltr!important;min-width:0!important}
+.itemMeta>.scanHistoryBtn{margin:0!important;margin-right:auto!important;flex:0 0 auto!important}
+.itemMeta .scanCorrectionTag{position:static!important;display:inline-block!important;background:#292929!important;border:1px solid #555!important;color:#ddd!important;font-size:12px!important;border-radius:10px!important;padding:5px 8px!important;margin:0!important;white-space:nowrap!important}
+.itemTop .scanCorrectionTag{display:none!important}
 </style>
 </head>
 <body>
@@ -162,16 +173,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.61"></script>
-<script src="js/utils.js?v=1.61"></script>
-<script src="js/storage.js?v=1.61"></script>
-<script src="js/barcode.js?v=1.61"></script>
-<script src="js/shared.js?v=1.61"></script>
-<script src="js/stats.js?v=1.61"></script>
-<script src="js/app.js?v=1.61"></script>
-<script src="js/pwa-enhance.js?v=1.61"></script>
-<script src="js/manager-summary.js?v=1.61"></script>
-<script src="js/developer-contact.js?v=1.61"></script>
+<script src="js/config.js?v=1.62"></script>
+<script src="js/utils.js?v=1.62"></script>
+<script src="js/storage.js?v=1.62"></script>
+<script src="js/barcode.js?v=1.62"></script>
+<script src="js/shared.js?v=1.62"></script>
+<script src="js/stats.js?v=1.62"></script>
+<script src="js/app.js?v=1.62"></script>
+<script src="js/pwa-enhance.js?v=1.62"></script>
+<script src="js/manager-summary.js?v=1.62"></script>
+<script src="js/developer-contact.js?v=1.62"></script>
 <script>
 
 function formatLastScannedDate(value) {
@@ -193,25 +204,7 @@ function isToday(value) {
   return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
 }
 
-const originalRenderItem = renderItem;
-renderItem = function(x) {
-  let html = originalRenderItem(x).replace('נפתחה ', 'נסרק ');
-  const correctionMatch = String(x.name || '').match(/תיקון (?:סריקה|הדפסה|פקע)/);
-  const correction = correctionMatch ? escapeHtml(correctionMatch[0]) : '';
-  const cleanName = escapeHtml(String(x.name || '').replace(/תיקון (?:סריקה|הדפסה|פקע)/g, '').trim());
-  const scanTime = Number(x.lastScannedAt || 0);
-  const visibleScan = scanTime > 0 && Date.now() - scanTime < 48 * 60 * 60 * 1000;
-  const todayClass = visibleScan && isToday(scanTime) ? ' today' : '';
-  const scanText = visibleScan ? `<span class="lastScannedText${todayClass}" title="נסרק לאחרונה" aria-label="נסרק לאחרונה ${formatLastScannedDate(scanTime)}"><svg viewBox="0 0 24 24" aria-hidden="true" class="lastScanClock"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg><span>${formatLastScannedDate(scanTime)}</span></span>` : '';
-  html = html.replace(/<div class="itemDate">[\s\S]*?<\/div>/, '');
-  html = html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${cleanName}</div>`);
-  if (!html.includes('class="itemMeta"')) {
-    html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="itemMeta"><div class="num">${escapeHtml(x.code)}</div></div>`);
-  }
-  if (correction) html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div><span class="scanCorrectionTag">${correction}</span></div>`);
-  if (scanText) html = html.replace('<div class="itemName">'+cleanName+'</div>', '<div class="itemName">'+cleanName+'</div>'+scanText);
-  return html;
-};
+
 
 async function shareApp() {
   const url = `${window.location.origin}${window.location.pathname}`;
