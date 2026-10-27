@@ -381,14 +381,14 @@ function renderSection(title, items) {
 }
 
 function renderItem(x) {
-  const localMeta = activeTab === 'local' ? `<div class="itemMeta"><div class="openCount">נפתחה ${Number(x.openCount || 0)} פעמים</div><div class="num">${escapeHtml(x.code)}</div></div>` : `<div class="num">${escapeHtml(x.code)}</div>`;
+  const localMeta = activeTab === 'local' ? `<div class="itemMeta"><button type="button" class="openCount scanHistoryBtn" data-action="scan-history" data-id="${escapeAttr(x.id)}">נפתחה ${Number(x.openCount || 0)} פעמים</button><div class="num">${escapeHtml(x.code)}</div></div>` : `<div class="num">${escapeHtml(x.code)}</div>`;
   return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}"><div class="itemTop"><button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemName">${escapeHtml(x.name)}</div><div class="itemDate">${formatDate(x.createdAt)}</div></div>${localMeta}</div></div>`;
 }
 
 function bindActions() {
   document.querySelectorAll('.item').forEach(el => {
     el.addEventListener('click', e => {
-      if (e.target.dataset.action === 'star') return;
+      if (e.target.closest('[data-action="star"], [data-action="scan-history"]')) return;
       if (Date.now() < suppressItemClickUntil) {
         e.preventDefault();
         e.stopPropagation();
@@ -401,6 +401,17 @@ function bindActions() {
     el.addEventListener('touchend', onTouchEnd, { passive: true });
   });
   document.querySelectorAll('[data-action="star"]').forEach(el => el.addEventListener('click', e => toggleFavorite(e, el.dataset.id)));
+  document.querySelectorAll('[data-action="scan-history"]').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); showItemScanHistory(el.dataset.id); }));
+}
+
+function showItemScanHistory(id) {
+  const item=getLocalItems().find(x=>String(x.id)===String(id));
+  if(!item)return;
+  const history=[...(item.scanHistory||[])].sort((a,b)=>b-a);
+  const previous=Math.max(0,Number(item.openCount||0)-history.length);
+  const rows=history.map((time,index)=>'<div class="scanHistoryRow"><span>סריקה '+(history.length-index)+'</span><strong>'+new Date(time).toLocaleString('he-IL',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})+'</strong></div>').join('');
+  const fallback=previous?'<p class="scanHistoryNote">'+previous+' סריקות ישנות נספרו לפני הפעלת שמירת התאריכים ולכן אין עבורן תאריכים מדויקים.</p>':'';
+  showAppDialog({title:'היסטוריית סריקות',text:'<strong>'+escapeHtml(item.name)+'</strong><div class="scanHistoryList">'+(rows||'<p>עדיין אין תאריכי סריקות שנשמרו.</p>')+'</div>'+fallback,actions:[{label:'סגור'}]});
 }
 
 function handleItemClick(id) {
