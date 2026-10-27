@@ -173,6 +173,7 @@ async function showDashboard() {
 
     renderTopDepartment(realDepartments[0] || null);
     renderDepartmentRows(departments);
+    fillManagerDevices(devices);
   } catch (e) {
     setupError.textContent = e.message || 'שגיאה בטעינת נתונים';
     setupError.classList.add('show');
@@ -241,6 +242,41 @@ async function logout() {
 }
 
 
+
+function fillManagerDevices(devices){
+  const select=document.getElementById('managerDeviceSelect');
+  select.replaceChildren(new Option('בחר משתמש לפי מכשיר ומחלקה',''));
+  for(const d of devices){
+    const label='מחלקה '+(d.department||'ללא מחלקה')+' · '+String(d.device_id||'').slice(0,12)+' · '+Number(d.total_scans||0)+' סריקות';
+    select.add(new Option(label,String(d.device_id||'')));
+  }
+}
+function initManagerAssignment(){
+  document.getElementById('assignManagerBtn').addEventListener('click',async()=>{
+    const device=document.getElementById('managerDeviceSelect').value;
+    const status=document.getElementById('managerIssueStatus');
+    const button=document.getElementById('assignManagerBtn');
+    if(!device){status.textContent='בחר מכשיר מהרשימה.';return;}
+    button.disabled=true;status.textContent='מגדיר הרשאה...';
+    document.getElementById('managerIssuedCode').hidden=true;
+    try{
+      const r=await fetch(adminRpcUrl('pakapaka_admin_assign_manager'),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_token:getAdminToken(),p_device_id:device})});
+      if(!r.ok)throw new Error('יצירת ההרשאה נכשלה.');
+      const code=await r.json();
+      if(!code)throw new Error('לא התקבל קוד הרשאה.');
+      document.getElementById('managerCodeValue').value=code;
+      document.getElementById('managerIssuedCode').hidden=false;
+      status.textContent='המנהל הוגדר. הקוד יוצג פעם אחת; יש להעביר אותו למשתמש המתאים בלבד.';
+    }catch(e){status.textContent=e.message;}
+    finally{button.disabled=false;}
+  });
+  document.getElementById('copyManagerCode').addEventListener('click',async()=>{
+    const value=document.getElementById('managerCodeValue').value;
+    try{await navigator.clipboard.writeText(value);document.getElementById('managerIssueStatus').textContent='הקוד הועתק.';}
+    catch{document.getElementById('managerCodeValue').select();document.getElementById('managerIssueStatus').textContent='סמן את הקוד והעתק אותו.';}
+  });
+}
+
 function initPasswordManagement(){
   const panel=document.getElementById('adminChangePasswordPanel');
   document.getElementById('changeAdminPasswordBtn').addEventListener('click',()=>{panel.hidden=!panel.hidden;});
@@ -280,6 +316,7 @@ function initAdmin() {
   });
   initPullToFullRefresh();
   initPasswordManagement();
+  initManagerAssignment();
 
   if (getAdminToken()) showDashboard();
 }
