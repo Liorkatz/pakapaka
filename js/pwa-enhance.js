@@ -116,6 +116,7 @@ function patchDepartmentUpTo5Digits() {
         err.textContent = 'מספר מחלקה חייב להיות עד 5 ספרות.';
         return;
       }
+      if (getDepartment() !== finalValue) { localStorage.removeItem('pakapaka_manager_request_secret_v1'); localStorage.removeItem('pakapaka_manager_code_v1'); localStorage.removeItem('pakapaka_manager_request_notified_v1'); localStorage.removeItem('pakapaka_manager_name_v1'); }
       localStorage.setItem(DEPARTMENT_KEY, finalValue);
       sharedItems = [];
       sharedLoaded = false;
