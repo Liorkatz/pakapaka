@@ -3,14 +3,6 @@
   const notice = text => { el('resetMessage').textContent = text; const inline = el('verifyFeedback'); if (inline) inline.textContent = text; };
   const email = 'Liorkatz@gmail.com';
   let recoveryToken = null;
-  let secondarySetup = sessionStorage.getItem('pakapaka_secondary_setup') === '1';
-  const setupBtn = document.getElementById('setupSecondaryPasswordBtn');
-  const resetHeading = document.querySelector('#resetScreen h1');
-  const setSecondaryUi = () => { resetHeading.textContent = secondarySetup ? 'הגדרת סיסמת מנהל שנייה' : 'שחזור סיסמה'; };
-  setupBtn.addEventListener('click', () => { secondarySetup = true; sessionStorage.setItem('pakapaka_secondary_setup','1'); setSecondaryUi(); showScreen('resetScreen'); });
-  document.getElementById('forgotPasswordBtn').addEventListener('click', () => { secondarySetup = false; sessionStorage.removeItem('pakapaka_secondary_setup'); setSecondaryUi(); });
-  setSecondaryUi();
-
   function tokenFromLink(raw) {
     let value = String(raw || '').trim().replace(/&amp;/g, '&');
     if (/^localhost(?::\d+)?\//i.test(value)) value = 'http://' + value;
@@ -110,19 +102,16 @@
     if (password.length < 6 || password.length > 128) { notice('הסיסמה חייבת להכיל 6 עד 128 תווים.'); return; }
     const button = el('saveNewPassword'); button.disabled = true;
     try {
-      const response = await fetch(adminRpcUrl(secondarySetup ? 'pakapaka_admin_set_secondary_password' : 'pakapaka_admin_reset_password'),{
+      const response = await fetch(adminRpcUrl('pakapaka_admin_reset_password'),{
         method:'POST',headers:{...headers(),Authorization:'Bearer ' + recoveryToken},
         body:JSON.stringify({p_new_password:password}),cache:'no-store'
       });
       if (!response.ok) throw new Error('החלפת הסיסמה נכשלה. ייתכן שפג תוקף האימות.');
       recoveryToken = null;
       el('newAdminPassword').value = '';
-      sessionStorage.removeItem('pakapaka_secondary_setup');
-      secondarySetup = false;
-      setSecondaryUi();
       sessionStorage.removeItem(ADMIN_SESSION_KEY);
       showScreen('loginScreen');
-      el('loginError').textContent = 'הסיסמה נשמרה. ניתן להיכנס עם אחת משתי הסיסמאות.';
+      el('loginError').textContent = 'הסיסמה נשמרה. ניתן להיכנס עם הסיסמה החדשה.';
     } catch(error) { notice(error.message); }
     finally { button.disabled = false; }
   });
