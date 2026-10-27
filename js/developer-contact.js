@@ -1,0 +1,21 @@
+(function(){
+const key='pakapaka_contact_secret_v1',nameKey='pakapaka_contact_name_v1';
+const getSecret=()=>{let s=localStorage.getItem(key);if(!s){s=Array.from(crypto.getRandomValues(new Uint8Array(32)),x=>x.toString(16).padStart(2,'0')).join('');localStorage.setItem(key,s);}return s;};
+const rpc=async(name,body)=>{const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/'+name,{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify(body)});if(!r.ok)throw Error('השרת לא זמין כרגע');return r.json();};
+function openContact(){
+ closeAppDialog();ensureAppDialogStyles();
+ const oldName=localStorage.getItem(nameKey)||localStorage.getItem('pakapaka_manager_name_v1')||'';
+ const overlay=document.createElement('div');overlay.id='appDialogBackdrop';overlay.className='appDialogBackdrop';
+ overlay.innerHTML='<div class="appDialog contactDialog"><h2 class="appDialogTitle">הודעה למפתח</h2><p class="appDialogText">מחלקה '+escapeHtml(getDepartment()||'לא נבחרה')+'</p><label for="contactName">שם המשתמש</label><input class="appDialogInput" id="contactName" maxlength="80" autocomplete="name" placeholder="הכנס שם מלא"><button type="button" class="appDialogBtn secondary small" id="contactRename">שמור / שנה שם</button><label for="contactMessage">הודעה</label><textarea id="contactMessage" maxlength="1500" rows="3" placeholder="כתוב הודעה למפתח"></textarea><p id="contactStatus" class="appDialogText"></p><button type="button" id="contactSend" class="appDialogBtn">שלח הודעה</button><div class="contactThread" id="contactThread"></div><button type="button" id="contactClose" class="appDialogBtn secondary">סגור</button></div>';
+ document.body.appendChild(overlay);const field=document.getElementById('contactName'),status=document.getElementById('contactStatus');field.value=oldName;
+ const identity=()=>({p_device_id:getDeviceId(),p_secret:getSecret()});
+ const thread=async()=>{try{const rows=await rpc('pakapaka_contact_thread',identity());const box=document.getElementById('contactThread');box.replaceChildren();for(const m of rows.reverse()){const p=document.createElement('div');p.className='contactBubble';p.textContent=(m.sender==='admin'?'המפתח: ':'אני: ')+m.body;box.appendChild(p);}}catch{status.textContent='לא ניתן לטעון הודעות קודמות.';}};
+ document.getElementById('contactClose').onclick=closeAppDialog;
+ document.getElementById('contactRename').onclick=async()=>{const n=field.value.trim();if(n.length<2){status.textContent='יש להזין שם בן 2 תווים לפחות';return;}if(!localStorage.getItem(nameKey)){localStorage.setItem(nameKey,n);status.textContent='השם יישמר עם ההודעה הראשונה';return;}try{const ok=await rpc('pakapaka_contact_rename',{...identity(),p_name:n});if(!ok)throw Error();localStorage.setItem(nameKey,n);status.textContent='השם עודכן';}catch{status.textContent='שינוי השם נכשל';}};
+ document.getElementById('contactSend').onclick=async()=>{const n=field.value.trim(),msg=document.getElementById('contactMessage').value.trim(),dept=getDepartment();if(n.length<2||!dept||!msg){status.textContent='נדרשים שם, מחלקה והודעה';return;}const button=document.getElementById('contactSend');button.disabled=true;try{const ok=await rpc('pakapaka_contact_send',{...identity(),p_name:n,p_department:dept,p_message:msg});if(!ok)throw Error();localStorage.setItem(nameKey,n);document.getElementById('contactMessage').value='';status.textContent='ההודעה נשלחה';await thread();}catch{status.textContent='שליחת ההודעה נכשלה';}finally{button.disabled=false;}};
+ thread();
+}
+window.openDeveloperContact=openContact;
+const original=window.showDepartmentDialog;
+if(typeof original==='function')window.showDepartmentDialog=function(...args){const result=original.apply(this,args);const parent=document.getElementById('appDialogBackdrop')?.querySelector('.appDialog');if(parent&&!parent.querySelector('#contactDeveloperBtn')){const btn=document.createElement('button');btn.id='contactDeveloperBtn';btn.type='button';btn.className='appDialogBtn secondary';btn.textContent='שלח הודעה למפתח / צפה בתשובות';btn.style.marginTop='12px';btn.onclick=openContact;parent.appendChild(btn);}return result;};
+})();
