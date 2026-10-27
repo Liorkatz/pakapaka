@@ -45,7 +45,11 @@ async function login() {
   const btn = document.getElementById('loginBtn');
   err.textContent = '';
 
-  const typed = String(input.value || '');
+  const secondInput = document.getElementById('adminSecondaryPassword');
+  const secondPassword = String(secondInput?.value || '');
+  const primaryPassword = String(input.value || '');
+  if (primaryPassword && secondPassword) { err.textContent = 'הזן סיסמה אחת בלבד.'; return; }
+  const typed = secondPassword || primaryPassword;
   if (!typed) {
     err.textContent = 'הזן סיסמה.';
     return;
@@ -53,7 +57,7 @@ async function login() {
 
   btn.disabled = true;
   try {
-    const r = await fetch(adminRpcUrl('pakapaka_admin_login'), {
+    const r = await fetch(adminRpcUrl(secondPassword ? 'pakapaka_admin_login_secondary' : 'pakapaka_admin_login'), {
       method: 'POST',
       headers: headers(),
       cache: 'no-store',
@@ -67,6 +71,7 @@ async function login() {
     }
     sessionStorage.setItem(ADMIN_SESSION_KEY, String(token));
     input.value = '';
+    if (secondInput) secondInput.value = '';
     await showDashboard();
   } catch (e) {
     err.textContent = e.message || 'שגיאה בכניסה.';
