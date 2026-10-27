@@ -32,7 +32,8 @@
        method: 'POST', headers: {'apikey': SUPABASE_KEY, 'Content-Type': 'application/json'},
        body: JSON.stringify({email, create_user: false}), cache: 'no-store'
      });
-     if (!response.ok) throw new Error('שליחת האימות נכשלה. נסה שוב.');
+     if (response.status === 429) throw new Error('נחסמה זמנית שליחת מיילים בגלל יותר מדי בקשות. אין צורך ללחוץ שוב כרגע.');
+     if (!response.ok) throw new Error('שליחת האימות נכשלה. בדוק את הגדרות שירות המייל.');
      message('נשלח קישור למייל. אם נפתח localhost, העתק את הכתובת והדבק בשדה למטה.');
    } catch(error) { message(error.message); }
    finally { button.disabled = false; }
