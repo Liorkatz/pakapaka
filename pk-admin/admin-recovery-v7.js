@@ -1,6 +1,6 @@
 (() => {
   const el = id => document.getElementById(id);
-  const notice = text => { el('resetMessage').textContent = text; };
+  const notice = text => { el('resetMessage').textContent = text; const inline = el('verifyFeedback'); if (inline) inline.textContent = text; };
   const email = 'Liorkatz@gmail.com';
   let recoveryToken = null;
   let secondarySetup = sessionStorage.getItem('pakapaka_secondary_setup') === '1';
@@ -51,8 +51,6 @@
       notice('תוקף קישור האימות פג. יש לבקש קישור חדש.'); return;
     }
     notice('מאמת את הקישור מול השרת...');
-    const button = el('useRecoveryLink');
-    button.disabled = true;
     try {
       const result = await fetch(SUPABASE_URL + '/auth/v1/user', {
         headers: { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + data.token },
@@ -70,14 +68,20 @@
       el('setNewPassword').hidden = false;
       notice('האימות הצליח. כעת בחר סיסמה חדשה.');
     } catch(error) { notice(error.message || 'לא ניתן לאמת את הקישור.'); }
-    finally { button.disabled = false; }
   }
 
   el('forgotPasswordBtn').addEventListener('click', () => showScreen('resetScreen'));
   el('resetCancelBtn').addEventListener('click', () => showScreen('loginScreen'));
   el('useRecoveryLink').addEventListener('click', async () => {
+    const button = el('useRecoveryLink');
+    if (button.disabled) return;
+    const originalLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = 'בודק קוד...';
+    notice('הבקשה נקלטה. מאמת מול השרת...');
     try { await acceptLink(el('recoveryLink').value); }
     catch { notice('אירעה תקלה באימות הקישור. בדוק חיבור לאינטרנט ונסה שוב.'); }
+    finally { button.disabled = false; button.textContent = originalLabel; }
   });
 
   el('sendResetBtn').addEventListener('click', async () => {
