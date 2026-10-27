@@ -92,3 +92,7 @@ html{-webkit-text-size-adjust:100%;overflow-x:hidden}body{overflow-x:hidden}
 /* Secondary credential field */
 .secondaryPasswordLabel{margin-top:18px}
 .passwordHint{font-size:13px;color:#a3a3a3;line-height:1.45;margin:10px 2px 0}
+
+/* Recovery verification response v1.51 */
+#useRecoveryLink.recoveryVerifyBtn{display:block;width:100%;margin-top:14px;background:#fff;color:#111;text-decoration:none;font-size:17px;font-weight:800;border-radius:15px;min-height:54px;touch-action:manipulation}
+.verifyFeedback{min-height:26px;color:#e6e6e6;font-size:15px;line-height:1.45;overflow-wrap:anywhere;margin:12px 0}
