@@ -19,11 +19,12 @@ async function loadInbox(){
   if(!rows.length){box.textContent='אין הודעות';return;}
   for(const x of rows){
    const item=document.createElement('div');item.className='deptRow';
-   const title=document.createElement('strong');title.textContent=x.display_name+' · מחלקה '+x.department;item.appendChild(title);
+   const header=document.createElement('div');header.className='inboxMessageHeader';
+   const title=document.createElement('strong');title.textContent=x.display_name+' · מחלקה '+x.department;header.appendChild(title);
    const preview=document.createElement('p');preview.textContent=x.last_message;item.appendChild(preview);
    const actions=document.createElement('div');actions.className='adminActions';
    const reply=document.createElement('button');reply.className='smallBtn';reply.textContent='פתח שיחה והשב';reply.onclick=()=>openThread(x,item);
-   actions.append(reply);item.appendChild(actions);box.appendChild(item);
+   actions.append(reply);header.appendChild(actions);item.prepend(header);box.appendChild(item);
   }
  }catch(error){box.textContent='לא ניתן לטעון הודעות: '+(error.message||'שגיאה');}
 }
