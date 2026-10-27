@@ -1,0 +1,57 @@
+/* Complete palette correction for admin light/dark, including iOS system theme. */
+:root{color-scheme:light}
+html,body{background:var(--bg)!important;color:var(--ink);min-height:100%;min-height:100dvh}
+#loginScreen,#resetScreen,#dashboardScreen,.adminShell{background:transparent;color:var(--ink)}
+.adminTopTools{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.adminTopVersion{position:static!important;color:var(--muted)!important}
+.themeToggle{width:43px!important;height:43px!important;min-width:43px;padding:0!important;border-radius:14px!important;background:var(--card)!important;color:var(--ink)!important;border:1px solid var(--line)!important;display:grid;place-items:center;font-size:23px!important;box-shadow:0 2px 10px #14223810}
+.themeToggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#loginScreen .newLogin,#resetScreen .loginCard{background:var(--card)!important;color:var(--ink)}
+.loginCard,.newLogin,.panelBlock,.topDepartmentCard,.statCard,.adminHeader{color:var(--ink)}
+#loginScreen .newLoginForm label,#resetScreen h1,.panelBlock .blockTitle{color:var(--ink)}
+.passwordHint,.recoveryHint,.verifyFeedback,#resetMessage,#managerIssueStatus,#dashboardPasswordStatus{color:var(--muted)}
+.newLoginForm .passwordRow input,#resetScreen input,#recoveryLink,input,textarea,select{background:var(--input-bg,#f7faff)!important;color:var(--ink)!important;border-color:var(--line)!important}
+input::placeholder,textarea::placeholder{color:var(--muted)!important}
+#loginScreen .newLoginForm .showPassword,.passwordEye{background:var(--accent-soft)!important;color:var(--accent)!important}
+#resetScreen #useRecoveryLink.recoveryVerifyBtn,#resetScreen #sendResetBtn,#resetScreen #saveNewPassword{background:var(--accent)!important;color:#fff!important}
+#resetScreen #resetCancelBtn{background:transparent!important;color:var(--accent)!important}
+#dashboardScreen .panelBlock button,#dashboardScreen .smallBtn{color:var(--accent)}
+#dashboardScreen .panelBlock .deptRow{background:transparent}
+#dashboardScreen .panelBlock .adminContactThread{background:var(--subtle-bg,#f4f7fb)}
+#dashboardScreen .panelBlock .adminContactThread p{background:var(--card);color:var(--ink);border-color:var(--line)}
+#dashboardScreen .panelBlock .deptRow strong,#dashboardScreen .panelBlock .deptRow p{color:var(--ink)}
+#dashboardScreen .topDepartmentStats div{border-radius:12px}
+#dashboardScreen #adminChangePasswordPanel[hidden]{display:none!important}
+@media(prefers-color-scheme:dark){html:not([data-admin-theme="light"]){--bg:#0b1220;--ink:#f0f5ff;--muted:#a8b5c9;--card:#172235;--line:#314158;--accent:#85b4ff;--accent-soft:#253b59;--input-bg:#121c2e;--subtle-bg:#111c2e;color-scheme:dark}}
+html[data-admin-theme="dark"]{--bg:#0b1220;--ink:#f0f5ff;--muted:#a8b5c9;--card:#172235;--line:#314158;--accent:#85b4ff;--accent-soft:#253b59;--input-bg:#121c2e;--subtle-bg:#111c2e;color-scheme:dark}
+html[data-admin-theme="light"]{--bg:#f4f7fb;--ink:#142238;--muted:#67758a;--card:#fff;--line:#e3e9f2;--accent:#2563eb;--accent-soft:#eaf2ff;--input-bg:#f7faff;--subtle-bg:#f4f7fb;color-scheme:light}
+@media(prefers-color-scheme:dark){
+html:not([data-admin-theme="light"]) .adminHeader,html:not([data-admin-theme="light"]) .statCard,html:not([data-admin-theme="light"]) .panelBlock,html:not([data-admin-theme="light"]) .topDepartmentCard{background:var(--card);color:var(--ink);border-color:var(--line)}
+html:not([data-admin-theme="light"]) .statCard.highlight{background:#213858}
+html:not([data-admin-theme="light"]) .statCard span,html:not([data-admin-theme="light"]) .statCard.highlight span,html:not([data-admin-theme="light"]) .statCard em,html:not([data-admin-theme="light"]) .adminHeader p,html:not([data-admin-theme="light"]) .topDepartmentCard span,html:not([data-admin-theme="light"]) .topDepartmentStats small,html:not([data-admin-theme="light"]) .deptStats,html:not([data-admin-theme="light"]) .panelBlock p{color:var(--muted)}
+html:not([data-admin-theme="light"]) .adminHeader h1,html:not([data-admin-theme="light"]) .topDepartmentCard strong,html:not([data-admin-theme="light"]) .blockTitle,html:not([data-admin-theme="light"]) .rowTitle,html:not([data-admin-theme="light"]) .loginIntro h1{color:var(--ink)}
+html:not([data-admin-theme="light"]) .topDepartmentStats div{background:#24334a}
+html:not([data-admin-theme="light"]) .adminNav button{background:var(--card);color:var(--ink);border-color:var(--line)}
+html:not([data-admin-theme="light"]) .adminNav button.active{background:#285fbe;color:#fff}
+html:not([data-admin-theme="light"]) .deptRow{border-color:var(--line)}
+html:not([data-admin-theme="light"]) .rowCount{background:#243e66;color:#bdd7ff}
+html:not([data-admin-theme="light"]) .panelBlock button:not(.smallBtn){background:#24406a;color:#d4e5ff;border-color:#365883}
+html:not([data-admin-theme="light"]) .smallBtn{background:#253b59;color:#d4e5ff;border-color:#375579}
+html:not([data-admin-theme="light"]) #logoutBtn{background:#422b38;color:#ffc5c5;border-color:#704657}
+html:not([data-admin-theme="light"]) #loginScreen .loginLogo{background:#253b59;color:#b8d4ff}
+html:not([data-admin-theme="light"]) #loginScreen .loginEyebrow,html:not([data-admin-theme="light"]) #loginScreen .loginIntro p,html:not([data-admin-theme="light"]) #resetScreen p{color:var(--muted)}
+}
+html[data-admin-theme="dark"] .adminHeader,html[data-admin-theme="dark"] .statCard,html[data-admin-theme="dark"] .panelBlock,html[data-admin-theme="dark"] .topDepartmentCard{background:var(--card);color:var(--ink);border-color:var(--line)}
+html[data-admin-theme="dark"] .statCard.highlight{background:#213858}
+html[data-admin-theme="dark"] .statCard span,html[data-admin-theme="dark"] .statCard.highlight span,html[data-admin-theme="dark"] .statCard em,html[data-admin-theme="dark"] .adminHeader p,html[data-admin-theme="dark"] .topDepartmentCard span,html[data-admin-theme="dark"] .topDepartmentStats small,html[data-admin-theme="dark"] .deptStats,html[data-admin-theme="dark"] .panelBlock p{color:var(--muted)}
+html[data-admin-theme="dark"] .adminHeader h1,html[data-admin-theme="dark"] .topDepartmentCard strong,html[data-admin-theme="dark"] .blockTitle,html[data-admin-theme="dark"] .rowTitle,html[data-admin-theme="dark"] .loginIntro h1{color:var(--ink)}
+html[data-admin-theme="dark"] .topDepartmentStats div{background:#24334a}
+html[data-admin-theme="dark"] .adminNav button{background:var(--card);color:var(--ink);border-color:var(--line)}
+html[data-admin-theme="dark"] .adminNav button.active{background:#285fbe;color:#fff}
+html[data-admin-theme="dark"] .deptRow{border-color:var(--line)}
+html[data-admin-theme="dark"] .rowCount{background:#243e66;color:#bdd7ff}
+html[data-admin-theme="dark"] .panelBlock button:not(.smallBtn){background:#24406a;color:#d4e5ff;border-color:#365883}
+html[data-admin-theme="dark"] .smallBtn{background:#253b59;color:#d4e5ff;border-color:#375579}
+html[data-admin-theme="dark"] #logoutBtn{background:#422b38;color:#ffc5c5;border-color:#704657}
+html[data-admin-theme="dark"] #loginScreen .loginLogo{background:#253b59;color:#b8d4ff}
+html[data-admin-theme="dark"] #loginScreen .loginEyebrow,html[data-admin-theme="dark"] #loginScreen .loginIntro p,html[data-admin-theme="dark"] #resetScreen p{color:var(--muted)}
