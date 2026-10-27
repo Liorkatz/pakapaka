@@ -206,7 +206,7 @@ async function showVersionSettings() {
     actions: [
       { label: 'בדיקת עדכונים', onClick: () => checkForAppUpdate(true) },
       { label: 'שינוי מחלקה', kind: 'secondary', onClick: changeDepartment },
-      { label: 'בקשה לניהול מחלקה', kind: 'secondary', onClick: requestDepartmentManager },
+      ...(!isManager ? [{ label: 'בקשה לניהול מחלקה', kind: 'secondary', onClick: requestDepartmentManager }] : []),
       ...(isManager ? [{ label: 'נתוני מנהל מחלקה', kind: 'secondary', onClick: openDepartmentManager }] : []),
       { label: 'סגור', kind: 'secondary small' }
     ]
