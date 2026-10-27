@@ -10,10 +10,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.47">
+<link rel="stylesheet" href="css/main.css?v=1.48">
 <title>פקעות</title>
 <style>
-.lastScannedText{display:block;margin-top:10px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
+.lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
 .lastScannedText.today{color:#3b82f6;font-weight:700}
 .topVersion{font-size:12px;color:#aaa;font-weight:700;direction:ltr;white-space:nowrap}.topBarActions{display:flex;align-items:center;gap:8px;direction:ltr}
 .shareBtn{width:42px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;background:#1d1d1d;color:#fff;border:1px solid #333;border-radius:14px}
@@ -40,6 +40,12 @@
 .managerSummaryGrid>div{background:#262626;border-radius:13px;padding:12px 4px;text-align:center;min-width:0}
 .managerSummaryGrid strong{font-size:26px;display:block;direction:ltr}
 .managerSummaryGrid span{font-size:12px;color:#ccc;display:block;margin-top:4px}
+.scanHistoryBtn{width:auto;background:none;border:0;padding:2px 0;color:#b5b5b5;font-size:15px;font-weight:500;cursor:pointer;text-decoration:underline;text-underline-offset:3px;direction:rtl}
+.scanHistoryRow{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 3px;border-bottom:1px solid #393939;font-size:15px}
+.scanHistoryRow strong{direction:ltr;font-size:14px;white-space:nowrap}
+.scanHistoryList{max-height:48vh;overflow:auto;margin-top:12px}
+.scanHistoryNote{font-size:13px;color:#aaa;line-height:1.5}
+.scanCorrectionTag{display:inline-block;margin-inline-start:15px;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -83,15 +89,15 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.47"></script>
-<script src="js/utils.js?v=1.47"></script>
-<script src="js/storage.js?v=1.47"></script>
-<script src="js/barcode.js?v=1.47"></script>
-<script src="js/shared.js?v=1.47"></script>
-<script src="js/stats.js?v=1.47"></script>
-<script src="js/app.js?v=1.47"></script>
-<script src="js/pwa-enhance.js?v=1.47"></script>
-<script src="js/manager-summary.js?v=1.47"></script>
+<script src="js/config.js?v=1.48"></script>
+<script src="js/utils.js?v=1.48"></script>
+<script src="js/storage.js?v=1.48"></script>
+<script src="js/barcode.js?v=1.48"></script>
+<script src="js/shared.js?v=1.48"></script>
+<script src="js/stats.js?v=1.48"></script>
+<script src="js/app.js?v=1.48"></script>
+<script src="js/pwa-enhance.js?v=1.48"></script>
+<script src="js/manager-summary.js?v=1.48"></script>
 <script>
 
 function formatLastScannedDate(value) {
@@ -120,7 +126,8 @@ renderItem = function(x) {
   if (activeTab !== 'local' || !scanTime || Date.now() - scanTime >= 48 * 60 * 60 * 1000) return html;
   const todayClass = isToday(x.lastScannedAt) ? ' today' : '';
   const scanText = `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(x.lastScannedAt)}</span>`;
-  return html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${escapeHtml(x.name)}${scanText}</div>`);
+  const prettyName=escapeHtml(x.name).replace(/(תיקון (?:סריקה|הדפסה))/g,'<span class="scanCorrectionTag">$1</span>');
+  return html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${prettyName}${scanText}</div>`);
 };
 
 async function shareApp() {
