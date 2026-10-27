@@ -173,7 +173,7 @@ async function showDashboard() {
 
     renderTopDepartment(realDepartments[0] || null);
     renderDepartmentRows(departments);
-    fillManagerDevices(devices);
+    loadActiveManagers();
     loadManagerRequests();
   } catch (e) {
     setupError.textContent = e.message || 'שגיאה בטעינת נתונים';
@@ -284,32 +284,31 @@ async function loadManagerRequests(){
  }catch(e){box.textContent=e.message||'שגיאה';}
 }
 
-function initManagerAssignment(){
-  document.getElementById('assignManagerBtn').addEventListener('click',async()=>{
-    const device=document.getElementById('managerDeviceSelect').value;
-    const status=document.getElementById('managerIssueStatus');
-    const button=document.getElementById('assignManagerBtn');
-    if(!device){status.textContent='בחר מכשיר מהרשימה.';return;}
-    button.disabled=true;status.textContent='מגדיר הרשאה...';
-    document.getElementById('managerIssuedCode').hidden=true;
+async function loadActiveManagers(){
+ const box=document.getElementById('activeManagerList');
+ try{
+  const response=await fetch(adminRpcUrl('pakapaka_admin_active_managers'),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_token:getAdminToken()})});
+  if(!response.ok)throw new Error('לא ניתן לטעון מנהלים');
+  const managers=await response.json();
+  box.replaceChildren();
+  if(!managers.length){box.textContent='אין מנהלי מחלקות מאושרים.';return;}
+  for(const person of managers){
+   const item=document.createElement('div');item.className='deptRow';
+   const title=document.createElement('strong');title.textContent=person.requester_name+' · מחלקה '+person.department;item.appendChild(title);
+   const btn=document.createElement('button');btn.className='smallBtn';btn.type='button';btn.textContent='בטל הרשאת מנהל';btn.style.marginTop='8px';
+   btn.addEventListener('click',async()=>{
+    if(!confirm('לבטל הרשאת מנהל של '+person.requester_name+'?'))return;
+    btn.disabled=true;
     try{
-      const r=await fetch(adminRpcUrl('pakapaka_admin_assign_manager'),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_token:getAdminToken(),p_device_id:device})});
-      if(!r.ok)throw new Error('יצירת ההרשאה נכשלה.');
-      const code=await r.json();
-      if(!code)throw new Error('לא התקבל קוד הרשאה.');
-      document.getElementById('managerCodeValue').value=code;
-      document.getElementById('managerIssuedCode').hidden=false;
-      status.textContent='המנהל הוגדר. הקוד יוצג פעם אחת; יש להעביר אותו למשתמש המתאים בלבד.';
-    }catch(e){status.textContent=e.message;}
-    finally{button.disabled=false;}
-  });
-  document.getElementById('copyManagerCode').addEventListener('click',async()=>{
-    const value=document.getElementById('managerCodeValue').value;
-    try{await navigator.clipboard.writeText(value);document.getElementById('managerIssueStatus').textContent='הקוד הועתק.';}
-    catch{document.getElementById('managerCodeValue').select();document.getElementById('managerIssueStatus').textContent='סמן את הקוד והעתק אותו.';}
-  });
+     const r=await fetch(adminRpcUrl('pakapaka_admin_revoke_manager'),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_token:getAdminToken(),p_device_id:person.device_id})});
+     if(!r.ok||await r.json()!==true)throw new Error('ביטול הרשאה נכשל');
+     await loadActiveManagers();
+    }catch(e){alert(e.message);btn.disabled=false;}
+   });
+   item.appendChild(btn);box.appendChild(item);
+  }
+ }catch(e){box.textContent=e.message||'שגיאה';}
 }
-
 function initPasswordManagement(){
   const panel=document.getElementById('adminChangePasswordPanel');
   document.getElementById('changeAdminPasswordBtn').addEventListener('click',()=>{panel.hidden=!panel.hidden;});
@@ -349,7 +348,7 @@ function initAdmin() {
   });
   initPullToFullRefresh();
   initPasswordManagement();
-  initManagerAssignment();
+  document.getElementById('refreshActiveManagers').addEventListener('click',loadActiveManagers);
   document.getElementById('refreshManagerRequests').addEventListener('click',loadManagerRequests);
 
   if (getAdminToken()) showDashboard();
