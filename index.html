@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.51">
+<link rel="stylesheet" href="css/main.css?v=1.52">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -48,10 +48,10 @@
 .scanCorrectionTag{display:inline-block;margin-inline-start:15px;vertical-align:middle}
 .itemMeta{display:flex;flex-direction:row;direction:rtl;align-items:center;justify-content:space-between;gap:10px}
 .itemMeta.hasCorrection{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:8px;align-items:center}
-.itemMeta.hasCorrection .num{grid-column:1;grid-row:1;order:unset!important;min-width:0;margin:0!important;justify-self:start;direction:ltr;text-align:right;font-size:clamp(12px,3.4vw,16px);white-space:nowrap}
+ .itemMeta.hasCorrection .num{grid-column:1;grid-row:1;order:unset!important;min-width:0;margin:0!important;justify-self:stretch;direction:ltr;text-align:right;font-size:clamp(12px,3.4vw,16px);white-space:nowrap}
 .itemMeta.hasCorrection .scanCorrectionTag{grid-column:2;grid-row:1;justify-self:center;white-space:nowrap;margin:0!important;padding:5px 8px;border:1px solid #444;border-radius:10px;color:#d4d4d4;font-size:clamp(11px,3vw,14px);font-weight:700}
 .itemMeta.hasCorrection .scanHistoryBtn{grid-column:3;grid-row:1;justify-self:end;order:unset!important;max-width:100%;font-size:clamp(12px,3.4vw,15px)!important}
-.itemMeta .num{order:0!important;direction:ltr;text-align:right;margin-inline-end:auto;min-width:0;overflow-wrap:anywhere}
+.itemMeta .num{order:0!important;direction:ltr;text-align:right;margin:0 auto 0 0!important;min-width:0;overflow-wrap:anywhere}
 .itemMeta .scanHistoryBtn{order:1!important;display:inline-block;width:auto!important;max-width:50%;flex:0 0 auto;min-height:0!important;margin:0!important;padding:2px 0!important;background:transparent!important;border:0!important;border-radius:0!important;color:#b5b5b5!important;font-size:15px!important;font-weight:500;line-height:1.4;white-space:nowrap;text-align:left;text-decoration:underline;text-underline-offset:3px}
 .itemTop .star{display:block;width:28px!important;height:28px!important;padding:0!important;flex-shrink:0}
 .contactDialog{max-height:85vh;overflow-y:auto}
@@ -59,6 +59,7 @@
 .contactDialog textarea{font-size:16px;width:100%}
 .contactBubble{background:#252525;border-radius:12px;padding:10px;margin:7px 0;font-size:15px;overflow-wrap:anywhere}
 .contactThread{max-height:30vh;overflow-y:auto;margin:14px 0}
+.itemMeta{direction:rtl!important}.itemMeta .num{margin-left:auto!important;margin-right:0!important;text-align:right!important}.itemMeta.hasCorrection .num{margin:0!important;justify-self:stretch!important;text-align:right!important}
 </style>
 </head>
 <body>
@@ -102,16 +103,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.51"></script>
-<script src="js/utils.js?v=1.51"></script>
-<script src="js/storage.js?v=1.51"></script>
-<script src="js/barcode.js?v=1.51"></script>
-<script src="js/shared.js?v=1.51"></script>
-<script src="js/stats.js?v=1.51"></script>
-<script src="js/app.js?v=1.51"></script>
-<script src="js/pwa-enhance.js?v=1.51"></script>
-<script src="js/manager-summary.js?v=1.51"></script>
-<script src="js/developer-contact.js?v=1.51"></script>
+<script src="js/config.js?v=1.52"></script>
+<script src="js/utils.js?v=1.52"></script>
+<script src="js/storage.js?v=1.52"></script>
+<script src="js/barcode.js?v=1.52"></script>
+<script src="js/shared.js?v=1.52"></script>
+<script src="js/stats.js?v=1.52"></script>
+<script src="js/app.js?v=1.52"></script>
+<script src="js/pwa-enhance.js?v=1.52"></script>
+<script src="js/manager-summary.js?v=1.52"></script>
+<script src="js/developer-contact.js?v=1.52"></script>
 <script>
 
 function formatLastScannedDate(value) {
