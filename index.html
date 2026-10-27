@@ -10,12 +10,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.40">
+<link rel="stylesheet" href="css/main.css?v=1.41">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
 .lastScannedText.today{color:#3b82f6;font-weight:700}
-.topBarActions{display:flex;align-items:center;gap:8px;direction:ltr}
+.topVersion{font-size:12px;color:#aaa;font-weight:700;direction:ltr;white-space:nowrap}.topBarActions{display:flex;align-items:center;gap:8px;direction:ltr}
 .shareBtn{width:42px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;background:#1d1d1d;color:#fff;border:1px solid #333;border-radius:14px}
 .shareBtn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .versionScreen{position:fixed;inset:0;z-index:100000;background:#000;color:#fff;display:flex;flex-direction:column;padding:calc(14px + env(safe-area-inset-top,0px)) 16px calc(14px + env(safe-area-inset-bottom,0px));direction:rtl}
@@ -36,7 +36,7 @@
 </head>
 <body>
 <section id="home" class="page active">
-  <div class="topBar"><h1>פקעות</h1><div class="topBarActions"><button class="shareBtn" onclick="shareApp()" aria-label="שתף את האפליקציה" title="שתף את האפליקציה"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3"></path><path d="m7 8 5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg></button><button class="refreshBtn" onclick="refreshList()">↻</button></div></div>
+  <div class="topBar"><h1>פקעות <span class="topVersion" id="topVersion"></span></h1><div class="topBarActions"><button class="shareBtn" onclick="shareApp()" aria-label="שתף את האפליקציה" title="שתף את האפליקציה"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3"></path><path d="m7 8 5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg></button><button class="refreshBtn" onclick="refreshList()">↻</button></div></div>
   <p id="homeHelp" class="subtitle">מועדפים למעלה. מחיקה: החלקה ימינה.</p>
   <div class="tabs"><button id="tabLocal" class="tab active" onclick="setTab('local')">מקומי</button><button id="tabShared" class="tab" onclick="setTab('shared')">משותף</button></div>
   <div id="list" class="list"></div>
@@ -67,15 +67,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.40"></script>
-<script src="js/utils.js?v=1.40"></script>
-<script src="js/storage.js?v=1.40"></script>
-<script src="js/barcode.js?v=1.40"></script>
-<script src="js/shared.js?v=1.40"></script>
-<script src="js/stats.js?v=1.40"></script>
-<script src="js/app.js?v=1.40"></script>
-<script src="js/pwa-enhance.js?v=1.40"></script>
+<script src="js/config.js?v=1.41"></script>
+<script src="js/utils.js?v=1.41"></script>
+<script src="js/storage.js?v=1.41"></script>
+<script src="js/barcode.js?v=1.41"></script>
+<script src="js/shared.js?v=1.41"></script>
+<script src="js/stats.js?v=1.41"></script>
+<script src="js/app.js?v=1.41"></script>
+<script src="js/pwa-enhance.js?v=1.41"></script>
 <script>
+document.getElementById("topVersion").textContent = "v" + VERSION;
 function formatLastScannedDate(value) {
   const timestamp = Number(value || 0);
   if (!timestamp) return '';
