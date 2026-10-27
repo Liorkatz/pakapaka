@@ -1,0 +1,4 @@
+/* iOS Password AutoFill: username remains in the form but is visually unobtrusive. */
+#adminLoginForm .autofillUsername{position:absolute!important;inline-size:1px!important;block-size:1px!important;opacity:0!important;overflow:hidden!important;pointer-events:none!important;margin:0!important;padding:0!important;border:0!important;clip-path:inset(50%)!important}
+#adminLoginForm{position:relative}
+#adminLoginForm input[name="password"]{font-size:17px!important;letter-spacing:normal}
