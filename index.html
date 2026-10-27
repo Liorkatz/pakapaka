@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.60">
+<link rel="stylesheet" href="css/main.css?v=1.61">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -108,6 +108,17 @@
 .itemMeta>.num,.itemMeta>.barcodeGroup{margin:0!important;flex:0 1 auto!important}
 .itemMeta>.scanHistoryBtn{margin:0  auto 0 0!important;flex:0 0 auto!important}
 .itemMeta>.lastScannedText{display:none!important}
+
+/* Approved concept 2 — compact scan clock and correction beside barcode */
+.itemTop{grid-template-columns:28px minmax(0,1fr) auto!important;align-items:center!important}
+.itemTop>.itemName{min-width:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
+.itemTop>.lastScannedText{display:inline-flex!important;align-items:center!important;gap:5px!important;grid-column:3!important;grid-row:1!important;max-width:150px!important;white-space:nowrap!important;justify-self:end!important;text-align:left!important;margin:0!important;font-size:12px!important}
+.lastScanClock{height:15px;width:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.itemMeta{display:flex!important;direction:rtl!important;align-items:center!important;justify-content:space-between!important}
+.itemMeta>.barcodeGroup{display:inline-flex!important;gap:8px!important;align-items:center!important;direction:rtl!important;max-width:75%!important}
+.itemMeta .scanCorrectionTag{background:#292929!important;border:1px solid #555!important;border-radius:10px!important;color:#ddd!important;padding:5px 8px!important;font-size:12px!important;white-space:nowrap!important}
+.itemMeta>.scanHistoryBtn{margin-inline-start:auto!important;flex-shrink:0!important}
+@media(max-width:390px){.itemTop>.lastScannedText{font-size:11px!important;gap:3px!important}.lastScanClock{width:13px;height:13px}.itemMeta>.barcodeGroup{gap:5px!important}.itemMeta .scanCorrectionTag{font-size:10px!important;padding:4px!important}}
 </style>
 </head>
 <body>
@@ -151,16 +162,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.60"></script>
-<script src="js/utils.js?v=1.60"></script>
-<script src="js/storage.js?v=1.60"></script>
-<script src="js/barcode.js?v=1.60"></script>
-<script src="js/shared.js?v=1.60"></script>
-<script src="js/stats.js?v=1.60"></script>
-<script src="js/app.js?v=1.60"></script>
-<script src="js/pwa-enhance.js?v=1.60"></script>
-<script src="js/manager-summary.js?v=1.60"></script>
-<script src="js/developer-contact.js?v=1.60"></script>
+<script src="js/config.js?v=1.61"></script>
+<script src="js/utils.js?v=1.61"></script>
+<script src="js/storage.js?v=1.61"></script>
+<script src="js/barcode.js?v=1.61"></script>
+<script src="js/shared.js?v=1.61"></script>
+<script src="js/stats.js?v=1.61"></script>
+<script src="js/app.js?v=1.61"></script>
+<script src="js/pwa-enhance.js?v=1.61"></script>
+<script src="js/manager-summary.js?v=1.61"></script>
+<script src="js/developer-contact.js?v=1.61"></script>
 <script>
 
 function formatLastScannedDate(value) {
@@ -191,7 +202,7 @@ renderItem = function(x) {
   const scanTime = Number(x.lastScannedAt || 0);
   const visibleScan = scanTime > 0 && Date.now() - scanTime < 48 * 60 * 60 * 1000;
   const todayClass = visibleScan && isToday(scanTime) ? ' today' : '';
-  const scanText = visibleScan ? `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(scanTime)}</span>` : '';
+  const scanText = visibleScan ? `<span class="lastScannedText${todayClass}" title="נסרק לאחרונה" aria-label="נסרק לאחרונה ${formatLastScannedDate(scanTime)}"><svg viewBox="0 0 24 24" aria-hidden="true" class="lastScanClock"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg><span>${formatLastScannedDate(scanTime)}</span></span>` : '';
   html = html.replace(/<div class="itemDate">[\s\S]*?<\/div>/, '');
   html = html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${cleanName}</div>`);
   if (!html.includes('class="itemMeta"')) {
