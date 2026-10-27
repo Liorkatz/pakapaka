@@ -78,11 +78,11 @@ async function checkSharedUpdates() {
   } catch (e) {}
 }
 
-function patchDepartmentUpTo3Digits() {
+function patchDepartmentUpTo5Digits() {
   window.isValidDepartment = function(value) {
-    return /^\d{1,3}$/.test(String(value || '').trim());
+    return /^\d{1,5}$/.test(String(value || '').trim());
   };
-  window.showDepartmentDialog = function({ title = 'בחירת מחלקה', text = 'הכנס מספר מחלקה עד 3 ספרות.', onSaved } = {}) {
+  window.showDepartmentDialog = function({ title = 'בחירת מחלקה', text = 'הכנס מספר מחלקה עד 5 ספרות.', onSaved } = {}) {
     ensureAppDialogStyles();
     closeAppDialog();
     const backdrop = document.createElement('div');
@@ -93,7 +93,7 @@ function patchDepartmentUpTo3Digits() {
     dialog.innerHTML = `
       <div class="appDialogTitle">${escapeHtml(title)}</div>
       <div class="appDialogText">${text}</div>
-      <input id="departmentInput" class="appDialogInput" inputmode="numeric" maxlength="3" value="${escapeAttr(getDepartment())}" placeholder="000">
+      <input id="departmentInput" class="appDialogInput" inputmode="numeric" maxlength="5" value="${escapeAttr(getDepartment())}" placeholder="עד 5 ספרות">
       <div id="departmentError" class="appDialogError"></div>
       <div class="appDialogActions two">
         <button type="button" id="departmentCancel" class="appDialogBtn secondary">ביטול</button>
@@ -106,14 +106,14 @@ function patchDepartmentUpTo3Digits() {
     input.focus();
     input.select();
     input.addEventListener('input', () => {
-      input.value = onlyDigits(input.value).slice(0, 3);
+      input.value = onlyDigits(input.value).slice(0, 5);
       err.textContent = '';
     });
     document.getElementById('departmentCancel').addEventListener('click', closeAppDialog);
     document.getElementById('departmentSave').addEventListener('click', () => {
-      const finalValue = onlyDigits(input.value).slice(0, 3);
+      const finalValue = onlyDigits(input.value).slice(0, 5);
       if (!isValidDepartment(finalValue)) {
-        err.textContent = 'מספר מחלקה חייב להיות עד 3 ספרות.';
+        err.textContent = 'מספר מחלקה חייב להיות עד 5 ספרות.';
         return;
       }
       localStorage.setItem(DEPARTMENT_KEY, finalValue);
