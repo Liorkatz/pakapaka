@@ -54,3 +54,5 @@ button:active{transform:scale(.99)}
 .adminVersion{display:inline-block;margin-top:7px;color:#9ca3af;font-size:12px;font-weight:700;direction:ltr}
 
 .adminTopVersion{position:absolute;top:calc(5px + var(--safe-top));left:14px;direction:ltr;font-size:12px;font-weight:700;color:#a3a3a3}.secondaryLink{background:transparent;color:#ccc;text-decoration:underline;font-size:15px;padding:12px;margin-top:10px}.secondaryLink:active{transform:none}#resetScreen.active{display:flex;justify-content:center;align-items:center}#resetMessage{min-height:30px;line-height:1.45}#setNewPassword[hidden]{display:none}#setNewPassword input{font-size:17px}button:disabled{opacity:.5;cursor:wait}
+
+#recoveryFallback[hidden]{display:none}.recoveryHint{font-size:13px;line-height:1.5;margin:15px 0 6px}#recoveryLink{display:block;width:100%;font-size:12px;line-height:1.4;min-height:76px;resize:vertical;overflow-wrap:anywhere;color:#fff;background:#080808;border:1px solid #444;border-radius:12px;padding:10px;margin:10px 0}
