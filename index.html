@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.56">
+<link rel="stylesheet" href="css/main.css?v=1.57">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -80,6 +80,11 @@
 .barcodeGroup .num{min-width:0;font-size:clamp(13px,3.6vw,17px);overflow-wrap:anywhere}
 .barcodeGroup .scanCorrectionTag{flex:0 0 auto;margin:0!important;white-space:nowrap;border:1px solid #444;border-radius:10px;padding:5px 8px;font-size:12px;color:#d4d4d4}
 @media(max-width:390px){.itemTop{gap:5px!important}.itemTop .lastScannedText{font-size:12px!important}.barcodeGroup{gap:6px}.barcodeGroup .scanCorrectionTag{font-size:11px;padding:4px}}
+/* Uniform alignment across all cards, including shared cards and tab changes */
+.itemTop{grid-template-columns:auto minmax(0,1fr) auto!important}
+.itemTop .lastScannedText{justify-self:start!important;max-width:34vw!important}
+.item>.barcodeGroup{margin-top:8px!important;margin-inline-start:0!important;justify-content:flex-start!important;max-width:100%!important}
+.itemMeta>.barcodeGroup{margin:0!important;justify-content:flex-start!important}
 </style>
 </head>
 <body>
@@ -123,16 +128,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.56"></script>
-<script src="js/utils.js?v=1.56"></script>
-<script src="js/storage.js?v=1.56"></script>
-<script src="js/barcode.js?v=1.56"></script>
-<script src="js/shared.js?v=1.56"></script>
-<script src="js/stats.js?v=1.56"></script>
-<script src="js/app.js?v=1.56"></script>
-<script src="js/pwa-enhance.js?v=1.56"></script>
-<script src="js/manager-summary.js?v=1.56"></script>
-<script src="js/developer-contact.js?v=1.56"></script>
+<script src="js/config.js?v=1.57"></script>
+<script src="js/utils.js?v=1.57"></script>
+<script src="js/storage.js?v=1.57"></script>
+<script src="js/barcode.js?v=1.57"></script>
+<script src="js/shared.js?v=1.57"></script>
+<script src="js/stats.js?v=1.57"></script>
+<script src="js/app.js?v=1.57"></script>
+<script src="js/pwa-enhance.js?v=1.57"></script>
+<script src="js/manager-summary.js?v=1.57"></script>
+<script src="js/developer-contact.js?v=1.57"></script>
 <script>
 
 function formatLastScannedDate(value) {
@@ -161,14 +166,13 @@ renderItem = function(x) {
   const correctionMatch = String(x.name || '').match(/תיקון (?:סריקה|הדפסה|פקע)/);
   const correction = correctionMatch ? escapeHtml(correctionMatch[0]) : '';
   const cleanName = escapeHtml(String(x.name || '').replace(/תיקון (?:סריקה|הדפסה|פקע)/g, '').trim());
-  const visibleScan = activeTab === 'local' && scanTime > 0 && Date.now() - scanTime < 48 * 60 * 60 * 1000;
+  const visibleScan = scanTime > 0 && Date.now() - scanTime < 48 * 60 * 60 * 1000;
   const todayClass = visibleScan && isToday(scanTime) ? ' today' : '';
   const scanText = visibleScan ? `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(scanTime)}</span>` : '';
   html = html.replace(/<div class="itemDate">[\s\S]*?<\/div>/, '');
   html = html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${cleanName}</div>${scanText}`);
-  if (correction && activeTab === 'local') {
-    html = html.replace('<div class="itemMeta">', '<div class="itemMeta">')
-      .replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div><span class="scanCorrectionTag">${correction}</span></div>`);
+  if (correction) {
+    html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div><span class="scanCorrectionTag">${correction}</span></div>`);
   }
   return html;
 };
