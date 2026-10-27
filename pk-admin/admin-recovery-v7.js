@@ -12,10 +12,13 @@
   setSecondaryUi();
 
   function tokenFromLink(raw) {
-    const value = String(raw || '').trim().replace(/&amp;/g, '&');
+    let value = String(raw || '').trim().replace(/&amp;/g, '&');
+    if (/^localhost(?::\d+)?\//i.test(value)) value = 'http://' + value;
     try {
       const url = new URL(value);
-      if (url.protocol !== 'https:' && url.hostname !== 'localhost') return null;
+      if (!['https:', 'http:'].includes(url.protocol)) return null;
+      if (url.protocol === 'http:' && url.hostname !== 'localhost') return null;
+      if (url.hostname !== 'localhost' && url.hostname !== location.hostname) return null;
       const values = new URLSearchParams(url.hash.slice(1));
       const token = values.get('access_token');
       if (!token) return null;
@@ -72,7 +75,10 @@
 
   el('forgotPasswordBtn').addEventListener('click', () => showScreen('resetScreen'));
   el('resetCancelBtn').addEventListener('click', () => showScreen('loginScreen'));
-  el('useRecoveryLink').addEventListener('click', () => acceptLink(el('recoveryLink').value));
+  el('useRecoveryLink').addEventListener('click', async () => {
+    try { await acceptLink(el('recoveryLink').value); }
+    catch { notice('אירעה תקלה באימות הקישור. בדוק חיבור לאינטרנט ונסה שוב.'); }
+  });
 
   el('sendResetBtn').addEventListener('click', async () => {
     const button = el('sendResetBtn'); button.disabled = true;
