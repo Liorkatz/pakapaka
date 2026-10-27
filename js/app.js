@@ -381,7 +381,7 @@ function renderSection(title, items) {
 }
 
 function renderItem(x) {
-  const localMeta = activeTab === 'local' ? `<div class="itemMeta"><button type="button" class="openCount scanHistoryBtn" data-action="scan-history" data-id="${escapeAttr(x.id)}">נפתחה ${Number(x.openCount || 0)} פעמים</button><div class="num">${escapeHtml(x.code)}</div></div>` : `<div class="num">${escapeHtml(x.code)}</div>`;
+  const localMeta = activeTab === 'local' ? `<div class="itemMeta"><div class="num">${escapeHtml(x.code)}</div><button type="button" class="openCount scanHistoryBtn" data-action="scan-history" data-id="${escapeAttr(x.id)}">נסרק ${Number(x.openCount || 0)} פעמים</button></div>` : `<div class="num">${escapeHtml(x.code)}</div>`;
   return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}"><div class="itemTop"><button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemName">${escapeHtml(x.name)}</div><div class="itemDate">${formatDate(x.createdAt)}</div></div>${localMeta}</div></div>`;
 }
 
