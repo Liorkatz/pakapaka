@@ -174,6 +174,7 @@ async function showDashboard() {
     renderTopDepartment(realDepartments[0] || null);
     renderDepartmentRows(departments);
     fillManagerDevices(devices);
+    loadManagerRequests();
   } catch (e) {
     setupError.textContent = e.message || 'שגיאה בטעינת נתונים';
     setupError.classList.add('show');
@@ -251,6 +252,38 @@ function fillManagerDevices(devices){
     select.add(new Option(label,String(d.device_id||'')));
   }
 }
+
+async function loadManagerRequests(){
+ const box=document.getElementById('managerRequestList');
+ try{
+  const r=await fetch(adminRpcUrl('pakapaka_admin_manager_requests'),{method:'POST',headers:headers(),body:JSON.stringify({p_token:getAdminToken()}),cache:'no-store'});
+  if(!r.ok)throw new Error('לא ניתן לטעון בקשות.');
+  const requests=await r.json();
+  const pending=requests.filter(x=>x.status==='pending');
+  box.replaceChildren();
+  if(!pending.length){box.textContent='אין בקשות שממתינות לאישור.';return;}
+  for(const item of pending){
+   const card=document.createElement('div');card.className='deptRow';
+   const title=document.createElement('p');title.textContent=item.requester_name+' · מחלקה '+item.department;card.appendChild(title);
+   const date=document.createElement('small');date.textContent=new Date(item.requested_at).toLocaleString('he-IL');card.appendChild(date);
+   const row=document.createElement('div');row.className='adminActions';
+   for(const approved of [true,false]){
+    const btn=document.createElement('button');btn.type='button';btn.className='smallBtn';btn.textContent=approved?'אשר':'דחה';
+    btn.addEventListener('click',async()=>{
+     btn.disabled=true;
+     try{
+      const answer=await fetch(adminRpcUrl('pakapaka_admin_review_manager'),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_token:getAdminToken(),p_device_id:item.device_id,p_approve:approved})});
+      if(!answer.ok||await answer.json()!==true)throw new Error('העדכון נכשל.');
+      await loadManagerRequests();
+     }catch(e){btn.disabled=false;alert(e.message);}
+    });
+    row.appendChild(btn);
+   }
+   card.appendChild(row);box.appendChild(card);
+  }
+ }catch(e){box.textContent=e.message||'שגיאה';}
+}
+
 function initManagerAssignment(){
   document.getElementById('assignManagerBtn').addEventListener('click',async()=>{
     const device=document.getElementById('managerDeviceSelect').value;
@@ -317,6 +350,7 @@ function initAdmin() {
   initPullToFullRefresh();
   initPasswordManagement();
   initManagerAssignment();
+  document.getElementById('refreshManagerRequests').addEventListener('click',loadManagerRequests);
 
   if (getAdminToken()) showDashboard();
 }
