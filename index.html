@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.65">
+<link rel="stylesheet" href="css/main.css?v=1.66">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -70,6 +70,13 @@
 .itemMeta>.scanHistoryBtn{margin:0;margin-inline-start:auto;flex-shrink:0;width:auto;padding:2px 0;border:0;background:transparent;color:#b5b5b5;font-size:15px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 @media(max-width:390px){.itemTop{gap:5px}.itemTop>.lastScannedText{font-size:11px}.lastScanClock{width:13px;height:13px}.itemMeta{gap:5px}.itemMeta>.barcodeGroup{gap:5px}.itemMeta>.barcodeGroup>.num{font-size:12px}.itemMeta>.barcodeGroup>.scanCorrectionTag{font-size:10px;padding:4px 5px}.itemMeta>.scanHistoryBtn{font-size:13px}}
 
+/* v1.66: barcode first (right), correction next (left); softer, clearer timestamp */
+.itemMeta>.barcodeGroup{direction:rtl!important;flex-direction:row!important;justify-content:flex-start!important}
+.itemMeta>.barcodeGroup>.num{order:0!important;flex:0 1 auto!important}
+.itemMeta>.barcodeGroup>.scanFixBtn,.itemMeta>.barcodeGroup>.scanCorrectionTag{order:1!important}
+.itemTop>.lastScannedText{font-size:14px!important;color:#9dbbd0!important;font-weight:550!important}
+.itemTop>.lastScannedText.today{color:#8bbce9!important;font-weight:650!important}
+@media(max-width:390px){.itemTop>.lastScannedText{font-size:13px!important}}
 </style>
 </head>
 <body>
@@ -113,16 +120,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.65"></script>
-<script src="js/utils.js?v=1.65"></script>
-<script src="js/storage.js?v=1.65"></script>
-<script src="js/barcode.js?v=1.65"></script>
-<script src="js/shared.js?v=1.65"></script>
-<script src="js/stats.js?v=1.65"></script>
-<script src="js/app.js?v=1.65"></script>
-<script src="js/pwa-enhance.js?v=1.65"></script>
-<script src="js/manager-summary.js?v=1.65"></script>
-<script src="js/developer-contact.js?v=1.65"></script>
+<script src="js/config.js?v=1.66"></script>
+<script src="js/utils.js?v=1.66"></script>
+<script src="js/storage.js?v=1.66"></script>
+<script src="js/barcode.js?v=1.66"></script>
+<script src="js/shared.js?v=1.66"></script>
+<script src="js/stats.js?v=1.66"></script>
+<script src="js/app.js?v=1.66"></script>
+<script src="js/pwa-enhance.js?v=1.66"></script>
+<script src="js/manager-summary.js?v=1.66"></script>
+<script src="js/developer-contact.js?v=1.66"></script>
 <script>
 
 function formatLastScannedDate(value) {
