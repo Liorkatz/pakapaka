@@ -10,10 +10,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.46">
+<link rel="stylesheet" href="css/main.css?v=1.47">
 <title>פקעות</title>
 <style>
-.lastScannedText{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
+.lastScannedText{display:block;margin-top:10px;font-size:12px;font-weight:500;color:#9f9f9f;white-space:nowrap}
 .lastScannedText.today{color:#3b82f6;font-weight:700}
 .topVersion{font-size:12px;color:#aaa;font-weight:700;direction:ltr;white-space:nowrap}.topBarActions{display:flex;align-items:center;gap:8px;direction:ltr}
 .shareBtn{width:42px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;background:#1d1d1d;color:#fff;border:1px solid #333;border-radius:14px}
@@ -44,7 +44,7 @@
 </head>
 <body>
 <section id="home" class="page active">
-  <div class="topBar"><h1>פקעות <span class="topVersion" id="topVersion"></span></h1><div class="topBarActions"><button class="shareBtn" onclick="shareApp()" aria-label="שתף את האפליקציה" title="שתף את האפליקציה"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3"></path><path d="m7 8 5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg></button><button class="refreshBtn" onclick="refreshList()">↻</button></div></div>
+  <div class="topBar"><h1>פקעות</h1><div class="topBarActions"><button class="shareBtn" onclick="shareApp()" aria-label="שתף את האפליקציה" title="שתף את האפליקציה"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3"></path><path d="m7 8 5-5 5 5"></path><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"></path></svg></button><button class="refreshBtn" onclick="refreshList()">↻</button></div></div>
   <p id="homeHelp" class="subtitle">מועדפים למעלה. מחיקה: החלקה ימינה.</p>
   <section id="departmentManagerSummary" class="departmentManagerSummary" hidden aria-live="polite">
     <div class="managerSummaryTitle"><strong id="managerSummaryTitle">נתוני מחלקה</strong><span>מנהל מחלקה</span></div>
@@ -83,17 +83,17 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.46"></script>
-<script src="js/utils.js?v=1.46"></script>
-<script src="js/storage.js?v=1.46"></script>
-<script src="js/barcode.js?v=1.46"></script>
-<script src="js/shared.js?v=1.46"></script>
-<script src="js/stats.js?v=1.46"></script>
-<script src="js/app.js?v=1.46"></script>
-<script src="js/pwa-enhance.js?v=1.46"></script>
-<script src="js/manager-summary.js?v=1.46"></script>
+<script src="js/config.js?v=1.47"></script>
+<script src="js/utils.js?v=1.47"></script>
+<script src="js/storage.js?v=1.47"></script>
+<script src="js/barcode.js?v=1.47"></script>
+<script src="js/shared.js?v=1.47"></script>
+<script src="js/stats.js?v=1.47"></script>
+<script src="js/app.js?v=1.47"></script>
+<script src="js/pwa-enhance.js?v=1.47"></script>
+<script src="js/manager-summary.js?v=1.47"></script>
 <script>
-document.getElementById("topVersion").textContent = "v" + VERSION;
+
 function formatLastScannedDate(value) {
   const timestamp = Number(value || 0);
   if (!timestamp) return '';
@@ -116,7 +116,8 @@ function isToday(value) {
 const originalRenderItem = renderItem;
 renderItem = function(x) {
   let html = originalRenderItem(x).replace('נפתחה ', 'נסרק ');
-  if (activeTab !== 'local' || !Number(x.lastScannedAt || 0)) return html;
+  const scanTime = Number(x.lastScannedAt || 0);
+  if (activeTab !== 'local' || !scanTime || Date.now() - scanTime >= 48 * 60 * 60 * 1000) return html;
   const todayClass = isToday(x.lastScannedAt) ? ' today' : '';
   const scanText = `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(x.lastScannedAt)}</span>`;
   return html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${escapeHtml(x.name)}${scanText}</div>`);
