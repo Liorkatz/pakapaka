@@ -70,6 +70,11 @@
     } catch(error) { notice(error.message || 'לא ניתן לאמת את הקישור.'); }
   }
 
+  el('toggleRecoveryPassword').addEventListener('click', () => {
+    const input=el('newAdminPassword'),button=el('toggleRecoveryPassword');
+    input.type=input.type==='password'?'text':'password';
+    button.textContent=input.type==='password'?'הצג':'הסתר';
+  });
   el('forgotPasswordBtn').addEventListener('click', () => showScreen('resetScreen'));
   el('resetCancelBtn').addEventListener('click', () => showScreen('loginScreen'));
   el('useRecoveryLink').addEventListener('click', async () => {
