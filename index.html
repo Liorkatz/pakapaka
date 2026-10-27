@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.58">
+<link rel="stylesheet" href="css/main.css?v=1.59">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -91,6 +91,15 @@
 .itemTop .lastScannedText{align-self:start!important;min-width:0!important}
 .itemMeta>.barcodeGroup,.item>.barcodeGroup{display:flex!important;direction:rtl!important;align-items:center!important;gap:7px!important;max-width:100%!important;flex-wrap:wrap!important}
 .itemMeta>.barcodeGroup .scanCorrectionTag,.item>.barcodeGroup .scanCorrectionTag{margin:0!important;flex-shrink:0!important}
+/* One stable bottom row for every card, including saved/favorite and shared */
+.itemTop{grid-template-columns:auto minmax(0,1fr)!important}
+.itemTop .itemName{grid-column:2!important}
+.itemMeta{display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;direction:rtl!important;align-items:center!important;gap:7px!important}
+.itemMeta>.num,.itemMeta>.barcodeGroup{grid-column:1!important;grid-row:1!important;justify-self:start!important;margin:0!important}
+.itemMeta>.lastScannedText{grid-column:2!important;grid-row:1!important;justify-self:center!important;max-width:100%!important;text-align:center!important;margin:0!important;white-space:normal!important;line-height:1.25!important;font-size:12px!important}
+.itemMeta>.scanHistoryBtn{grid-column:3!important;grid-row:1!important;justify-self:end!important;margin:0!important}
+.item>.lastScannedText{display:block!important;text-align:center!important;margin:5px 0!important;font-size:12px!important}
+@media(max-width:390px){.itemMeta{gap:4px!important}.itemMeta>.lastScannedText{font-size:11px!important}.barcodeGroup .num{font-size:12px!important}}
 </style>
 </head>
 <body>
@@ -134,16 +143,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.58"></script>
-<script src="js/utils.js?v=1.58"></script>
-<script src="js/storage.js?v=1.58"></script>
-<script src="js/barcode.js?v=1.58"></script>
-<script src="js/shared.js?v=1.58"></script>
-<script src="js/stats.js?v=1.58"></script>
-<script src="js/app.js?v=1.58"></script>
-<script src="js/pwa-enhance.js?v=1.58"></script>
-<script src="js/manager-summary.js?v=1.58"></script>
-<script src="js/developer-contact.js?v=1.58"></script>
+<script src="js/config.js?v=1.59"></script>
+<script src="js/utils.js?v=1.59"></script>
+<script src="js/storage.js?v=1.59"></script>
+<script src="js/barcode.js?v=1.59"></script>
+<script src="js/shared.js?v=1.59"></script>
+<script src="js/stats.js?v=1.59"></script>
+<script src="js/app.js?v=1.59"></script>
+<script src="js/pwa-enhance.js?v=1.59"></script>
+<script src="js/manager-summary.js?v=1.59"></script>
+<script src="js/developer-contact.js?v=1.59"></script>
 <script>
 
 function formatLastScannedDate(value) {
@@ -168,17 +177,19 @@ function isToday(value) {
 const originalRenderItem = renderItem;
 renderItem = function(x) {
   let html = originalRenderItem(x).replace('נפתחה ', 'נסרק ');
-  const scanTime = Number(x.lastScannedAt || 0);
   const correctionMatch = String(x.name || '').match(/תיקון (?:סריקה|הדפסה|פקע)/);
   const correction = correctionMatch ? escapeHtml(correctionMatch[0]) : '';
   const cleanName = escapeHtml(String(x.name || '').replace(/תיקון (?:סריקה|הדפסה|פקע)/g, '').trim());
+  const scanTime = Number(x.lastScannedAt || 0);
   const visibleScan = scanTime > 0 && Date.now() - scanTime < 48 * 60 * 60 * 1000;
   const todayClass = visibleScan && isToday(scanTime) ? ' today' : '';
   const scanText = visibleScan ? `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(scanTime)}</span>` : '';
   html = html.replace(/<div class="itemDate">[\s\S]*?<\/div>/, '');
-  html = html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${cleanName}</div>${scanText}`);
-  if (correction) {
-    html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div><span class="scanCorrectionTag">${correction}</span></div>`);
+  html = html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${cleanName}</div>`);
+  if (correction) html = html.replace(`<div class="num">${escapeHtml(x.code)}</div>`, `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div><span class="scanCorrectionTag">${correction}</span></div>`);
+  if (scanText) {
+    if (html.includes('class="itemMeta"')) html = html.replace('<div class="itemMeta">','<div class="itemMeta">'+scanText);
+    else html = html.replace('</div></div></div>',scanText+'</div></div></div>');
   }
   return html;
 };
