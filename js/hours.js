@@ -309,17 +309,16 @@ function getItemHoursState(item) {
 
 function hoursExtraHtml(item) {
   const state = getItemHoursState(item);
-  let html = '';
-  if (hasTrackedHours(state)) {
-    const remaining = Number(state.remainingHours ?? state.totalHours);
-    const total = Number(state.totalHours);
-    const cls = remaining < 0 ? ' negative' : remaining <= 12 ? ' low' : '';
-    html += `<span class="hoursRemainingText${cls}">נשארו ${escapeHtml(formatHours(remaining))} מתוך ${escapeHtml(formatHours(total))} שעות</span>`;
-  }
-  if (activeTab === 'local' && latestActiveScan(item.code)) {
-    html += `<button type="button" class="scanFixBtn" onclick="event.stopPropagation();openScanCorrection('${escapeAttr(item.id)}')">תיקון סריקה</button>`;
-  }
-  return html;
+  if (!hasTrackedHours(state)) return '';
+  const remaining = Number(state.remainingHours ?? state.totalHours);
+  const total = Number(state.totalHours);
+  const cls = remaining < 0 ? ' negative' : remaining <= 12 ? ' low' : '';
+  return `<span class="hoursRemainingText${cls}">נשארו ${escapeHtml(formatHours(remaining))} מתוך ${escapeHtml(formatHours(total))} שעות</span>`;
+}
+
+function scanCorrectionHtml(item) {
+  if (activeTab !== 'local' || !latestActiveScan(item.code)) return '';
+  return `<button type="button" class="scanFixBtn" onclick="event.stopPropagation();openScanCorrection('${escapeAttr(item.id)}')">תיקון סריקה</button>`;
 }
 
 function patchRenderItemForHours() {
@@ -328,10 +327,17 @@ function patchRenderItemForHours() {
   const base = window.renderItem;
   window.renderItem = function(item) {
     let html = base(item);
-    const extra = hoursExtraHtml(item);
-    if (!extra) return html;
-    const needle = `<div class="itemName">${escapeHtml(item.name)}`;
-    return html.replace(needle, `${needle}${extra}`);
+    const hours = hoursExtraHtml(item);
+    if (hours) {
+      // Preserve the existing hours indicator under the name.
+      html = html.replace(/(<div class="itemName">[^<]*)(<\/div>)/, (match, opening, closing) => opening + hours + closing);
+    }
+    const correction = scanCorrectionHtml(item);
+    if (correction) {
+      // Place the real correction action beside the barcode, not in itemName.
+      html = html.replace(/(<div class="barcodeGroup"><div class="num">[^<]*<\/div>)/, (match) => match + correction);
+    }
+    return html;
   };
 }
 
