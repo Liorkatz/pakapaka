@@ -1,0 +1,62 @@
+/* PakaPaka admin — light professional mobile dashboard (concept 1) */
+:root{--bg:#f4f7fb;--ink:#142238;--muted:#67758a;--card:#fff;--line:#e3e9f2;--accent:#2563eb;--accent-soft:#eaf2ff;color-scheme:light}
+html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+.adminShell{max-width:1140px!important;margin:0 auto;padding:calc(26px + var(--safe-top)) 14px calc(96px + var(--safe-bottom));background:transparent}
+.adminTopVersion{color:#7a889b}
+#dashboardScreen{width:100%}
+.adminHeader{background:#fff;border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 5px 18px #17355e08;align-items:center;margin-bottom:14px}
+.adminHeader h1{font-size:clamp(24px,5vw,31px);font-weight:850;color:#192d4c}
+.adminHeader p{color:#78869a}
+.adminActions{gap:7px}
+.smallBtn{background:#edf4ff;color:#205bb8;border:1px solid #d7e7ff;border-radius:12px;font-size:13px;padding:10px 12px;min-height:40px}
+#logoutBtn{background:#fff3f3;color:#a94040;border-color:#f4dddd}
+.adminNav{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:0 0 16px;padding:2px 0 6px;direction:rtl}
+.adminNav::-webkit-scrollbar{display:none}
+.adminNav button{width:auto;white-space:nowrap;border-radius:13px;padding:11px 14px;font-size:14px;background:#fff;color:#44546e;border:1px solid var(--line);font-weight:750;min-height:44px}
+.adminNav button.active{background:#2563eb;color:#fff;border-color:#2563eb;box-shadow:0 5px 14px #2563eb24}
+.cardsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.statCard{background:#fff;border:1px solid var(--line);border-radius:19px;padding:16px;box-shadow:0 5px 18px #17355e0a;min-width:0}
+.statCard.highlight{background:#eaf3ff;color:#142238;border-color:#e3eefc}
+.statCard span,.statCard.highlight span{font-size:13px;color:#60718a;font-weight:700}
+.statCard strong{font-size:clamp(29px,7vw,39px);line-height:1.1;color:#2563eb}
+.statCard:nth-child(2) strong{color:#14a86d}
+.statCard:nth-child(3) strong{color:#ed971a}
+.statCard:nth-child(4) strong{color:#8b5cf6}
+.statCard em,.statCard.highlight em{font-size:11px;color:#8290a3}
+.panelBlock,.topDepartmentCard{background:#fff;color:#16263f;border:1px solid var(--line);border-radius:20px;padding:17px;margin-bottom:14px;box-shadow:0 5px 18px #17355e0a}
+.topDepartmentCard span{color:#718096}
+.topDepartmentCard strong{color:#1c3151}
+.topDepartmentStats div{background:#f2f6fc}
+.topDepartmentStats small{color:#708198}
+.blockTitle{font-weight:850;color:#172b47;font-size:19px}
+.panelBlock p{color:#66758a}
+.deptRow{border-color:#e8edf5}
+.rowTitle{color:#1b3151}
+.rowCount{background:#ebf3ff;color:#2365c2}
+.deptStats{color:#64758c}
+.panelBlock button:not(.smallBtn),#saveDashboardPassword,#refreshDeveloperInbox,#refreshManagerRequests,#refreshActiveManagers{background:#edf4ff;color:#205db7;border:1px solid #d9e7fc;border-radius:12px;font-size:15px;min-height:43px;padding:11px}
+.panelBlock .adminActions button{background:#edf4ff;color:#215ab2;width:auto;min-height:40px;padding:10px 13px}
+#adminChangePasswordPanel[hidden]{display:none!important}
+input,textarea,select,.managerSelect{background:#f8faff;color:#1e3350;border-color:#dbe4f2;font-size:16px}
+input:focus,textarea:focus{background:#fff;border-color:#6ca4f6}
+#dashboardScreen #adminChangePasswordPanel .passwordRow input{background:#f8faff}
+.setupError{background:#fff3dc;color:#78500d;border-color:#f8d9a6}
+#developerInbox .deptRow p{overflow-wrap:anywhere}
+.adminContactThread{border:1px solid #e1e8f4;border-radius:14px;background:#f8faff;padding:12px;margin:12px 0}
+.adminContactThread p{background:#fff;border:1px solid #e8edf5;border-radius:10px;padding:10px;color:#263b5b}
+#dashboardScreen .panelBlock,#dashboardScreen .topDepartmentCard,#dashboardScreen .cardsGrid{scroll-margin-top:18px}
+#loginScreen .newLogin,#resetScreen .loginCard{background:#fff;border:1px solid var(--line);border-radius:25px;box-shadow:0 15px 45px #25426b12;padding:23px}
+#loginScreen .loginLogo{background:#eaf3ff;color:#2362bb;box-shadow:none}
+#loginScreen .loginIntro h1,#resetScreen h1{color:#172c48}
+#loginScreen .loginIntro p,#resetScreen p{color:#718096}
+#loginScreen .loginEyebrow{color:#4d76a8}
+.newLoginForm label,.secondaryPasswordLabel{color:#344963}
+.newLoginForm .passwordRow input,#resetScreen input,#recoveryLink{background:#f7faff;color:#1b2c44;border-color:#dce6f2}
+.newLoginForm .showPassword,.passwordEye{background:#e8f1ff;color:#225bb0}
+.newLoginForm .loginSubmit,#saveNewPassword,#sendResetBtn{background:#2563eb;color:#fff}
+.newLoginForm .loginForgot,.secondaryLink{color:#245dab}
+.newLoginForm .errorText{color:#bd3544}
+.loginFootnote{color:#8895a8}
+#loginScreen.active,#resetScreen.active{min-height:calc(100dvh - 100px)}
+@media(min-width:720px){.adminShell{padding-left:28px;padding-right:28px}.cardsGrid{grid-template-columns:repeat(4,minmax(0,1fr))}.adminNav{gap:12px}.adminHeader{padding:22px}.panelBlock{padding:21px}}
+@media(max-width:385px){.adminHeader{padding:14px}.adminHeader h1{font-size:23px}.adminActions .smallBtn{font-size:12px;padding:9px 8px}.statCard{padding:13px}.adminNav button{font-size:13px;padding:10px 12px}}
