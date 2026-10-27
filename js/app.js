@@ -112,6 +112,7 @@ function showDepartmentDialog({ title = 'בחירת מחלקה', text = 'הכנ�
       err.textContent = 'מספר מחלקה חייב להכיל בין 1 ל־5 ספרות.';
       return;
     }
+    if (getDepartment() !== finalValue) { localStorage.removeItem('pakapaka_manager_request_secret_v1'); localStorage.removeItem('pakapaka_manager_code_v1'); localStorage.removeItem('pakapaka_manager_request_notified_v1'); localStorage.removeItem('pakapaka_manager_name_v1'); }
     localStorage.setItem(DEPARTMENT_KEY, finalValue);
     sharedItems = [];
     sharedLoaded = false;
@@ -188,8 +189,16 @@ function updateDepartmentNotice() {
   }
 }
 
-function showVersionSettings() {
+async function showVersionSettings() {
   const department = getDepartment() || 'לא נבחרה';
+  let isManager = false;
+  const secret = localStorage.getItem('pakapaka_manager_request_secret_v1');
+  if (secret && typeof getDeviceId === 'function') {
+    try {
+      const r=await fetch(SUPABASE_URL+'/rest/v1/rpc/pakapaka_manager_request_status',{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify({p_device_id:getDeviceId(),p_secret:secret})});
+      isManager=r.ok && await r.json()==='approved';
+    } catch {}
+  }
   showAppDialog({
     title: 'הגדרות',
     text: 'ניהול גרסה ומחלקה.',
@@ -198,7 +207,7 @@ function showVersionSettings() {
       { label: 'בדיקת עדכונים', onClick: () => checkForAppUpdate(true) },
       { label: 'שינוי מחלקה', kind: 'secondary', onClick: changeDepartment },
       { label: 'בקשה לניהול מחלקה', kind: 'secondary', onClick: requestDepartmentManager },
-      { label: 'נתוני מנהל מחלקה', kind: 'secondary', onClick: openDepartmentManager },
+      ...(isManager ? [{ label: 'נתוני מנהל מחלקה', kind: 'secondary', onClick: openDepartmentManager }] : []),
       { label: 'סגור', kind: 'secondary small' }
     ]
   });
@@ -609,7 +618,7 @@ async function requestDepartmentManager(){
    if(!res.ok)throw new Error('השליחה נכשלה.');
    if(state==='device_not_registered')throw new Error('יש לבצע סריקה אחת במחלקה לפני שליחת הבקשה.');
    if(state!=='pending')throw new Error('פרטי הבקשה אינם תקינים.');
-   localStorage.setItem(secretKey,secret);localStorage.removeItem('pakapaka_manager_request_notified_v1');feedback.textContent='הבקשה נשלחה וממתינה לאישור. חזור למסך זה כדי לראות את ההחלטה.';
+   localStorage.setItem('pakapaka_manager_name_v1',name);localStorage.setItem(secretKey,secret);localStorage.removeItem('pakapaka_manager_request_notified_v1');feedback.textContent='הבקשה נשלחה וממתינה לאישור. חזור למסך זה כדי לראות את ההחלטה.';
   }catch(e){feedback.textContent=e.message||'שגיאה בשליחת הבקשה';}finally{submit.disabled=false;}
  });
 }
