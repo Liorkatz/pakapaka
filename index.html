@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.53">
+<link rel="stylesheet" href="css/main.css?v=1.54">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -60,6 +60,10 @@
 .contactBubble{background:#252525;border-radius:12px;padding:10px;margin:7px 0;font-size:15px;overflow-wrap:anywhere}
 .contactThread{max-height:30vh;overflow-y:auto;margin:14px 0}
 .itemMeta{direction:rtl!important}.itemMeta .num{margin-left:auto!important;margin-right:0!important;text-align:right!important}.itemMeta.hasCorrection .num{margin:0!important;justify-self:stretch!important;text-align:right!important}
+.contactNameRow{display:flex;align-items:stretch;gap:8px;direction:rtl;margin:6px 0 12px}
+.contactNameRow #contactName{flex:1 1 auto;width:0;min-width:0;margin:0}
+.contactNameRow #contactRename{flex:0 0 auto;width:auto;white-space:nowrap;margin:0;padding:9px 12px;font-size:15px;min-height:50px}
+.developerReplyAlert{position:fixed;z-index:99999;left:16px;right:16px;top:calc(env(safe-area-inset-top,0px) + 72px);width:calc(100% - 32px);padding:16px 12px;background:#2563eb;color:white;border:1px solid #8db4ff;border-radius:18px;box-shadow:0 9px 28px #0008;font-size:17px;line-height:1.45;text-align:center}
 </style>
 </head>
 <body>
@@ -103,16 +107,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.53"></script>
-<script src="js/utils.js?v=1.53"></script>
-<script src="js/storage.js?v=1.53"></script>
-<script src="js/barcode.js?v=1.53"></script>
-<script src="js/shared.js?v=1.53"></script>
-<script src="js/stats.js?v=1.53"></script>
-<script src="js/app.js?v=1.53"></script>
-<script src="js/pwa-enhance.js?v=1.53"></script>
-<script src="js/manager-summary.js?v=1.53"></script>
-<script src="js/developer-contact.js?v=1.53"></script>
+<script src="js/config.js?v=1.54"></script>
+<script src="js/utils.js?v=1.54"></script>
+<script src="js/storage.js?v=1.54"></script>
+<script src="js/barcode.js?v=1.54"></script>
+<script src="js/shared.js?v=1.54"></script>
+<script src="js/stats.js?v=1.54"></script>
+<script src="js/app.js?v=1.54"></script>
+<script src="js/pwa-enhance.js?v=1.54"></script>
+<script src="js/manager-summary.js?v=1.54"></script>
+<script src="js/developer-contact.js?v=1.54"></script>
 <script>
 
 function formatLastScannedDate(value) {
