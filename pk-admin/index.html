@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#050505">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.47">
+<link rel="stylesheet" href="admin.css?v=1.48">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopVersion">v1.47</div>
+<div class="adminTopVersion">v1.48</div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -25,9 +25,16 @@
           <input id="adminPassword" type="password" autocomplete="current-password" placeholder="הכנס סיסמה" required>
           <button id="toggleAdminPassword" class="showPassword" type="button" aria-label="הצג סיסמה">הצג</button>
         </div>
-        <div id="loginError" class="errorText" role="alert" aria-live="polite"></div>
+        <label for="adminSecondaryPassword" class="secondaryPasswordLabel">סיסמת מנהל נוספת</label>
+<div class="passwordRow">
+<input id="adminSecondaryPassword" type="password" autocomplete="off" placeholder="או הכנס סיסמה שנייה">
+<button id="toggleSecondaryPassword" class="showPassword" type="button">הצג</button>
+</div>
+<p class="passwordHint">הזן אחת משתי הסיסמאות, לא את שתיהן יחד.</p>
+<div id="loginError" class="errorText" role="alert" aria-live="polite"></div>
         <button id="loginBtn" type="submit" class="loginSubmit">כניסה למרכז הניהול</button>
         <button id="forgotPasswordBtn" type="button" class="loginForgot">שכחת סיסמה?</button>
+<button id="setupSecondaryPasswordBtn" type="button" class="loginForgot">הגדרת סיסמה שנייה באימות מייל</button>
       </form>
       <div class="loginFootnote"><span aria-hidden="true">●</span> גישה למנהל מורשה בלבד</div>
     </div>
@@ -99,10 +106,10 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.47"></script>
-<script src="../js/utils.js?v=1.47"></script>
-<script src="admin.js?v=1.47"></script>
-<script src="admin-recovery-v5.js?v=1.47"></script>
-<script src="admin-login-ui.js?v=1.47"></script>
+<script src="../js/config.js?v=1.48"></script>
+<script src="../js/utils.js?v=1.48"></script>
+<script src="admin.js?v=1.48"></script>
+<script src="admin-recovery-v6.js?v=1.48"></script>
+<script src="admin-login-ui.js?v=1.48"></script>
 </body>
 </html>
