@@ -102,7 +102,7 @@
   el('saveNewPassword').addEventListener('click', async () => {
     const password = el('newAdminPassword').value;
     if (!recoveryToken) { notice('קודם יש לאמת קישור למייל.'); return; }
-    if (password.length < 12 || password.length > 128) { notice('הסיסמה חייבת להכיל 12 עד 128 תווים.'); return; }
+    if (password.length < 6 || password.length > 128) { notice('הסיסמה חייבת להכיל 6 עד 128 תווים.'); return; }
     const button = el('saveNewPassword'); button.disabled = true;
     try {
       const response = await fetch(adminRpcUrl(secondarySetup ? 'pakapaka_admin_set_secondary_password' : 'pakapaka_admin_reset_password'),{
