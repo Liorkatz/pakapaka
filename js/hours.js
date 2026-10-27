@@ -94,6 +94,7 @@ function ensureHoursStyles() {
     .hoursRemainingText.low{color:#fbbf24}
     .hoursRemainingText.negative{color:#fb7185}
     .scanFixBtn{display:inline-block;width:auto;margin-top:7px;padding:6px 10px;border-radius:10px;border:1px solid #454545;background:#202020;color:#ddd;font-size:12px;font-weight:700}
+    .barcodeGroup>.scanFixBtn{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:auto;margin:0;padding:5px 7px;border-radius:10px;border:1px solid #555;background:#292929;color:#ddd;font-size:11px;line-height:1.25;font-weight:700;white-space:nowrap;cursor:pointer}
     .barcodeActions.hoursMode{display:grid;grid-template-columns:.9fr 1fr 1fr;gap:9px;width:100%}
     .barcodeHoursBtn{background:#111;color:#fff;border:2px solid #111;font-weight:900}
     .barcodeHoursBtn:disabled{opacity:.45}
