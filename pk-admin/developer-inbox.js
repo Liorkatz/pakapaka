@@ -1,5 +1,5 @@
 (function(){
-const rpc=async(name,data)=>{const r=await fetch(adminRpcUrl(name),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify(data)});if(!r.ok)throw Error('שגיאת שרת');return r.json();};
+const rpc=async(name,data)=>{const r=await fetch(adminRpcUrl(name),{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify(data)});if(!r.ok){const info=await r.json().catch(()=>({}));throw Error(info.message||'שגיאת שרת '+r.status);}return r.json();};
 async function updateInboxBadge(){
  const badge=document.getElementById('adminInboxBadge');
  if(!badge||!getAdminToken())return;
@@ -26,7 +26,7 @@ async function loadInbox(){
    const rename=document.createElement('button');rename.className='smallBtn';rename.textContent='שינוי שם';rename.onclick=async()=>{const n=prompt('שם המשתמש',x.display_name);if(n===null)return;try{if(await rpc('pakapaka_admin_contact_rename',{p_token:getAdminToken(),p_device_id:x.device_id,p_name:n.trim()})){await loadInbox();}else alert('שם לא תקין');}catch{alert('לא ניתן לעדכן שם');}};
    actions.append(reply,rename);item.appendChild(actions);box.appendChild(item);
   }
- }catch{box.textContent='לא ניתן לטעון הודעות';}
+ }catch(error){box.textContent='לא ניתן לטעון הודעות: '+(error.message||'שגיאה');}
 }
 async function openThread(x,item){
  let panel=item.querySelector('.adminContactThread');if(panel){panel.remove();return;}
