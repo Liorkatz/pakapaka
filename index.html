@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.50">
+<link rel="stylesheet" href="css/main.css?v=1.51">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -54,6 +54,11 @@
 .itemMeta .num{order:0!important;direction:ltr;text-align:right;margin-inline-end:auto;min-width:0;overflow-wrap:anywhere}
 .itemMeta .scanHistoryBtn{order:1!important;display:inline-block;width:auto!important;max-width:50%;flex:0 0 auto;min-height:0!important;margin:0!important;padding:2px 0!important;background:transparent!important;border:0!important;border-radius:0!important;color:#b5b5b5!important;font-size:15px!important;font-weight:500;line-height:1.4;white-space:nowrap;text-align:left;text-decoration:underline;text-underline-offset:3px}
 .itemTop .star{display:block;width:28px!important;height:28px!important;padding:0!important;flex-shrink:0}
+.contactDialog{max-height:85vh;overflow-y:auto}
+.contactDialog .appDialogInput{font-size:18px;letter-spacing:0;text-align:right}
+.contactDialog textarea{font-size:16px;width:100%}
+.contactBubble{background:#252525;border-radius:12px;padding:10px;margin:7px 0;font-size:15px;overflow-wrap:anywhere}
+.contactThread{max-height:30vh;overflow-y:auto;margin:14px 0}
 </style>
 </head>
 <body>
@@ -97,15 +102,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.50"></script>
-<script src="js/utils.js?v=1.50"></script>
-<script src="js/storage.js?v=1.50"></script>
-<script src="js/barcode.js?v=1.50"></script>
-<script src="js/shared.js?v=1.50"></script>
-<script src="js/stats.js?v=1.50"></script>
-<script src="js/app.js?v=1.50"></script>
-<script src="js/pwa-enhance.js?v=1.50"></script>
-<script src="js/manager-summary.js?v=1.50"></script>
+<script src="js/config.js?v=1.51"></script>
+<script src="js/utils.js?v=1.51"></script>
+<script src="js/storage.js?v=1.51"></script>
+<script src="js/barcode.js?v=1.51"></script>
+<script src="js/shared.js?v=1.51"></script>
+<script src="js/stats.js?v=1.51"></script>
+<script src="js/app.js?v=1.51"></script>
+<script src="js/pwa-enhance.js?v=1.51"></script>
+<script src="js/manager-summary.js?v=1.51"></script>
+<script src="js/developer-contact.js?v=1.51"></script>
 <script>
 
 function formatLastScannedDate(value) {
