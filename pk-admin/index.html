@@ -8,14 +8,14 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.62">
-<link rel="stylesheet" href="admin-light.css?v=1.62">
-<link rel="stylesheet" href="admin-theme.css?v=1.62">
-<link rel="stylesheet" href="admin-notifications.css?v=1.62">
+<link rel="stylesheet" href="admin.css?v=1.63">
+<link rel="stylesheet" href="admin-light.css?v=1.63">
+<link rel="stylesheet" href="admin-theme.css?v=1.63">
+<link rel="stylesheet" href="admin-notifications.css?v=1.63">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopTools"><div class="adminTopVersion">v1.62</div><button type="button" id="adminThemeToggle" class="themeToggle" aria-label="ערכת נושא" title="החלף צבעים">◐</button></div>
+<div class="adminTopTools"><div class="adminTopVersion">v1.63</div><button type="button" id="adminThemeToggle" class="themeToggle" aria-label="ערכת נושא" title="החלף צבעים">◐</button></div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -28,19 +28,14 @@
       <form id="adminLoginForm" class="newLoginForm">
         <label for="adminPassword">סיסמת מנהל</label>
         <div class="passwordRow">
-          <input id="adminPassword" type="password" autocomplete="current-password" placeholder="הכנס סיסמה">
+          <input id="adminUsername" type="text" name="username" autocomplete="username" value="pakapaka-admin" readonly class="autofillUsername" tabindex="-1" aria-hidden="true">
+          <input id="adminPassword" name="password" type="password" autocomplete="current-password" placeholder="הכנס סיסמה" required>
           <button id="toggleAdminPassword" class="showPassword" type="button" aria-label="הצג סיסמה">הצג</button>
         </div>
-        <label for="adminSecondaryPassword" class="secondaryPasswordLabel">סיסמת מנהל נוספת</label>
-<div class="passwordRow">
-<input id="adminSecondaryPassword" type="password" autocomplete="off" placeholder="או הכנס סיסמה שנייה">
-<button id="toggleSecondaryPassword" class="showPassword" type="button">הצג</button>
-</div>
-<p class="passwordHint">הזן אחת משתי הסיסמאות, לא את שתיהן יחד.</p>
 <div id="loginError" class="errorText" role="alert" aria-live="polite"></div>
         <button id="loginBtn" type="submit" class="loginSubmit">כניסה למרכז הניהול</button>
         <button id="forgotPasswordBtn" type="button" class="loginForgot">שכחת סיסמה?</button>
-<button id="setupSecondaryPasswordBtn" type="button" class="loginForgot">הגדרת סיסמה שנייה באימות מייל</button>
+
       </form>
       <div class="loginFootnote"><span aria-hidden="true">●</span> גישה למנהל מורשה בלבד</div>
     </div>
@@ -124,17 +119,17 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.62"></script>
-<script src="../js/utils.js?v=1.62"></script>
-<script src="admin.js?v=1.62"></script>
-<script src="admin-recovery-v7.js?v=1.62"></script>
-<script src="admin-login-ui.js?v=1.62"></script>
-<script src="developer-inbox.js?v=1.62"></script>
-<script src="admin-light.js?v=1.62"></script>
-<script src="admin-theme.js?v=1.62"></script>
+<script src="../js/config.js?v=1.63"></script>
+<script src="../js/utils.js?v=1.63"></script>
+<script src="admin.js?v=1.63"></script>
+<script src="admin-recovery-v7.js?v=1.63"></script>
+<script src="admin-login-ui.js?v=1.63"></script>
+<script src="developer-inbox.js?v=1.63"></script>
+<script src="admin-light.js?v=1.63"></script>
+<script src="admin-theme.js?v=1.63"></script>
 <script>
 (function(){
-  const current = '1.62';
+  const current = '1.63';
   let checking = false;
   async function checkForUpdate(){
     if (checking || document.hidden) return;
