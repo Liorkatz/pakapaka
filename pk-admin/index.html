@@ -8,11 +8,11 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.58">
+<link rel="stylesheet" href="admin.css?v=1.59">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopVersion">v1.58</div>
+<div class="adminTopVersion">v1.59</div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -81,6 +81,7 @@
     </section>
     <section class="panelBlock"><div class="blockTitle">בקשות לניהול מחלקה</div><button id="refreshManagerRequests" type="button">רענן בקשות</button><div id="managerRequestList">טוען בקשות...</div></section>
     <section class="panelBlock"><div class="blockTitle">מנהלי מחלקות קיימים</div><button id="refreshActiveManagers" type="button">רענן רשימה</button><div id="activeManagerList">טוען מנהלים...</div></section>
+    <section class="panelBlock"><div class="blockTitle">הודעות למפתח</div><button id="refreshDeveloperInbox" type="button">רענן הודעות</button><div id="developerInbox">טוען הודעות...</div></section>
     <div id="setupError" class="setupError"></div>
 
     <section class="cardsGrid">
@@ -120,14 +121,15 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.58"></script>
-<script src="../js/utils.js?v=1.58"></script>
-<script src="admin.js?v=1.58"></script>
-<script src="admin-recovery-v7.js?v=1.58"></script>
-<script src="admin-login-ui.js?v=1.58"></script>
+<script src="../js/config.js?v=1.59"></script>
+<script src="../js/utils.js?v=1.59"></script>
+<script src="admin.js?v=1.59"></script>
+<script src="admin-recovery-v7.js?v=1.59"></script>
+<script src="admin-login-ui.js?v=1.59"></script>
+<script src="developer-inbox.js?v=1.59"></script>
 <script>
 (function(){
-  const current = '1.58';
+  const current = '1.59';
   let checking = false;
   async function checkForUpdate(){
     if (checking || document.hidden) return;
