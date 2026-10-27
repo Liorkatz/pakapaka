@@ -28,4 +28,5 @@ async function openThread(x,item){
 }
 document.getElementById('refreshDeveloperInbox').addEventListener('click',loadInbox);
 const old=window.showDashboard;window.showDashboard=async function(...args){const result=await old.apply(this,args);await loadInbox();return result;};
+if(getAdminToken())loadInbox();
 })();
