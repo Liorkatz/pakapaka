@@ -123,11 +123,11 @@ const originalRenderItem = renderItem;
 renderItem = function(x) {
   let html = originalRenderItem(x).replace('נפתחה ', 'נסרק ');
   const scanTime = Number(x.lastScannedAt || 0);
-  if (activeTab !== 'local' || !scanTime || Date.now() - scanTime >= 48 * 60 * 60 * 1000) return html;
-  const todayClass = isToday(x.lastScannedAt) ? ' today' : '';
-  const scanText = `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(x.lastScannedAt)}</span>`;
   const prettyName=escapeHtml(x.name).replace(/(תיקון (?:סריקה|הדפסה))/g,'<span class="scanCorrectionTag">$1</span>');
-  return html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`, `<div class="itemName">${prettyName}${scanText}</div>`);
+  const visibleScan=activeTab === 'local' && scanTime && Date.now()-scanTime < 48*60*60*1000;
+  const todayClass=visibleScan && isToday(scanTime) ? ' today' : '';
+  const scanText=visibleScan ? `<span class="lastScannedText${todayClass}">נסרק לאחרונה: ${formatLastScannedDate(scanTime)}</span>` : '';
+  return html.replace(`<div class="itemName">${escapeHtml(x.name)}</div>`,`<div class="itemName">${prettyName}${scanText}</div>`);
 };
 
 async function shareApp() {
