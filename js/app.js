@@ -197,7 +197,8 @@ function showVersionSettings() {
     actions: [
       { label: 'בדיקת עדכונים', onClick: () => checkForAppUpdate(true) },
       { label: 'שינוי מחלקה', kind: 'secondary', onClick: changeDepartment },
-      { label: 'ניהול מחלקה', kind: 'secondary', onClick: openDepartmentManager },
+      { label: 'בקשה לניהול מחלקה', kind: 'secondary', onClick: requestDepartmentManager },
+      { label: 'נתוני מנהל מחלקה', kind: 'secondary', onClick: openDepartmentManager },
       { label: 'סגור', kind: 'secondary small' }
     ]
   });
@@ -557,7 +558,7 @@ initApp();
 
 async function openDepartmentManager(){
   const deviceId=typeof getDeviceId==='function'?getDeviceId():'';
-  const stored=localStorage.getItem('pakapaka_manager_code_v1')||'';
+  const stored=localStorage.getItem('pakapaka_manager_request_secret_v1')||localStorage.getItem('pakapaka_manager_code_v1')||'';
   ensureAppDialogStyles();
   closeAppDialog();
   const overlay=document.createElement('div');
@@ -581,4 +582,34 @@ async function openDepartmentManager(){
       status.textContent='מחלקה '+data.department+' · משתמשים: '+data.users+' · פעילים בשבוע האחרון: '+data.active_users+' · סריקות: '+data.scans;
     }catch(e){status.textContent=e.message||'שגיאה באימות הרשאה';}
   });
+}
+
+async function requestDepartmentManager(){
+ ensureAppDialogStyles();closeAppDialog();
+ const dept=getDepartment(),device=typeof getDeviceId==='function'?getDeviceId():'';
+ const overlay=document.createElement('div');overlay.id='appDialogBackdrop';overlay.className='appDialogBackdrop';
+ overlay.innerHTML='<div class="appDialog"><div class="appDialogTitle">בקשה להיות מנהל מחלקה</div><p class="appDialogText">מחלקה: '+escapeHtml(dept||'לא נבחרה')+'</p><input id="managerRequestName" class="appDialogInput" maxlength="80" placeholder="שם מלא" autocomplete="name"><p id="managerRequestStatus" class="appDialogText"></p><div class="appDialogActions"><button class="appDialogBtn" id="managerRequestSubmit">שלח בקשה</button><button class="appDialogBtn secondary" id="managerRequestClose">סגור</button></div></div>';
+ document.body.appendChild(overlay);
+ const feedback=document.getElementById('managerRequestStatus'),submit=document.getElementById('managerRequestSubmit');
+ const secretKey='pakapaka_manager_request_secret_v1';
+ const known=localStorage.getItem('pakapaka_manager_request_secret_v1');
+ if(known&&device){
+  try{const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/pakapaka_manager_request_status',{method:'POST',headers:headers(),body:JSON.stringify({p_device_id:device,p_secret:known})});
+  const st=await res.json();feedback.textContent=st==='approved'?'הבקשה אושרה! אפשר לפתוח את נתוני מנהל המחלקה.':st==='rejected'?'הבקשה נדחתה. ניתן לשלוח בקשה חדשה.':st==='pending'?'הבקשה ממתינה לאישור מנהל המערכת.':'';}catch{}
+ }
+ document.getElementById('managerRequestClose').addEventListener('click',closeAppDialog);
+ submit.addEventListener('click',async()=>{
+  const name=document.getElementById('managerRequestName').value.trim();
+  if(name.length<2||!dept){feedback.textContent='נדרש שם מלא ומספר מחלקה.';return;}
+  submit.disabled=true;feedback.textContent='שולח בקשה...';
+  const secret=known||Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');
+  try{
+   const res=await fetch(SUPABASE_URL+'/rest/v1/rpc/pakapaka_manager_request',{method:'POST',headers:headers(),body:JSON.stringify({p_device_id:device,p_name:name,p_department:dept,p_secret:secret})});
+   const state=await res.json();
+   if(!res.ok)throw new Error('השליחה נכשלה.');
+   if(state==='device_not_registered')throw new Error('יש לבצע סריקה אחת במחלקה לפני שליחת הבקשה.');
+   if(state!=='pending')throw new Error('פרטי הבקשה אינם תקינים.');
+   localStorage.setItem(secretKey,secret);feedback.textContent='הבקשה נשלחה וממתינה לאישור. חזור למסך זה כדי לראות את ההחלטה.';
+  }catch(e){feedback.textContent=e.message||'שגיאה בשליחת הבקשה';}finally{submit.disabled=false;}
+ });
 }
