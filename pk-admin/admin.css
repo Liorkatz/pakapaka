@@ -50,3 +50,5 @@ button:active{transform:scale(.99)}
 .setupError{display:none;background:#211a0d;color:#ffe7a8;border:1px solid #5a4a20;border-radius:18px;padding:12px 14px;font-size:14px;line-height:1.4;margin-bottom:14px}
 .setupError.show{display:block}
 @media (min-width:520px){.adminShell{max-width:430px;margin:0 auto}}
+
+.adminVersion{display:inline-block;margin-top:7px;color:#9ca3af;font-size:12px;font-weight:700;direction:ltr}
