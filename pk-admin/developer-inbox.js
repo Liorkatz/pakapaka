@@ -23,8 +23,7 @@ async function loadInbox(){
    const preview=document.createElement('p');preview.textContent=x.last_message;item.appendChild(preview);
    const actions=document.createElement('div');actions.className='adminActions';
    const reply=document.createElement('button');reply.className='smallBtn';reply.textContent='פתח שיחה והשב';reply.onclick=()=>openThread(x,item);
-   const rename=document.createElement('button');rename.className='smallBtn';rename.textContent='שינוי שם';rename.onclick=async()=>{const n=prompt('שם המשתמש',x.display_name);if(n===null)return;try{if(await rpc('pakapaka_admin_contact_rename',{p_token:getAdminToken(),p_device_id:x.device_id,p_name:n.trim()})){await loadInbox();}else alert('שם לא תקין');}catch{alert('לא ניתן לעדכן שם');}};
-   actions.append(reply,rename);item.appendChild(actions);box.appendChild(item);
+   actions.append(reply);item.appendChild(actions);box.appendChild(item);
   }
  }catch(error){box.textContent='לא ניתן לטעון הודעות: '+(error.message||'שגיאה');}
 }
@@ -35,9 +34,10 @@ async function openThread(x,item){
   const rows=await rpc('pakapaka_admin_contact_thread',{p_token:getAdminToken(),p_device_id:x.device_id});
   await rpc('pakapaka_admin_contact_mark_read',{p_token:getAdminToken(),p_device_id:x.device_id});
   updateInboxBadge();
-  for(const m of rows.reverse()){const p=document.createElement('p');p.textContent=(m.sender==='admin'?'אני: ':'משתמש: ')+m.body;panel.appendChild(p);}
-  const area=document.createElement('textarea');area.rows=3;area.placeholder='כתוב תשובה';panel.appendChild(area);
-  const send=document.createElement('button');send.className='smallBtn';send.textContent='שלח תשובה';send.onclick=async()=>{send.disabled=true;try{const ok=await rpc('pakapaka_admin_contact_reply',{p_token:getAdminToken(),p_device_id:x.device_id,p_name:x.display_name,p_message:area.value.trim()});if(!ok)throw Error();await loadInbox();}catch{alert('שליחת התשובה נכשלה');send.disabled=false;}};panel.appendChild(send);
+  for(const m of rows.reverse()){const p=document.createElement('p');p.textContent=(m.sender==='admin'?'אני: ':x.display_name+': ')+m.body;panel.appendChild(p);}
+  const composer=document.createElement('div');composer.className='adminReplyComposer';
+  const area=document.createElement('textarea');area.rows=1;area.placeholder='כתוב תשובה';area.setAttribute('aria-label','כתוב תשובה');composer.appendChild(area);
+  const send=document.createElement('button');send.className='smallBtn';send.textContent='שלח תשובה';send.onclick=async()=>{send.disabled=true;try{const ok=await rpc('pakapaka_admin_contact_reply',{p_token:getAdminToken(),p_device_id:x.device_id,p_name:x.display_name,p_message:area.value.trim()});if(!ok)throw Error();await loadInbox();}catch{alert('שליחת התשובה נכשלה');send.disabled=false;}};composer.appendChild(send);panel.appendChild(composer);
  }catch{panel.textContent='לא ניתן לטעון שיחה';}
 }
 document.getElementById('refreshDeveloperInbox').addEventListener('click',loadInbox);
