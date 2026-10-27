@@ -5,26 +5,41 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#050505">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.41">
+<link rel="stylesheet" href="admin.css?v=1.42">
 </head>
 <body>
 <main class="adminShell">
+<div class="adminTopVersion">v1.42</div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="loginCard">
       <div class="lockIcon">🔒</div>
       <h1>פקע פקע</h1>
-      <p>מרכז הניהול</p><div class="adminVersion">גרסת פאנל 1.41</div>
+      <p>מרכז הניהול</p>
       <input id="adminPassword" type="password" autocomplete="current-password" placeholder="סיסמה">
       <div id="loginError" class="errorText"></div>
       <button id="loginBtn">כניסה</button>
+<button id="forgotPasswordBtn" class="secondaryLink" type="button">שכחתי סיסמה</button>
     </div>
   </section>
 
-  <section id="dashboardScreen" class="screen">
+  <section id="resetScreen" class="screen">
+<div class="loginCard">
+<h1>שחזור סיסמה</h1>
+<p>קישור אימות יישלח לכתובת המנהל שהוגדרה</p>
+<button id="sendResetBtn" type="button">שלח קישור למייל</button>
+<p id="resetMessage" role="status"></p>
+<div id="setNewPassword" hidden>
+<input id="newAdminPassword" type="password" autocomplete="new-password" minlength="12" placeholder="סיסמה חדשה (12 תווים לפחות)">
+<button id="saveNewPassword" type="button">שמור סיסמה חדשה</button>
+</div>
+<button class="secondaryLink" id="resetCancelBtn" type="button">חזרה לכניסה</button>
+</div>
+</section>
+<section id="dashboardScreen" class="screen">
     <header class="adminHeader">
       <div>
-        <h1>מרכז הניהול</h1><div class="adminVersion">גרסת פאנל 1.41</div>
+        <h1>מרכז הניהול</h1>
         <p id="lastUpdated">טוען נתונים...</p>
       </div>
       <button id="logoutBtn" class="smallBtn">יציאה</button>
@@ -69,8 +84,9 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.41"></script>
-<script src="../js/utils.js?v=1.41"></script>
-<script src="admin.js?v=1.41"></script>
+<script src="../js/config.js?v=1.42"></script>
+<script src="../js/utils.js?v=1.42"></script>
+<script src="admin.js?v=1.42"></script>
+<script src="admin-recovery.js?v=1.42"></script>
 </body>
 </html>
