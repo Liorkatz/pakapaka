@@ -28,6 +28,7 @@
     let data = tokenFromLink(supplied);
     if (!data && /^\d{6,8}$/.test(supplied)) {
       notice('מאמת קוד חד־פעמי...');
+      try {
       const verify = await fetch(SUPABASE_URL + '/auth/v1/verify', {
         method:'POST',
         headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json'},
@@ -40,6 +41,7 @@
         return;
       }
       data = {token:result.access_token,expiration:0};
+      } catch { notice('לא ניתן לתקשר עם שרת האימות. נסה שוב.'); return; }
     }
     if (!data) { notice('הזן קוד אימות בן 6 ספרות, או הדבק את הקישור המלא מהמייל.'); return; }
     if (data.expiration && data.expiration * 1000 <= Date.now()) {
