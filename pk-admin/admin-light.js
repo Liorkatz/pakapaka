@@ -19,10 +19,12 @@
   const nav=document.createElement('nav');nav.className='adminNav';nav.setAttribute('aria-label','ניווט פאנל ניהול');
   const items=[['סקירה',cards],['מחלקות',departments],['בקשות מנהלים',requests],['מנהלי מחלקות',managers],['הודעות למפתח',inbox]];
   for(const [label,target] of items){if(!target)continue;const button=document.createElement('button');button.type='button';button.textContent=label;
+   if(label==='הודעות למפתח'){const badge=document.createElement('span');badge.id='adminInboxBadge';badge.className='adminInboxBadge';badge.hidden=true;button.appendChild(badge);button.classList.add('adminInboxNavButton');}
    button.onclick=()=>{nav.querySelectorAll('button').forEach(x=>x.classList.remove('active'));button.classList.add('active');target.scrollIntoView({behavior:'smooth',block:'start'});};
    nav.appendChild(button);}
   if(nav.firstElementChild)nav.firstElementChild.classList.add('active');
   header.after(nav);
+  if(typeof window.updateInboxBadge==='function')window.updateInboxBadge();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initLightDashboard);
  else initLightDashboard();
