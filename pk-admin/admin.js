@@ -45,11 +45,7 @@ async function login() {
   const btn = document.getElementById('loginBtn');
   err.textContent = '';
 
-  const secondInput = document.getElementById('adminSecondaryPassword');
-  const secondPassword = String(secondInput?.value || '');
-  const primaryPassword = String(input.value || '');
-  if (primaryPassword && secondPassword) { err.textContent = 'הזן סיסמה אחת בלבד.'; return; }
-  const typed = secondPassword || primaryPassword;
+  const typed = String(input.value || '');
   if (!typed) {
     err.textContent = 'הזן סיסמה.';
     return;
@@ -57,7 +53,7 @@ async function login() {
 
   btn.disabled = true;
   try {
-    const r = await fetch(adminRpcUrl(secondPassword ? 'pakapaka_admin_login_secondary' : 'pakapaka_admin_login'), {
+    const r = await fetch(adminRpcUrl('pakapaka_admin_login'), {
       method: 'POST',
       headers: headers(),
       cache: 'no-store',
@@ -70,8 +66,6 @@ async function login() {
       return;
     }
     sessionStorage.setItem(ADMIN_SESSION_KEY, String(token));
-    input.value = '';
-    if (secondInput) secondInput.value = '';
     await showDashboard();
   } catch (e) {
     err.textContent = e.message || 'שגיאה בכניסה.';
@@ -341,11 +335,8 @@ function initPasswordManagement(){
 }
 
 function initAdmin() {
-  document.getElementById('loginBtn').addEventListener('click', login);
+  document.getElementById('adminLoginForm').addEventListener('submit', e => {e.preventDefault(); login();});
   document.getElementById('logoutBtn').addEventListener('click', logout);
-  document.getElementById('adminPassword').addEventListener('keydown', e => {
-    if (e.key === 'Enter') login();
-  });
   initPullToFullRefresh();
   initPasswordManagement();
   document.getElementById('refreshActiveManagers').addEventListener('click',loadActiveManagers);
