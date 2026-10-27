@@ -17,7 +17,7 @@ function getDepartment() {
 }
 
 function isValidDepartment(value) {
-  return /^\d{2}$/.test(String(value || '').trim());
+  return /^\d{1,5}$/.test(String(value || '').trim());
 }
 
 function ensureAppDialogStyles() {
@@ -78,7 +78,7 @@ function showAppDialog({ title, text, value, actions }) {
   document.body.appendChild(backdrop);
 }
 
-function showDepartmentDialog({ title = 'בחירת מחלקה', text = 'הכנס מספר מחלקה בן 2 ספרות.', onSaved } = {}) {
+function showDepartmentDialog({ title = 'בחירת מחלקה', text = 'הכנס מספר מחלקה של 1 עד 5 ספרות.', onSaved } = {}) {
   ensureAppDialogStyles();
   closeAppDialog();
   const backdrop = document.createElement('div');
@@ -89,7 +89,7 @@ function showDepartmentDialog({ title = 'בחירת מחלקה', text = 'הכנ�
   dialog.innerHTML = `
     <div class="appDialogTitle">${escapeHtml(title)}</div>
     <div class="appDialogText">${text}</div>
-    <input id="departmentInput" class="appDialogInput" inputmode="numeric" maxlength="2" value="${escapeAttr(getDepartment())}" placeholder="00">
+    <input id="departmentInput" class="appDialogInput" inputmode="numeric" maxlength="5" value="${escapeAttr(getDepartment())}" placeholder="עד 5 ספרות">
     <div id="departmentError" class="appDialogError"></div>
     <div class="appDialogActions two">
       <button type="button" id="departmentCancel" class="appDialogBtn secondary">ביטול</button>
@@ -102,14 +102,14 @@ function showDepartmentDialog({ title = 'בחירת מחלקה', text = 'הכנ�
   input.focus();
   input.select();
   input.addEventListener('input', () => {
-    input.value = onlyDigits(input.value).slice(0, 2);
+    input.value = onlyDigits(input.value).slice(0, 5);
     err.textContent = '';
   });
   document.getElementById('departmentCancel').addEventListener('click', closeAppDialog);
   document.getElementById('departmentSave').addEventListener('click', () => {
-    const finalValue = onlyDigits(input.value).slice(0, 2);
+    const finalValue = onlyDigits(input.value).slice(0, 5);
     if (!isValidDepartment(finalValue)) {
-      err.textContent = 'מספר מחלקה חייב להיות בדיוק 2 ספרות.';
+      err.textContent = 'מספר מחלקה חייב להכיל בין 1 ל־5 ספרות.';
       return;
     }
     localStorage.setItem(DEPARTMENT_KEY, finalValue);
