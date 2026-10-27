@@ -6,7 +6,7 @@ async function update(){
   if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();await Promise.all(regs.map(r=>r.unregister()));}
   if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}
   status.textContent='פותח את הגרסה החדשה...';
-  location.replace('./index.html?v=1.64&reload='+Date.now());
+  location.replace('./index.html?v=1.65&reload='+Date.now());
  }catch(err){status.textContent='לא ניתן לרענן אוטומטית. אפשר לנסות שוב.';document.getElementById('retry').hidden=false;}
 }
 document.getElementById('retry').onclick=update;
