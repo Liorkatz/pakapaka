@@ -14,7 +14,8 @@ function normalizeLocalItem(x) {
     notes: x.notes || '',
     favorite: !!x.favorite,
     openCount: Number(x.openCount || 0),
-    lastScannedAt: Number(x.lastScannedAt || 0)
+    lastScannedAt: Number(x.lastScannedAt || 0),
+    scanHistory: Array.isArray(x.scanHistory) ? x.scanHistory.filter(t => Number.isFinite(Number(t)) && Number(t)>0).map(Number).slice(-1000) : []
   };
 }
 
@@ -67,6 +68,7 @@ function incrementLocalScanCountByCode(code) {
   if (!item) return null;
   item.openCount = Number(item.openCount || 0) + 1;
   item.lastScannedAt = Date.now();
+  item.scanHistory = [...(item.scanHistory || []), item.lastScannedAt].slice(-1000);
   setLocalItems(items);
   return item;
 }
