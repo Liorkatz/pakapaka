@@ -8,11 +8,11 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.53">
+<link rel="stylesheet" href="admin.css?v=1.54">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopVersion">v1.53</div>
+<div class="adminTopVersion">v1.54</div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -79,6 +79,14 @@
       <p id="dashboardPasswordStatus" role="status"></p>
       <button id="saveDashboardPassword" type="button">שמור סיסמה חדשה</button>
     </section>
+    <section class="panelBlock">
+      <div class="blockTitle">הגדרת מנהל מחלקה</div>
+      <p>בחר מכשיר והפק קוד הרשאה אישי. המשתמש יזין אותו בהגדרות האפליקציה ויראה נתוני מחלקה מורחבים בלבד.</p>
+      <select id="managerDeviceSelect" class="managerSelect"><option value="">בחר משתמש לפי מכשיר ומחלקה</option></select>
+      <button id="assignManagerBtn" type="button">הגדר מנהל למשתמש</button>
+      <p id="managerIssueStatus" role="status"></p>
+      <div id="managerIssuedCode" hidden><textarea id="managerCodeValue" readonly dir="ltr" rows="3"></textarea><button id="copyManagerCode" type="button">העתק קוד למשתמש</button></div>
+    </section>
     <div id="setupError" class="setupError"></div>
 
     <section class="cardsGrid">
@@ -118,14 +126,14 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.53"></script>
-<script src="../js/utils.js?v=1.53"></script>
-<script src="admin.js?v=1.53"></script>
-<script src="admin-recovery-v7.js?v=1.53"></script>
-<script src="admin-login-ui.js?v=1.53"></script>
+<script src="../js/config.js?v=1.54"></script>
+<script src="../js/utils.js?v=1.54"></script>
+<script src="admin.js?v=1.54"></script>
+<script src="admin-recovery-v7.js?v=1.54"></script>
+<script src="admin-login-ui.js?v=1.54"></script>
 <script>
 (function(){
-  const current = '1.53';
+  const current = '1.54';
   let checking = false;
   async function checkForUpdate(){
     if (checking || document.hidden) return;
