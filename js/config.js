@@ -1,4 +1,4 @@
-const VERSION = '1.42';
+const VERSION = '1.43';
 const STORAGE_KEY = 'pekaot_barcode_v3';
 const SHARED_FAV_KEY = 'pakapaka_shared_favorites_v1';
 const DEPARTMENT_KEY = 'pakapaka_department_v1';
