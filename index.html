@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.62">
+<link rel="stylesheet" href="css/main.css?v=1.63">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -45,91 +45,31 @@
 .scanHistoryRow strong{direction:ltr;font-size:14px;white-space:nowrap}
 .scanHistoryList{max-height:48vh;overflow:auto;margin-top:12px}
 .scanHistoryNote{font-size:13px;color:#aaa;line-height:1.5}
-.scanCorrectionTag{display:inline-block;margin-inline-start:15px;vertical-align:middle}
-.itemMeta{display:flex;flex-direction:row;direction:rtl;align-items:center;justify-content:space-between;gap:10px}
-.itemMeta.hasCorrection{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:8px;align-items:center}
- .itemMeta.hasCorrection .num{grid-column:1;grid-row:1;order:unset!important;min-width:0;margin:0!important;justify-self:stretch;direction:ltr;text-align:right;font-size:clamp(12px,3.4vw,16px);white-space:nowrap}
-.itemMeta.hasCorrection .scanCorrectionTag{grid-column:2;grid-row:1;justify-self:center;white-space:nowrap;margin:0!important;padding:5px 8px;border:1px solid #444;border-radius:10px;color:#d4d4d4;font-size:clamp(11px,3vw,14px);font-weight:700}
-.itemMeta.hasCorrection .scanHistoryBtn{grid-column:3;grid-row:1;justify-self:end;order:unset!important;max-width:100%;font-size:clamp(12px,3.4vw,15px)!important}
-.itemMeta .num{order:0!important;direction:ltr;text-align:right;margin:0 auto 0 0!important;min-width:0;overflow-wrap:anywhere}
-.itemMeta .scanHistoryBtn{order:1!important;display:inline-block;width:auto!important;max-width:50%;flex:0 0 auto;min-height:0!important;margin:0!important;padding:2px 0!important;background:transparent!important;border:0!important;border-radius:0!important;color:#b5b5b5!important;font-size:15px!important;font-weight:500;line-height:1.4;white-space:nowrap;text-align:left;text-decoration:underline;text-underline-offset:3px}
-.itemTop .star{display:block;width:28px!important;height:28px!important;padding:0!important;flex-shrink:0}
 .contactDialog{max-height:85vh;overflow-y:auto}
 .contactDialog .appDialogInput{font-size:18px;letter-spacing:0;text-align:right}
 .contactDialog textarea{font-size:16px;width:100%}
 .contactBubble{background:#252525;border-radius:12px;padding:10px;margin:7px 0;font-size:15px;overflow-wrap:anywhere}
 .contactThread{max-height:30vh;overflow-y:auto;margin:14px 0}
-.itemMeta{direction:rtl!important}.itemMeta .num{margin-left:auto!important;margin-right:0!important;text-align:right!important}.itemMeta.hasCorrection .num{margin:0!important;justify-self:stretch!important;text-align:right!important}
 .contactNameRow{display:flex;align-items:stretch;gap:8px;direction:rtl;margin:6px 0 12px}
 .contactNameRow #contactName{flex:1 1 auto;width:0;min-width:0;margin:0}
 .contactNameRow #contactRename{flex:0 0 auto;width:auto;white-space:nowrap;margin:0;padding:9px 12px;font-size:15px;min-height:50px}
 .developerReplyAlert{position:fixed;z-index:99999;left:16px;right:16px;top:calc(env(safe-area-inset-top,0px) + 72px);width:calc(100% - 32px);padding:16px 12px;background:#2563eb;color:white;border:1px solid #8db4ff;border-radius:18px;box-shadow:0 9px 28px #0008;font-size:17px;line-height:1.45;text-align:center}
 .developerReplyAlert{position:fixed!important;top:calc(env(safe-area-inset-top,0px) + 54px)!important;left:14px!important;right:auto!important;width:44px!important;height:44px!important;min-width:44px!important;padding:0!important;display:grid!important;place-items:center!important;font-size:23px!important;line-height:1!important;border-radius:14px!important;background:#2563eb!important;color:white!important;border:1px solid #7eafff!important;box-shadow:0 5px 16px #0006!important;z-index:99999!important}
 
-/* v1.56: consistent positions on every item, including after tab switches */
-.itemTop{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;gap:8px!important;direction:rtl!important;align-items:center!important}
-.itemTop .star{grid-column:1!important;grid-row:1!important}
-.itemTop .itemName{grid-column:2!important;grid-row:1!important;min-width:0!important;text-align:right!important}
-.itemTop .lastScannedText{grid-column:3!important;grid-row:1!important;margin:0!important;white-space:normal!important;text-align:left!important;font-size:14px!important;line-height:1.3!important}
-.itemTop .itemDate{display:none!important}
-.itemMeta{display:flex!important;flex-direction:row!important;direction:rtl!important;align-items:center!important;justify-content:space-between!important;gap:10px!important}
-.itemMeta>.num,.itemMeta>.barcodeGroup{margin:0!important;order:0!important;min-width:0!important}
-.itemMeta>.num,.barcodeGroup .num{direction:ltr!important;text-align:right!important;unicode-bidi:isolate}
-.itemMeta>.scanHistoryBtn{order:1!important;margin:0!important;margin-right:auto!important}
-.barcodeGroup{display:flex;align-items:center;direction:rtl;gap:10px;min-width:0;max-width:75%}
-.barcodeGroup .num{min-width:0;font-size:clamp(13px,3.6vw,17px);overflow-wrap:anywhere}
-.barcodeGroup .scanCorrectionTag{flex:0 0 auto;margin:0!important;white-space:nowrap;border:1px solid #444;border-radius:10px;padding:5px 8px;font-size:12px;color:#d4d4d4}
-@media(max-width:390px){.itemTop{gap:5px!important}.itemTop .lastScannedText{font-size:12px!important}.barcodeGroup{gap:6px}.barcodeGroup .scanCorrectionTag{font-size:11px;padding:4px}}
-/* Uniform alignment across all cards, including shared cards and tab changes */
-.itemTop{grid-template-columns:auto minmax(0,1fr) auto!important}
-.itemTop .lastScannedText{justify-self:start!important;max-width:34vw!important}
-.item>.barcodeGroup{margin-top:8px!important;margin-inline-start:0!important;justify-content:flex-start!important;max-width:100%!important}
-.itemMeta>.barcodeGroup{margin:0!important;justify-content:flex-start!important}
-/* 1.58: don't truncate item names; keep corrections beside barcode on lower row */
-.itemTop .itemName{white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;line-height:1.25!important}
-.itemTop{align-items:start!important}
-.itemTop .lastScannedText{align-self:start!important;min-width:0!important}
-.itemMeta>.barcodeGroup,.item>.barcodeGroup{display:flex!important;direction:rtl!important;align-items:center!important;gap:7px!important;max-width:100%!important;flex-wrap:wrap!important}
-.itemMeta>.barcodeGroup .scanCorrectionTag,.item>.barcodeGroup .scanCorrectionTag{margin:0!important;flex-shrink:0!important}
-/* One stable bottom row for every card, including saved/favorite and shared */
-.itemTop{grid-template-columns:auto minmax(0,1fr)!important}
-.itemTop .itemName{grid-column:2!important}
-.itemMeta{display:grid!important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important;direction:rtl!important;align-items:center!important;gap:7px!important}
-.itemMeta>.num,.itemMeta>.barcodeGroup{grid-column:1!important;grid-row:1!important;justify-self:start!important;margin:0!important}
-.itemMeta>.lastScannedText{grid-column:2!important;grid-row:1!important;justify-self:center!important;max-width:100%!important;text-align:center!important;margin:0!important;white-space:normal!important;line-height:1.25!important;font-size:12px!important}
-.itemMeta>.scanHistoryBtn{grid-column:3!important;grid-row:1!important;justify-self:end!important;margin:0!important}
-.item>.lastScannedText{display:block!important;text-align:center!important;margin:5px 0!important;font-size:12px!important}
-@media(max-width:390px){.itemMeta{gap:4px!important}.itemMeta>.lastScannedText{font-size:11px!important}.barcodeGroup .num{font-size:12px!important}}
-/* v1.60: latest scan belongs beside item name, never in metadata row */
-.itemTop{display:grid!important;grid-template-columns:auto minmax(0,1fr) minmax(90px,auto)!important;align-items:center!important;direction:rtl!important}
-.itemTop>.itemName{grid-column:2!important;grid-row:1!important}
-.itemTop>.lastScannedText{grid-column:3!important;grid-row:1!important;justify-self:end!important;text-align:left!important;max-width:145px!important;margin:0!important;font-size:12px!important;line-height:1.25!important}
-.itemMeta{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;direction:rtl!important;gap:10px!important}
-.itemMeta>.num,.itemMeta>.barcodeGroup{margin:0!important;flex:0 1 auto!important}
-.itemMeta>.scanHistoryBtn{margin:0  auto 0 0!important;flex:0 0 auto!important}
-.itemMeta>.lastScannedText{display:none!important}
+/* Single authoritative item-card layout, all lists and favorites */
+.itemTop{display:grid;grid-template-columns:28px minmax(0,1fr) auto;direction:rtl;align-items:center;gap:8px;min-height:30px}
+.itemTop>.star{grid-column:1;grid-row:1}
+.itemTop>.itemName{grid-column:2;grid-row:1;text-align:right;min-width:0;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word;line-height:1.25}
+.itemTop>.lastScannedText{grid-column:3;grid-row:1;justify-self:end;display:inline-flex;gap:4px;align-items:center;margin:0;white-space:nowrap;text-align:left;color:#9f9f9f;font-size:12px;direction:ltr}
+.itemTop>.lastScannedText.today{color:#3b82f6;font-weight:700}
+.lastScanClock{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.itemMeta{display:flex;flex-direction:row;direction:rtl;align-items:center;justify-content:space-between;gap:10px;margin-top:8px;padding-top:8px;border-top:1px solid #333}
+.itemMeta>.barcodeGroup{display:inline-flex;flex-direction:row;align-items:center;direction:rtl;gap:9px;min-width:0;max-width:75%;margin:0}
+.itemMeta>.barcodeGroup>.num{direction:ltr;text-align:right;white-space:nowrap;min-width:0;font-size:clamp(13px,3.5vw,17px)}
+.itemMeta>.barcodeGroup>.scanCorrectionTag{display:inline-block;flex-shrink:0;position:static;background:#292929;border:1px solid #555;color:#ddd;font-size:12px;font-weight:650;border-radius:10px;padding:5px 8px;margin:0;white-space:nowrap}
+.itemMeta>.scanHistoryBtn{margin:0;margin-inline-start:auto;flex-shrink:0;width:auto;padding:2px 0;border:0;background:transparent;color:#b5b5b5;font-size:15px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+@media(max-width:390px){.itemTop{gap:5px}.itemTop>.lastScannedText{font-size:11px}.lastScanClock{width:13px;height:13px}.itemMeta{gap:5px}.itemMeta>.barcodeGroup{gap:5px}.itemMeta>.barcodeGroup>.num{font-size:12px}.itemMeta>.barcodeGroup>.scanCorrectionTag{font-size:10px;padding:4px 5px}.itemMeta>.scanHistoryBtn{font-size:13px}}
 
-/* Approved concept 2 — compact scan clock and correction beside barcode */
-.itemTop{grid-template-columns:28px minmax(0,1fr) auto!important;align-items:center!important}
-.itemTop>.itemName{min-width:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important}
-.itemTop>.lastScannedText{display:inline-flex!important;align-items:center!important;gap:5px!important;grid-column:3!important;grid-row:1!important;max-width:150px!important;white-space:nowrap!important;justify-self:end!important;text-align:left!important;margin:0!important;font-size:12px!important}
-.lastScanClock{height:15px;width:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.itemMeta{display:flex!important;direction:rtl!important;align-items:center!important;justify-content:space-between!important}
-.itemMeta>.barcodeGroup{display:inline-flex!important;gap:8px!important;align-items:center!important;direction:rtl!important;max-width:75%!important}
-.itemMeta .scanCorrectionTag{background:#292929!important;border:1px solid #555!important;border-radius:10px!important;color:#ddd!important;padding:5px 8px!important;font-size:12px!important;white-space:nowrap!important}
-.itemMeta>.scanHistoryBtn{margin-inline-start:auto!important;flex-shrink:0!important}
-@media(max-width:390px){.itemTop>.lastScannedText{font-size:11px!important;gap:3px!important}.lastScanClock{width:13px;height:13px}.itemMeta>.barcodeGroup{gap:5px!important}.itemMeta .scanCorrectionTag{font-size:10px!important;padding:4px!important}}
-/* v1.62 unified card layout */
-.itemTop{display:grid!important;grid-template-columns:28px minmax(0,1fr) auto!important;gap:8px!important;align-items:center!important;direction:rtl!important}
-.itemTop>.star{grid-column:1!important;grid-row:1!important}
-.itemTop>.itemName{grid-column:2!important;grid-row:1!important;min-width:0!important;white-space:normal!important;overflow:visible!important;text-overflow:clip!important;overflow-wrap:anywhere!important;line-height:1.25!important}
-.itemTop>.lastScannedText{grid-column:3!important;grid-row:1!important;display:inline-flex!important;align-items:center!important;gap:4px!important;max-width:130px!important;margin:0!important;white-space:nowrap!important;text-align:left!important;font-size:12px!important;justify-self:end!important}
-.itemMeta{display:flex!important;flex-direction:row!important;direction:rtl!important;align-items:center!important;justify-content:space-between!important;gap:8px!important}
-.itemMeta>.barcodeGroup{display:flex!important;align-items:center!important;direction:rtl!important;gap:8px!important;max-width:75%!important;min-width:0!important;margin:0!important}
-.itemMeta .barcodeGroup .num{text-align:right!important;direction:ltr!important;min-width:0!important}
-.itemMeta>.scanHistoryBtn{margin:0!important;margin-right:auto!important;flex:0 0 auto!important}
-.itemMeta .scanCorrectionTag{position:static!important;display:inline-block!important;background:#292929!important;border:1px solid #555!important;color:#ddd!important;font-size:12px!important;border-radius:10px!important;padding:5px 8px!important;margin:0!important;white-space:nowrap!important}
-.itemTop .scanCorrectionTag{display:none!important}
 </style>
 </head>
 <body>
@@ -173,16 +113,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.62"></script>
-<script src="js/utils.js?v=1.62"></script>
-<script src="js/storage.js?v=1.62"></script>
-<script src="js/barcode.js?v=1.62"></script>
-<script src="js/shared.js?v=1.62"></script>
-<script src="js/stats.js?v=1.62"></script>
-<script src="js/app.js?v=1.62"></script>
-<script src="js/pwa-enhance.js?v=1.62"></script>
-<script src="js/manager-summary.js?v=1.62"></script>
-<script src="js/developer-contact.js?v=1.62"></script>
+<script src="js/config.js?v=1.63"></script>
+<script src="js/utils.js?v=1.63"></script>
+<script src="js/storage.js?v=1.63"></script>
+<script src="js/barcode.js?v=1.63"></script>
+<script src="js/shared.js?v=1.63"></script>
+<script src="js/stats.js?v=1.63"></script>
+<script src="js/app.js?v=1.63"></script>
+<script src="js/pwa-enhance.js?v=1.63"></script>
+<script src="js/manager-summary.js?v=1.63"></script>
+<script src="js/developer-contact.js?v=1.63"></script>
 <script>
 
 function formatLastScannedDate(value) {
