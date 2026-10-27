@@ -52,3 +52,5 @@ button:active{transform:scale(.99)}
 @media (min-width:520px){.adminShell{max-width:430px;margin:0 auto}}
 
 .adminVersion{display:inline-block;margin-top:7px;color:#9ca3af;font-size:12px;font-weight:700;direction:ltr}
+
+.adminTopVersion{position:absolute;top:calc(5px + var(--safe-top));left:14px;direction:ltr;font-size:12px;font-weight:700;color:#a3a3a3}.secondaryLink{background:transparent;color:#ccc;text-decoration:underline;font-size:15px;padding:12px;margin-top:10px}.secondaryLink:active{transform:none}#resetScreen.active{display:flex;justify-content:center;align-items:center}#resetMessage{min-height:30px;line-height:1.45}#setNewPassword[hidden]{display:none}#setNewPassword input{font-size:17px}button:disabled{opacity:.5;cursor:wait}
