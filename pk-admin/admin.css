@@ -96,3 +96,16 @@ html{-webkit-text-size-adjust:100%;overflow-x:hidden}body{overflow-x:hidden}
 /* Recovery verification response v1.51 */
 #useRecoveryLink.recoveryVerifyBtn{display:block;width:100%;margin-top:14px;background:#fff;color:#111;text-decoration:none;font-size:17px;font-weight:800;border-radius:15px;min-height:54px;touch-action:manipulation}
 .verifyFeedback{min-height:26px;color:#e6e6e6;font-size:15px;line-height:1.45;overflow-wrap:anywhere;margin:12px 0}
+
+/* Administrator password and manager settings */
+.adminActions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.adminActions .smallBtn{white-space:nowrap}
+#adminChangePasswordPanel[hidden],#managerIssuedCode[hidden]{display:none!important}
+#adminChangePasswordPanel .passwordRow{margin:12px 0;position:relative}
+#adminChangePasswordPanel .passwordRow input,#setNewPassword .passwordRow input{width:100%;padding-inline-start:82px;min-height:54px;margin:0;text-align:right;font-size:16px}
+.passwordEye{position:absolute;left:7px;top:50%;transform:translateY(-50%);width:auto!important;font-size:14px;z-index:2}
+#adminChangePasswordPanel p,.managerSelect{line-height:1.5}
+.managerSelect{width:100%;min-height:52px;background:#151515;color:#fff;border:1px solid #555;border-radius:13px;font-size:16px;padding:12px;margin:12px 0}
+#managerIssuedCode textarea{width:100%;background:#151515;color:#fff;border:1px solid #555;border-radius:12px;padding:12px;font-size:14px;overflow-wrap:anywhere;resize:vertical}
+#managerIssueStatus,#dashboardPasswordStatus{overflow-wrap:anywhere;min-height:26px}
+@media(max-width:420px){.adminHeader{flex-wrap:wrap}.adminActions .smallBtn{padding:9px;font-size:13px}}
