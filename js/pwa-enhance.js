@@ -98,7 +98,8 @@ function patchDepartmentUpTo5Digits() {
       <div class="appDialogActions two">
         <button type="button" id="departmentCancel" class="appDialogBtn secondary">ביטול</button>
         <button type="button" id="departmentSave" class="appDialogBtn">שמור</button>
-      </div>`;
+      </div>
+      <button type="button" id="contactDeveloperBtn" class="appDialogBtn secondary" style="margin-top:12px">הודעה למפתח / צפייה בתשובות</button>`;
     backdrop.appendChild(dialog);
     document.body.appendChild(backdrop);
     const input = document.getElementById('departmentInput');
@@ -109,6 +110,7 @@ function patchDepartmentUpTo5Digits() {
       input.value = onlyDigits(input.value).slice(0, 5);
       err.textContent = '';
     });
+    document.getElementById('contactDeveloperBtn').addEventListener('click', () => window.openDeveloperContact?.());
     document.getElementById('departmentCancel').addEventListener('click', closeAppDialog);
     document.getElementById('departmentSave').addEventListener('click', () => {
       const finalValue = onlyDigits(input.value).slice(0, 5);
