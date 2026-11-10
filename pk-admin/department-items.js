@@ -89,7 +89,17 @@
       return input;
     }
     const name=field('שם הפקעה',item.name);
-    const code=field('מספר פקעה',item.barcode);
+    const barcode=String(item.barcode||'');
+    const barcodeGroup=element('div','managedBarcodeGroup');
+    const barcodeLabel=element('div','managedBarcodeLabel','מספר פקעה — בסיס (8 ספרות) + 0000 + סיומת (3 ספרות)');
+    const barcodeParts=element('div','managedBarcodeParts');
+    const base=element('input');base.type='text';base.inputMode='numeric';base.maxLength=8;base.dir='ltr';base.value=barcode.slice(0,8);base.placeholder='8 ספרות';base.setAttribute('aria-label','בסיס הפקעה');
+    const fixed=element('span','managedBarcodeFixed','0000');
+    const suffix=element('input');suffix.type='text';suffix.inputMode='numeric';suffix.maxLength=3;suffix.dir='ltr';suffix.value=barcode.slice(12,15);suffix.placeholder='סיומת';suffix.setAttribute('aria-label','סיומת הפקעה');
+    const normalize=field=>{field.value=field.value.replace(/\\D/g,'').slice(0,field.maxLength);};
+    base.addEventListener('input',()=>normalize(base));suffix.addEventListener('input',()=>normalize(suffix));
+    barcodeParts.append(base,fixed,suffix);barcodeGroup.append(barcodeLabel,barcodeParts);
+    dialog.appendChild(barcodeGroup);
     const notes=field('הערות',item.notes,true);
     const error=element('p','managedItemError');error.setAttribute('role','status');dialog.appendChild(error);
     const actions=element('div','managedItemActions');
@@ -98,8 +108,8 @@
     const save=element('button','smallBtn managedSave','שמור שינויים');
     save.type='button';
     save.onclick=async()=>{
-      const n=name.value.trim(),c=code.value.trim(),t=notes.value.trim();
-      if(!n||!/^[0-9]{15}$/.test(c)){error.textContent='יש להזין שם ומספר פקעה בן 15 ספרות.';return;}
+      const n=name.value.trim(),c=base.value.trim()+'0000'+suffix.value.trim().padStart(3,'0'),t=notes.value.trim();
+      if(!n||!/^[0-9]{8}$/.test(base.value.trim())||!/^[0-9]{1,3}$/.test(suffix.value.trim())){error.textContent='יש להזין שם, בסיס בן 8 ספרות וסיומת בת 1–3 ספרות.';return;}
       if(items.some(x=>String(x.id)!==String(item.id)&&x.barcode===c)){error.textContent='מספר זה כבר קיים במחלקה.';return;}
       save.disabled=true;error.textContent='שומרת...';
       try{
