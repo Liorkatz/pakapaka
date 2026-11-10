@@ -8,19 +8,19 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.69">
-<link rel="stylesheet" href="admin-light.css?v=1.69">
-<link rel="stylesheet" href="admin-theme.css?v=1.69">
-<link rel="stylesheet" href="admin-notifications.css?v=1.69">
-<link rel="stylesheet" href="admin-autofill.css?v=1.69">
-<link rel="stylesheet" href="admin-navigation.css?v=1.69">
-<link rel="stylesheet" href="admin-chat-layout.css?v=1.69">
-<link rel="stylesheet" href="admin-inbox-header.css?v=1.69">
-<link rel="stylesheet" href="admin-department-items.css?v=1.69">
+<link rel="stylesheet" href="admin.css?v=1.70">
+<link rel="stylesheet" href="admin-light.css?v=1.70">
+<link rel="stylesheet" href="admin-theme.css?v=1.70">
+<link rel="stylesheet" href="admin-notifications.css?v=1.70">
+<link rel="stylesheet" href="admin-autofill.css?v=1.70">
+<link rel="stylesheet" href="admin-navigation.css?v=1.70">
+<link rel="stylesheet" href="admin-chat-layout.css?v=1.70">
+<link rel="stylesheet" href="admin-inbox-header.css?v=1.70">
+<link rel="stylesheet" href="admin-department-items.css?v=1.70">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopTools"><div class="adminTopVersion">v1.69</div><button type="button" id="adminThemeToggle" class="themeToggle" aria-label="ערכת נושא" title="החלף צבעים">◐</button></div>
+<div class="adminTopTools"><div class="adminTopVersion">v1.70</div><button type="button" id="adminThemeToggle" class="themeToggle" aria-label="ערכת נושא" title="החלף צבעים">◐</button></div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -93,6 +93,7 @@
         <select id="editItemsDepartment"><option value="">בחר מחלקה</option></select>
         <button type="button" id="refreshDepartmentItems" class="smallBtn">רענן מחלקות</button>
       </div>
+      <label class="managedOrphanFilter"><input id="departmentItemsOrphanOnly" type="checkbox"> הצג רק פקעות ללא בעלים</label>
       <input id="departmentItemsFilter" type="search" placeholder="חפש לפי שם, מספר או הערות" aria-label="חיפוש פקעות במחלקה">
       <div class="itemManagerSummary"><span id="departmentItemsCount">0 פקעות</span><span id="departmentItemsStatus" role="status"></span></div>
       <div id="departmentItemsList" class="managedItemsList"></div>
@@ -136,15 +137,15 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.69"></script>
-<script src="../js/utils.js?v=1.69"></script>
-<script src="admin.js?v=1.69"></script>
-<script src="admin-recovery-v7.js?v=1.69"></script>
-<script src="admin-login-ui.js?v=1.69"></script>
-<script src="developer-inbox.js?v=1.69"></script>
-<script src="admin-light.js?v=1.69"></script>
-<script src="department-items.js?v=1.69"></script>
-<script src="admin-theme.js?v=1.69"></script>
+<script src="../js/config.js?v=1.70"></script>
+<script src="../js/utils.js?v=1.70"></script>
+<script src="admin.js?v=1.70"></script>
+<script src="admin-recovery-v7.js?v=1.70"></script>
+<script src="admin-login-ui.js?v=1.70"></script>
+<script src="developer-inbox.js?v=1.70"></script>
+<script src="admin-light.js?v=1.70"></script>
+<script src="department-items.js?v=1.70"></script>
+<script src="admin-theme.js?v=1.70"></script>
 <script>
 (function(){
   const current = '1.69';
