@@ -22,3 +22,14 @@
 .managedItemActions button{flex:1;min-height:46px}
 .managedItemActions .managedSave{background:#2563eb;color:white;border-color:#2563eb}
 @media(max-width:370px){.managedItemDialog{padding:14px}.managedItemRow{padding:9px}}
+
+.managedBarcodeGroup{margin:12px 0;direction:rtl}
+.managedBarcodeLabel{font-size:14px;font-weight:700;margin-bottom:7px;color:var(--ink)}
+.managedBarcodeParts{display:flex;align-items:center;gap:8px;direction:rtl}
+.managedBarcodeParts input{min-width:0;box-sizing:border-box;padding:12px 7px;min-height:46px;border:1px solid var(--line);border-radius:11px;background:var(--input-bg,#f7faff);color:var(--ink);font-size:18px;text-align:center;font-variant-numeric:tabular-nums}
+.managedBarcodeParts input:first-child{flex:2 1 0}
+.managedBarcodeParts input:last-child{flex:1 1 0}
+.managedBarcodeFixed{flex:0 0 auto;font-size:15px;letter-spacing:1px;color:var(--muted);font-weight:700}
+.adminMessageLine{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border-bottom:1px solid var(--line);padding:6px 0}
+.adminMessageLine p{flex:1;min-width:0;overflow-wrap:anywhere;margin:3px 0}
+.inboxDeleteButton{width:auto!important;flex-shrink:0;color:#c62828!important;border-color:#c62828!important;font-size:13px!important}
