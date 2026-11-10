@@ -49,5 +49,7 @@ function formatHomeLastScanDate(value) {
   if(Number.isNaN(d.getTime()))return '';
   const day=String(d.getDate()).padStart(2,'0');
   const month=String(d.getMonth()+1).padStart(2,'0');
-  return day+'.'+month;
+  const hour=String(d.getHours()).padStart(2,'0');
+  const minute=String(d.getMinutes()).padStart(2,'0');
+  return day+'.'+month+' '+hour+':'+minute;
 }
