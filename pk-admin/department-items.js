@@ -6,6 +6,7 @@
   const list=$('departmentItemsList');
   const status=$('departmentItemsStatus');
   const filter=$('departmentItemsFilter');
+  const orphanOnly=$('departmentItemsOrphanOnly');
   let items=[];
   let busy=false;
   function message(text){status.textContent=text;}
@@ -44,16 +45,17 @@
   function display(){
     list.replaceChildren();
     const term=filter.value.trim().toLowerCase();
-    const matching=items.filter(i=>!term||[i.name,i.barcode,i.notes].some(v=>String(v||'').toLowerCase().includes(term)));
+    const matching=items.filter(i=>(!orphanOnly.checked||!i.has_owner)&&(!term||[i.name,i.barcode,i.notes].some(v=>String(v||'').toLowerCase().includes(term))));
     $('departmentItemsCount').textContent=matching.length+' פקעות';
     if(!matching.length){list.appendChild(element('p','itemManagerEmpty',items.length?'לא נמצאו פקעות שתואמות לחיפוש.':'אין פקעות במחלקה שנבחרה.'));return;}
     for(const item of matching){
       const row=element('div','managedItemRow');
       const info=element('div','managedItemInfo');
-      info.append(element('strong',null,item.name),element('span','managedItemCode',item.barcode));
+      info.append(element('strong',null,item.name),element('span','managedItemCode',item.barcode),element('span','managedOwnerState',item.has_owner?'בעלים מזוהה':'ללא בעלים'));
       const edit=element('button','smallBtn managedItemEdit','עריכה');
       edit.type='button';edit.onclick=()=>openEditor(item);
       row.append(info,edit);
+      if(!item.has_owner){const remove=element('button','smallBtn managedOrphanDelete','מחק');remove.type='button';remove.onclick=()=>deleteOrphan(item);row.appendChild(remove);}
       list.appendChild(row);
     }
   }
@@ -64,11 +66,21 @@
     if(!department){message('בחר מחלקה');display();return;}
     busy=true;message('טוענת את פקעות המחלקה...');
     try{
-      items=await rpc('pakapaka_admin_department_items',{p_department:department});
+      items=await rpc('pakapaka_admin_department_items_with_owner',{p_department:department});
       message('מחלקה '+department+' — ניתן לערוך שם, מספר והערות. אין שינוי בשעות או בסריקות.');
       display();
     }catch(e){message('טעינת הפקעות נכשלה: '+e.message);}
     finally{busy=false;}
+  }
+  async function deleteOrphan(item){
+    if(item.has_owner)return;
+    if(!confirm('למחוק לצמיתות את הפקעה '+item.barcode+' ('+item.name+')? פעולה זו אינה ניתנת לביטול.'))return;
+    try{
+      const ok=await rpc('pakapaka_admin_delete_orphan_item',{p_id:item.id,p_department:item.department});
+      if(!ok)throw Error('הפקעה כבר אינה ללא בעלים, או שאינה קיימת');
+      await load();
+      message('הפקעה נמחקה מהמאגר המשותף. עותקים מקומיים שכבר נשמרו במכשירים אחרים לא נמחקים.');
+    }catch(e){alert('מחיקת הפקעה נכשלה: '+e.message);}
   }
   function openEditor(item){
     const overlay=element('div','managedItemOverlay');
@@ -131,6 +143,7 @@
   }
   departmentSelect.addEventListener('change',load);
   filter.addEventListener('input',display);
+  orphanOnly.addEventListener('change',display);
   $('refreshDepartmentItems').addEventListener('click',departments);
   // Load only after authentication; an empty/stale token never grants access.
   $('departmentItemsNavAnchor')?.addEventListener('click',departments);
