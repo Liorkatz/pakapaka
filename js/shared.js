@@ -111,8 +111,11 @@ function syncSharedCopiesFromRows(rows) {
   const hourMetas = typeof getHoursMetaMap === 'function' ? getHoursMetaMap() : null;
   let hoursChanged = false;
   for (const item of items) {
-    const linked = item.sharedId ? byId.get(String(item.sharedId)) : null;
+    const historicSharedId = hourMetas?.[String(item.code)]?.sharedId;
+    const linkedId = item.sharedId || historicSharedId;
+    const linked = linkedId ? byId.get(String(linkedId)) : null;
     let remote = linked;
+    if (remote && !item.sharedId) { item.sharedId = Number(remote.id); item.sharedDepartment = String(remote.department || department); changed = true; }
     if (!remote && !item.sharedId && (!item.sharedDepartment || item.sharedDepartment === department)) {
       remote = byCode.get(String(item.code));
       if (remote) { item.sharedId = Number(remote.id); item.sharedDepartment = department; changed = true; }
