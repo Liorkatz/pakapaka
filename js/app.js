@@ -387,7 +387,7 @@ function renderItem(x) {
   const name = escapeHtml(String(x.name || '').replace(/תיקון (?:סריקה|הדפסה|פקע)/g, '').trim());
   const scanTime = Number(x.lastScannedAt || 0);
   const showScan = scanTime > 0 && Date.now() - scanTime < 48 * 60 * 60 * 1000;
-  const scanText = showScan ? `<span class="lastScannedText${isToday(scanTime) ? ' today' : ''}" aria-label="נסרק לאחרונה ${formatLastScannedDate(scanTime)}" title="נסרק לאחרונה"><svg class="lastScanClock" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg><span>${formatLastScannedDate(scanTime)}</span></span>` : '';
+  const scanText = showScan ? `<span class="lastScannedText${isToday(scanTime) ? ' today' : ''}" aria-label="נסרק לאחרונה ${formatHomeLastScanDate(scanTime)}" title="נסרק לאחרונה"><svg class="lastScanClock" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3.5 2"></path></svg><span>${formatHomeLastScanDate(scanTime)}</span></span>` : '';
   const barcode = `<div class="barcodeGroup"><div class="num">${escapeHtml(x.code)}</div>${correction ? `<span class="scanCorrectionTag">${correction}</span>` : ''}</div>`;
   const count = activeTab === 'local' ? `<button type="button" class="openCount scanHistoryBtn" data-action="scan-history" data-id="${escapeAttr(x.id)}">נסרק ${Number(x.openCount || 0)} פעמים</button>` : '';
   return `<div class="itemShell"><div class="deleteHint">מחק</div><div class="item" data-id="${escapeAttr(x.id)}"><div class="itemTop"><button class="star ${x.favorite ? 'on' : ''}" data-action="star" data-id="${escapeAttr(x.id)}">★</button><div class="itemName">${name}</div>${scanText}</div><div class="itemMeta">${barcode}${count}</div></div></div>`;
