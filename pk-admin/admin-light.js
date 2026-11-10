@@ -10,17 +10,19 @@
   const managers=blocks.find(x=>x.querySelector('#activeManagerList'));
   const inbox=blocks.find(x=>x.querySelector('#developerInbox'));
   const departments=blocks.find(x=>x.querySelector('#departmentsList'));
+  const itemManager=blocks.find(x=>x.id==='departmentItemManager');
   if(cards&&header)header.after(cards);
   if(top&&cards)cards.after(top);
   if(departments&&top)top.after(departments);
-  if(requests&&departments)departments.after(requests);
+  if(itemManager&&departments)departments.after(itemManager);
+  if(requests&&itemManager)itemManager.after(requests);
   if(managers&&requests)requests.after(managers);
   if(inbox&&managers)managers.after(inbox);
   const nav=document.createElement('nav');nav.className='adminNav';nav.setAttribute('aria-label','ניווט פאנל ניהול');
-  const items=[['סקירה',cards],['מחלקות',departments],['בקשות מנהלים',requests],['מנהלי מחלקות',managers],['הודעות למפתח',inbox]];
+  const items=[['סקירה',cards],['מחלקות',departments],['עריכת פקעות',itemManager],['בקשות מנהלים',requests],['מנהלי מחלקות',managers],['הודעות למפתח',inbox]];
   for(const [label,target] of items){if(!target)continue;const button=document.createElement('button');button.type='button';button.textContent=label;
    if(label==='הודעות למפתח'){const badge=document.createElement('span');badge.id='adminInboxBadge';badge.className='adminInboxBadge';badge.hidden=true;button.appendChild(badge);button.classList.add('adminInboxNavButton');}
-   button.onclick=()=>{nav.querySelectorAll('button').forEach(x=>x.classList.remove('active'));button.classList.add('active');target.scrollIntoView({behavior:'smooth',block:'start'});};
+   button.onclick=()=>{nav.querySelectorAll('button').forEach(x=>x.classList.remove('active'));button.classList.add('active');target.scrollIntoView({behavior:'smooth',block:'start'});if(label==='עריכת פקעות'&&typeof window.loadAdminDepartmentItems==='function')window.loadAdminDepartmentItems();};
    nav.appendChild(button);}
   if(nav.firstElementChild)nav.firstElementChild.classList.add('active');
   header.after(nav);
