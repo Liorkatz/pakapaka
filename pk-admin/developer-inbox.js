@@ -24,7 +24,9 @@ async function loadInbox(){
    const preview=document.createElement('p');preview.textContent=x.last_message;item.appendChild(preview);
    const actions=document.createElement('div');actions.className='adminActions';
    const reply=document.createElement('button');reply.className='smallBtn';reply.textContent='פתח שיחה והשב';reply.onclick=()=>openThread(x,item);
-   actions.append(reply);header.appendChild(actions);item.prepend(header);box.appendChild(item);
+   const remove=document.createElement('button');remove.className='smallBtn inboxDeleteButton';remove.type='button';remove.textContent='מחק שיחה';
+   remove.onclick=async()=>{if(!confirm('למחוק את כל ההודעות בשיחה עם '+x.display_name+'? לא ניתן לבטל את המחיקה.'))return;remove.disabled=true;try{await rpc('pakapaka_admin_contact_delete_thread',{p_token:getAdminToken(),p_device_id:x.device_id});await loadInbox();}catch(e){alert('מחיקת השיחה נכשלה: '+e.message);remove.disabled=false;}};
+   actions.append(reply,remove);header.appendChild(actions);item.prepend(header);box.appendChild(item);
   }
  }catch(error){box.textContent='לא ניתן לטעון הודעות: '+(error.message||'שגיאה');}
 }
@@ -32,10 +34,16 @@ async function openThread(x,item){
  let panel=item.querySelector('.adminContactThread');if(panel){panel.remove();return;}
  panel=document.createElement('div');panel.className='adminContactThread';item.appendChild(panel);
  try{
-  const rows=await rpc('pakapaka_admin_contact_thread',{p_token:getAdminToken(),p_device_id:x.device_id});
+  const rows=await rpc('pakapaka_admin_contact_thread_detail',{p_token:getAdminToken(),p_device_id:x.device_id});
   await rpc('pakapaka_admin_contact_mark_read',{p_token:getAdminToken(),p_device_id:x.device_id});
   updateInboxBadge();
-  for(const m of rows.reverse()){const p=document.createElement('p');p.textContent=(m.sender==='admin'?'אני: ':x.display_name+': ')+m.body;panel.appendChild(p);}
+  for(const m of rows.reverse()){
+   const line=document.createElement('div');line.className='adminMessageLine';
+   const p=document.createElement('p');p.textContent=(m.sender==='admin'?'אני: ':x.display_name+': ')+m.body;
+   const del=document.createElement('button');del.type='button';del.className='smallBtn inboxDeleteButton';del.textContent='מחק';del.setAttribute('aria-label','מחק הודעה');
+   del.onclick=async()=>{if(!confirm('למחוק את ההודעה הזאת לצמיתות?'))return;del.disabled=true;try{await rpc('pakapaka_admin_contact_delete_message',{p_token:getAdminToken(),p_message_id:m.id});line.remove();await updateInboxBadge();}catch(e){alert('מחיקת ההודעה נכשלה: '+e.message);del.disabled=false;}};
+   line.append(p,del);panel.appendChild(line);
+  }
   const composer=document.createElement('div');composer.className='adminReplyComposer';
   const area=document.createElement('textarea');area.rows=1;area.placeholder='כתוב תשובה';area.setAttribute('aria-label','כתוב תשובה');composer.appendChild(area);
   const send=document.createElement('button');send.className='smallBtn';send.textContent='שלח תשובה';send.onclick=async()=>{send.disabled=true;try{const ok=await rpc('pakapaka_admin_contact_reply',{p_token:getAdminToken(),p_device_id:x.device_id,p_name:x.display_name,p_message:area.value.trim()});if(!ok)throw Error();await loadInbox();}catch{alert('שליחת התשובה נכשלה');send.disabled=false;}};composer.appendChild(send);panel.appendChild(composer);
