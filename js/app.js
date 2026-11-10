@@ -427,6 +427,19 @@ function handleItemClick(id) {
   openBarcode(id);
 }
 
+function openPakaItemMenu(id) {
+  const item=(activeTab==='shared'?sharedItems:getLocalItems()).find(x=>String(x.id)===String(id));
+  if(!item)return;
+  if(activeTab==='shared'&&!item.canEdit){
+    showAppDialog({title:'עריכת פקעה משותפת',text:'העריכה מותרת רק למי שהכניס את הפקעה. לפקעות המשותפות שנוצרו לפני שמירת בעלות אין כרגע דרך לאמת את היוצר.',actions:[{label:'סגור'}]});
+    return;
+  }
+  showAppDialog({title:'אפשרויות פקעה',text:escapeHtml(item.name),actions:[
+    {label:'עריכה',onClick:()=>editPakaItem(id)},
+    {label:'ביטול',kind:'secondary'}
+  ]});
+}
+
 function editPakaItem(id) {
   const shared = activeTab === 'shared';
   const item=(shared ? sharedItems : getLocalItems()).find(x=>String(x.id)===String(id));
@@ -595,7 +608,7 @@ function onTouchStart(e) {
     state.longPressed = true;
     suppressItemClickUntil = Date.now() + 900;
     if(navigator.vibrate)navigator.vibrate(20);
-    editPakaItem(state.id);
+    openPakaItemMenu(state.id);
   },650);
 }
 
