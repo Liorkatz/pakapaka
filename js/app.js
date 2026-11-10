@@ -231,11 +231,11 @@ function updateHomeHelp() {
   if (activeTab === 'shared') {
     const department = getDepartment();
     help.innerHTML = department
-      ? `פקעות משותפות של מחלקה ${escapeHtml(department)}.<br>לחיצה על פק״ע תשמור אותה ברשימה המקומית שלך.`
+      ? `פקעות משותפות של מחלקה ${escapeHtml(department)}.<br>לחיצה קצרה שומרת במקומי; לחיצה ארוכה מאפשרת עריכה ליוצר הפקעה.`
       : 'רשימה משותפת. כדי לראות פקעות או לשמור למשותף צריך לבחור מחלקה.';
     help.classList.add('sharedHelp');
   } else {
-    help.textContent = 'מועדפים למעלה. מחיקה: החלקה ימינה.';
+    help.textContent = 'מועדפים למעלה. עריכה: לחיצה ארוכה. מחיקה: החלקה ימינה.';
     help.classList.remove('sharedHelp');
   }
 }
