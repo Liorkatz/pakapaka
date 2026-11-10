@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/main.css?v=1.66">
+<link rel="stylesheet" href="css/main.css?v=1.67">
 <title>פקעות</title>
 <style>
 .lastScannedText{display:block;margin-top:5px;font-size:14px;font-weight:500;color:#9f9f9f;white-space:nowrap}
@@ -77,6 +77,14 @@
 .itemTop>.lastScannedText{font-size:14px!important;color:#9dbbd0!important;font-weight:550!important}
 .itemTop>.lastScannedText.today{color:#8bbce9!important;font-weight:650!important}
 @media(max-width:390px){.itemTop>.lastScannedText{font-size:13px!important}}
+/* v1.67: secure long-press item editing */
+.pakaEditDialog{max-height:calc(100dvh - 44px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pakaEditLabel{display:block;text-align:right;color:#ddd;font-size:15px;font-weight:700;margin:12px 0 8px}
+.pakaEditField{display:block;width:100%;margin-top:7px;padding:12px 13px;min-height:47px;border:1px solid #555;border-radius:12px;background:#101010;color:#fff;font-size:17px;line-height:1.4;letter-spacing:normal;box-sizing:border-box}
+.pakaEditField[dir="ltr"]{text-align:right;direction:ltr;font-variant-numeric:tabular-nums}
+.pakaEditDialog textarea.pakaEditField{min-height:65px;resize:vertical}
+.pakaEditDialog .appDialogActions{margin-top:10px}
+.pakaEditDialog .appDialogActions .appDialogBtn{font-size:16px;padding:13px 5px}
 </style>
 </head>
 <body>
@@ -120,16 +128,16 @@
   </div>
 </section>
 
-<script src="js/config.js?v=1.66"></script>
-<script src="js/utils.js?v=1.66"></script>
-<script src="js/storage.js?v=1.66"></script>
-<script src="js/barcode.js?v=1.66"></script>
-<script src="js/shared.js?v=1.66"></script>
-<script src="js/stats.js?v=1.66"></script>
-<script src="js/app.js?v=1.66"></script>
-<script src="js/pwa-enhance.js?v=1.66"></script>
-<script src="js/manager-summary.js?v=1.66"></script>
-<script src="js/developer-contact.js?v=1.66"></script>
+<script src="js/config.js?v=1.67"></script>
+<script src="js/utils.js?v=1.67"></script>
+<script src="js/storage.js?v=1.67"></script>
+<script src="js/barcode.js?v=1.67"></script>
+<script src="js/shared.js?v=1.67"></script>
+<script src="js/stats.js?v=1.67"></script>
+<script src="js/app.js?v=1.67"></script>
+<script src="js/pwa-enhance.js?v=1.67"></script>
+<script src="js/manager-summary.js?v=1.67"></script>
+<script src="js/developer-contact.js?v=1.67"></script>
 <script>
 
 function formatLastScannedDate(value) {
