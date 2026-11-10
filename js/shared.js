@@ -1,3 +1,30 @@
+const SHARED_EDIT_SECRET_KEY = 'pakapaka_shared_edit_secret_v1';
+function getSharedEditSecret() {
+  let token = localStorage.getItem(SHARED_EDIT_SECRET_KEY);
+  if (!/^[0-9a-f]{64}$/.test(token || '')) {
+    if (!crypto?.getRandomValues) throw new Error('הדפדפן לא תומך בשמירה מאובטחת של בעלות');
+    token = Array.from(crypto.getRandomValues(new Uint8Array(32)), b => b.toString(16).padStart(2,'0')).join('');
+    localStorage.setItem(SHARED_EDIT_SECRET_KEY,token);
+  }
+  return token;
+}
+async function sharedEditRpc(name, params) {
+  const r = await fetch(SUPABASE_URL+'/rest/v1/rpc/'+name,{method:'POST',headers:headers(),cache:'no-store',body:JSON.stringify(params)});
+  if(!r.ok) throw new Error(await errorText(r));
+  return r.json();
+}
+async function createOwnedShared(name,code,notes,department,totalHours=null){
+  return await sharedEditRpc('pakapaka_shared_create_owned',{
+    p_name:name,p_barcode:code,p_notes:notes,p_department:department,p_secret:getSharedEditSecret(),p_total_hours:totalHours
+  });
+}
+async function ownedSharedIds(department){
+  try{
+    const ids=await sharedEditRpc('pakapaka_shared_owned_ids',{p_secret:getSharedEditSecret(),p_department:department});
+    return new Set((ids||[]).map(x=>String(x.item_id)));
+  }catch(e){return new Set();}
+}
+
 async function loadShared() {
   const department = getDepartment();
   if (!department) {
@@ -16,7 +43,9 @@ async function loadShared() {
     });
     if (!r.ok) throw new Error(await errorText(r));
     const favs = getSharedFavs();
+    const owned = await ownedSharedIds(department);
     sharedItems = (await r.json()).map(x => ({
+      canEdit: owned.has(String(x.id)),
       id: x.id,
       createdAt: new Date(x.created_at).getTime(),
       name: x.name,
@@ -57,15 +86,11 @@ async function saveShared(name, code, notes) {
   window[lockKey] = true;
 
   try {
-    const r = await fetch(apiUrl(), {
-      method: 'POST',
-      headers: { ...headers(), Prefer: 'return=representation' },
-      body: JSON.stringify({ name, barcode: code, notes, department })
-    });
-    if (!r.ok) {
-      const msg = await errorText(r);
-      if (isDuplicateError(msg)) throw new Error('הברקוד כבר קיים במחלקה הזאת');
-      throw new Error('השמירה למשותף נכשלה. נסה שוב.');
+    try {
+      await createOwnedShared(name,code,notes,department,null);
+    } catch(e){
+      if (isDuplicateError(e.message)) throw new Error('הברקוד כבר קיים במחלקה הזאת');
+      throw e;
     }
     sharedLoaded = false;
     await loadShared();
