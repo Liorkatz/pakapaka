@@ -8,18 +8,19 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>פקע פקע | ניהול</title>
-<link rel="stylesheet" href="admin.css?v=1.67">
-<link rel="stylesheet" href="admin-light.css?v=1.67">
-<link rel="stylesheet" href="admin-theme.css?v=1.67">
-<link rel="stylesheet" href="admin-notifications.css?v=1.67">
-<link rel="stylesheet" href="admin-autofill.css?v=1.67">
-<link rel="stylesheet" href="admin-navigation.css?v=1.67">
-<link rel="stylesheet" href="admin-chat-layout.css?v=1.67">
-<link rel="stylesheet" href="admin-inbox-header.css?v=1.67">
+<link rel="stylesheet" href="admin.css?v=1.68">
+<link rel="stylesheet" href="admin-light.css?v=1.68">
+<link rel="stylesheet" href="admin-theme.css?v=1.68">
+<link rel="stylesheet" href="admin-notifications.css?v=1.68">
+<link rel="stylesheet" href="admin-autofill.css?v=1.68">
+<link rel="stylesheet" href="admin-navigation.css?v=1.68">
+<link rel="stylesheet" href="admin-chat-layout.css?v=1.68">
+<link rel="stylesheet" href="admin-inbox-header.css?v=1.68">
+<link rel="stylesheet" href="admin-department-items.css?v=1.68">
 </head>
 <body>
 <main class="adminShell">
-<div class="adminTopTools"><div class="adminTopVersion">v1.67</div><button type="button" id="adminThemeToggle" class="themeToggle" aria-label="ערכת נושא" title="החלף צבעים">◐</button></div>
+<div class="adminTopTools"><div class="adminTopVersion">v1.68</div><button type="button" id="adminThemeToggle" class="themeToggle" aria-label="ערכת נושא" title="החלף צבעים">◐</button></div>
   <div id="pullRefresh" class="pullRefresh">משוך לרענון</div>
   <section id="loginScreen" class="screen active">
     <div class="newLogin">
@@ -84,6 +85,18 @@
     <section class="panelBlock"><div class="blockTitle">בקשות לניהול מחלקה</div><button id="refreshManagerRequests" type="button">רענן בקשות</button><div id="managerRequestList">טוען בקשות...</div></section>
     <section class="panelBlock"><div class="blockTitle">מנהלי מחלקות קיימים</div><button id="refreshActiveManagers" type="button">רענן רשימה</button><div id="activeManagerList">טוען מנהלים...</div></section>
     <section class="panelBlock"><div class="blockTitle">הודעות למפתח</div><button id="refreshDeveloperInbox" type="button">רענן הודעות</button><div id="developerInbox">טוען הודעות...</div></section>
+    <section class="panelBlock" id="departmentItemManager">
+      <div class="blockTitle">עריכת פקעות לפי מחלקה</div>
+      <p>בחר מחלקה, הצג את כל הפקעות וערוך שם, מספר פקעה והערות — ללא תלות ביוצר.</p>
+      <div class="itemManagerControls">
+        <label for="editItemsDepartment">מחלקה</label>
+        <select id="editItemsDepartment"><option value="">בחר מחלקה</option></select>
+        <button type="button" id="refreshDepartmentItems" class="smallBtn">רענן מחלקות</button>
+      </div>
+      <input id="departmentItemsFilter" type="search" placeholder="חפש לפי שם, מספר או הערות" aria-label="חיפוש פקעות במחלקה">
+      <div class="itemManagerSummary"><span id="departmentItemsCount">0 פקעות</span><span id="departmentItemsStatus" role="status"></span></div>
+      <div id="departmentItemsList" class="managedItemsList"></div>
+    </section>
     <div id="setupError" class="setupError"></div>
 
     <section class="cardsGrid">
@@ -123,17 +136,18 @@
   </section>
 </main>
 
-<script src="../js/config.js?v=1.67"></script>
-<script src="../js/utils.js?v=1.67"></script>
-<script src="admin.js?v=1.67"></script>
-<script src="admin-recovery-v7.js?v=1.67"></script>
-<script src="admin-login-ui.js?v=1.67"></script>
-<script src="developer-inbox.js?v=1.67"></script>
-<script src="admin-light.js?v=1.67"></script>
-<script src="admin-theme.js?v=1.67"></script>
+<script src="../js/config.js?v=1.68"></script>
+<script src="../js/utils.js?v=1.68"></script>
+<script src="admin.js?v=1.68"></script>
+<script src="admin-recovery-v7.js?v=1.68"></script>
+<script src="admin-login-ui.js?v=1.68"></script>
+<script src="developer-inbox.js?v=1.68"></script>
+<script src="admin-light.js?v=1.68"></script>
+<script src="department-items.js?v=1.68"></script>
+<script src="admin-theme.js?v=1.68"></script>
 <script>
 (function(){
-  const current = '1.67';
+  const current = '1.68';
   let checking = false;
   async function checkForUpdate(){
     if (checking || document.hidden) return;
