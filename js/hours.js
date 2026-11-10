@@ -143,7 +143,9 @@ async function loadSharedWithHours() {
     const r = await fetch(apiUrl(q), { headers: headers(), cache: 'no-store' });
     if (!r.ok) throw new Error(await errorText(r));
     const favs = getSharedFavs();
+    const owned = await ownedSharedIds(department);
     sharedItems = (await r.json()).map(x => ({
+      canEdit: owned.has(String(x.id)),
       id: x.id,
       createdAt: new Date(x.created_at).getTime(),
       name: x.name,
@@ -155,6 +157,7 @@ async function loadSharedWithHours() {
       remainingHours: x.remaining_hours === null ? null : Number(x.remaining_hours)
     }));
     sharedLoaded = true;
+    if (typeof syncSharedCopiesFromRows === 'function') syncSharedCopiesFromRows(sharedItems);
     renderList();
   } catch (e) {
     document.getElementById('list').innerHTML = `<div class="empty">שגיאה בטעינת המשותף.<br>${escapeHtml(e.message)}</div>`;
@@ -168,21 +171,8 @@ async function saveSharedWithHours(name, code, notes, totalHours) {
   if (window[lockKey]) return true;
   window[lockKey] = true;
   try {
-    const body = { name, barcode: code, notes, department };
-    if (totalHours !== null) {
-      body.total_hours = totalHours;
-      body.remaining_hours = totalHours;
-    }
-    const r = await fetch(apiUrl(), {
-      method: 'POST',
-      headers: { ...headers(), Prefer: 'return=representation' },
-      body: JSON.stringify(body)
-    });
-    if (!r.ok) {
-      const msg = await errorText(r);
-      if (isDuplicateError(msg)) throw new Error('הברקוד כבר קיים במחלקה הזאת');
-      throw new Error('השמירה למשותף נכשלה. נסה שוב.');
-    }
+    try { await createOwnedShared(name, code, notes, department, totalHours); }
+    catch(e){ if(isDuplicateError(e.message)) throw new Error('הברקוד כבר קיים במחלקה הזאת'); throw e; }
     sharedLoaded = false;
     await loadSharedWithHours();
     return true;
