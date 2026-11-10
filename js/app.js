@@ -472,6 +472,7 @@ function editPakaItem(id) {
   const save=document.createElement('button');save.className='appDialogBtn';save.type='button';save.textContent='שמור שינויים';
   save.onclick=async()=>{
     const nextName=name.value.trim(),nextCode=code.value.trim(),nextNotes=notes.value.trim();
+    if(!/^[0-9]{15}$/.test(nextCode)){message.textContent='מספר הפקעה חייב להכיל בדיוק 15 ספרות';return;}
     if(!nextName){message.textContent='יש להזין שם פקעה';return;}
     const parsed=parseFullBarcode(nextCode);
     if(!parsed.ok){message.textContent=parsed.error;return;}
