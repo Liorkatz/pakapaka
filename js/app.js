@@ -427,6 +427,75 @@ function handleItemClick(id) {
   openBarcode(id);
 }
 
+function editPakaItem(id) {
+  const shared = activeTab === 'shared';
+  const item=(shared ? sharedItems : getLocalItems()).find(x=>String(x.id)===String(id));
+  if(!item)return;
+  if(shared && !item.canEdit){
+    showAppDialog({title:'אין הרשאת עריכה',text:'רק מי שיצר את הפקעה במשותף יכול לערוך אותה. בפקעות ישנות לא נשמר זיהוי יוצר ולכן לא ניתן לאמת בעלות עליהן.',actions:[{label:'סגור'}]});
+    return;
+  }
+  ensureAppDialogStyles();
+  closeAppDialog();
+  const backdrop=document.createElement('div');
+  backdrop.id='appDialogBackdrop';
+  backdrop.className='appDialogBackdrop';
+  const dialog=document.createElement('div');
+  dialog.className='appDialog pakaEditDialog';
+  const title=document.createElement('div');title.className='appDialogTitle';title.textContent=shared?'עריכת פקעה משותפת':'עריכת פקעה מקומית';dialog.appendChild(title);
+  const addField=(label,value,maxLength,multiline=false)=>{
+    const row=document.createElement('label');row.className='pakaEditLabel';row.textContent=label;
+    const field=document.createElement(multiline?'textarea':'input');
+    field.className='pakaEditField';field.maxLength=maxLength;field.value=value||'';
+    if(multiline)field.rows=2;
+    row.appendChild(field);dialog.appendChild(row);return field;
+  };
+  const name=addField('שם הפקעה',item.name,160);
+  const code=addField('מספר הפקעה',item.code,15);code.inputMode='numeric';code.setAttribute('dir','ltr');
+  const notes=addField('הערות',item.notes,3000,true);
+  const message=document.createElement('div');message.className='appDialogError';dialog.appendChild(message);
+  const actions=document.createElement('div');actions.className='appDialogActions two';
+  const cancel=document.createElement('button');cancel.className='appDialogBtn secondary';cancel.type='button';cancel.textContent='ביטול';cancel.onclick=closeAppDialog;
+  const save=document.createElement('button');save.className='appDialogBtn';save.type='button';save.textContent='שמור שינויים';
+  save.onclick=async()=>{
+    const nextName=name.value.trim(),nextCode=code.value.trim(),nextNotes=notes.value.trim();
+    if(!nextName){message.textContent='יש להזין שם פקעה';return;}
+    const parsed=parseFullBarcode(nextCode);
+    if(!parsed.ok){message.textContent=parsed.error;return;}
+    if(shared){
+      if(sharedItems.some(other=>String(other.id)!==String(item.id)&&String(other.code)===nextCode)){message.textContent='המספר קיים כבר במשותף';return;}
+    }else if(getLocalItems().some(other=>String(other.id)!==String(item.id)&&String(other.code)===nextCode)){message.textContent='המספר קיים כבר במקומי';return;}
+    save.disabled=true;save.textContent='שומר...';message.textContent='';
+    try{
+      if(shared){
+        const ok=await sharedEditRpc('pakapaka_shared_edit_owned',{p_id:Number(item.id),p_secret:getSharedEditSecret(),p_department:String(item.department||getDepartment()),p_name:nextName,p_barcode:nextCode,p_notes:nextNotes});
+        if(!ok)throw Error('אין הרשאה לשנות את הפקעה הזאת');
+        sharedItems=sharedItems.map(x=>String(x.id)===String(item.id)?{...x,name:nextName,code:nextCode,notes:nextNotes}:x);
+        syncSharedCopiesFromRows(sharedItems);
+      }else{
+        const items=getLocalItems();const target=items.find(x=>String(x.id)===String(item.id));
+        if(!target)throw Error('הפקעה כבר לא נמצאת במקומי');
+        const oldCode=target.code;
+        target.name=nextName;target.code=nextCode;target.notes=nextNotes;
+        if(oldCode!==nextCode){
+          // Deliberate local barcode edits are independent of subsequent shared updates.
+          target.sharedId=null;target.sharedDepartment='';
+          if(typeof getHoursMetaMap==='function'){
+            const meta=getHoursMetaMap();
+            if(meta[oldCode]){meta[nextCode]={...meta[oldCode],sharedId:null,sharedDepartment:''};delete meta[oldCode];setHoursMetaMap(meta);}
+          }
+        }
+        setLocalItems(items);
+      }
+      closeAppDialog();
+      renderList();
+      if(shared){sharedLoaded=false;loadShared();}
+    }catch(e){message.textContent=/duplicate|unique/i.test(String(e.message))?'המספר קיים כבר במשותף':(e.message||'שמירת השינויים נכשלה');}
+    finally{save.disabled=false;save.textContent='שמור שינויים';}
+  };
+  actions.append(cancel,save);dialog.appendChild(actions);backdrop.appendChild(dialog);document.body.appendChild(backdrop);name.focus();
+}
+
 function renameLocalItem(event, id) {
   if (event) event.stopPropagation();
   if (activeTab !== 'local') return;
@@ -521,15 +590,13 @@ function onTouchStart(e) {
   };
   touchState = state;
 
-  if (activeTab === 'local') {
-    state.longPressTimer = setTimeout(() => {
-      if (touchState !== state || state.moved) return;
-      state.longPressed = true;
-      suppressItemClickUntil = Date.now() + 900;
-      if (navigator.vibrate) navigator.vibrate(20);
-      renameLocalItem(null, state.id);
-    }, 650);
-  }
+  state.longPressTimer = setTimeout(() => {
+    if(touchState !== state || state.moved)return;
+    state.longPressed = true;
+    suppressItemClickUntil = Date.now() + 900;
+    if(navigator.vibrate)navigator.vibrate(20);
+    editPakaItem(state.id);
+  },650);
 }
 
 function onTouchMove(e) {
