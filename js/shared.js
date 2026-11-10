@@ -55,6 +55,7 @@ async function loadShared() {
       favorite: favs.includes(String(x.id))
     }));
     sharedLoaded = true;
+    syncSharedCopiesFromRows(sharedItems);
     renderList();
   } catch (e) {
     document.getElementById('list').innerHTML = `<div class="empty">שגיאה בטעינת המשותף.<br>${escapeHtml(e.message)}</div>`;
@@ -99,3 +100,50 @@ async function saveShared(name, code, notes) {
     window[lockKey] = false;
   }
 }
+/* Keep a local copy linked to its shared row, not just the mutable barcode. */
+function syncSharedCopiesFromRows(rows) {
+  if (!Array.isArray(rows) || !rows.length) return false;
+  const items = getLocalItems();
+  const department = String(getDepartment() || '');
+  const byId = new Map(rows.map(row => [String(row.id),row]));
+  const byCode = new Map(rows.map(row => [String(row.code || row.barcode),row]));
+  let changed = false;
+  const hourMetas = typeof getHoursMetaMap === 'function' ? getHoursMetaMap() : null;
+  let hoursChanged = false;
+  for (const item of items) {
+    const linked = item.sharedId ? byId.get(String(item.sharedId)) : null;
+    let remote = linked;
+    if (!remote && !item.sharedId && (!item.sharedDepartment || item.sharedDepartment === department)) {
+      remote = byCode.get(String(item.code));
+      if (remote) { item.sharedId = Number(remote.id); item.sharedDepartment = department; changed = true; }
+    }
+    if (!remote || String(remote.department || department) !== String(item.sharedDepartment || department)) continue;
+    const newCode=String(remote.code || remote.barcode || '');
+    if (!newCode || newCode===String(item.code)) continue;
+    if (items.some(other=>other!==item && String(other.code)===newCode)) continue;
+    const oldCode=String(item.code);
+    item.code=newCode; changed=true;
+    if (hourMetas && hourMetas[oldCode]) {
+      hourMetas[newCode] = { ...hourMetas[oldCode], sharedId:Number(remote.id), sharedDepartment:department };
+      delete hourMetas[oldCode]; hoursChanged=true;
+    }
+  }
+  if (changed) setLocalItems(items);
+  if (hoursChanged && typeof setHoursMetaMap === 'function') setHoursMetaMap(hourMetas);
+  return changed;
+}
+let sharedCopySyncBusy = false;
+async function syncSharedCopiesNow() {
+  const department=String(getDepartment() || '');
+  if(!department || sharedCopySyncBusy || !getLocalItems().length) return;
+  sharedCopySyncBusy=true;
+  try{
+    const q='?select=id,barcode,department&department=eq.'+encodeURIComponent(department);
+    const r=await fetch(apiUrl(q),{headers:headers(),cache:'no-store'});
+    if(!r.ok)return;
+    const changed=syncSharedCopiesFromRows(await r.json());
+    if(changed && activeTab==='local')renderList();
+  }catch(e){}finally{sharedCopySyncBusy=false;}
+}
+window.addEventListener('load',()=>{syncSharedCopiesNow();setInterval(()=>{if(!document.hidden)syncSharedCopiesNow();},45000);});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)syncSharedCopiesNow();});
