@@ -15,6 +15,8 @@ function normalizeLocalItem(x) {
     favorite: !!x.favorite,
     openCount: Number(x.openCount || 0),
     lastScannedAt: Number(x.lastScannedAt || 0),
+    sharedId: x.sharedId == null ? null : Number(x.sharedId),
+    sharedDepartment: String(x.sharedDepartment || ''),
     scanHistory: Array.isArray(x.scanHistory) ? x.scanHistory.filter(t => Number.isFinite(Number(t)) && Number(t)>0).map(Number).slice(-1000) : []
   };
 }
@@ -50,7 +52,9 @@ function copySharedToLocal(item, name) {
     notes: item.notes || '',
     favorite: false,
     openCount: 0,
-    lastScannedAt: 0
+    lastScannedAt: 0,
+    sharedId: Number(item.id),
+    sharedDepartment: String(item.department || getDepartment())
   });
   setLocalItems(items);
   return { ok: true };
