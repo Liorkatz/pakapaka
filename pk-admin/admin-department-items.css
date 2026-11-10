@@ -1,0 +1,24 @@
+/* Admin: department item editor — responsive, theme-aware */
+#departmentItemManager .itemManagerControls{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:13px 0}
+#departmentItemManager .itemManagerControls label{font-weight:700;color:var(--ink)}
+#departmentItemManager select{flex:1 1 160px;min-width:0;min-height:44px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:16px}
+#departmentItemManager .itemManagerControls button{width:auto!important;flex:0 0 auto}
+#departmentItemsFilter{display:block;width:100%;box-sizing:border-box;min-height:46px;padding:12px;margin:9px 0 12px;border-radius:12px}
+.itemManagerSummary{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:10px 0;font-size:13px;color:var(--muted)}
+.managedItemsList{display:grid;gap:9px}
+.managedItemRow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 10px;border:1px solid var(--line);border-radius:13px;background:var(--subtle-bg,#f4f7fb);min-width:0}
+.managedItemInfo{display:flex;flex-direction:column;gap:5px;min-width:0;overflow-wrap:anywhere}
+.managedItemInfo strong{color:var(--ink);font-size:15px}
+.managedItemCode{font-variant-numeric:tabular-nums;direction:ltr;text-align:right;color:var(--muted);font-size:13px}
+#departmentItemManager .managedItemEdit{width:auto!important;flex-shrink:0;white-space:nowrap}
+.managedItemOverlay{position:fixed;inset:0;z-index:100100;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px;direction:rtl}
+.managedItemDialog{box-sizing:border-box;width:100%;max-width:490px;max-height:90dvh;overflow:auto;border:1px solid var(--line);border-radius:20px;padding:20px;background:var(--card);color:var(--ink);box-shadow:0 24px 65px #0005}
+.managedItemDialog h2{margin:0 0 14px;font-size:23px}
+.managedField{display:flex;flex-direction:column;gap:6px;margin:12px 0;font-size:14px;font-weight:700;color:var(--ink)}
+.managedField input,.managedField textarea{box-sizing:border-box;width:100%;padding:12px;min-height:46px;border:1px solid var(--line);border-radius:11px;background:var(--input-bg,#f7faff);color:var(--ink);font-size:16px}
+.managedField input[dir=ltr]{direction:ltr;text-align:right}
+.managedItemError{color:#d04e59;min-height:20px;font-size:13px}
+.managedItemActions{display:flex;gap:9px}
+.managedItemActions button{flex:1;min-height:46px}
+.managedItemActions .managedSave{background:#2563eb;color:white;border-color:#2563eb}
+@media(max-width:370px){.managedItemDialog{padding:14px}.managedItemRow{padding:9px}}
